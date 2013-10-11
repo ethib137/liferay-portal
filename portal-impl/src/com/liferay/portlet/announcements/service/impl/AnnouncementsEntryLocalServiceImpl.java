@@ -348,6 +348,87 @@ public class AnnouncementsEntryLocalServiceImpl
 		return announcementsEntryPersistence.countByUserId(userId);
 	}
 
+	@Async
+	public void sendUserNotifications(
+			AnnouncementsEntry announcementEntry,
+			JSONObject notificationEventJSONObject)
+		throws Exception {
+
+		int count = 0;
+
+		if (announcementEntry.getClassNameId() == 0) {
+			count = UserLocalServiceUtil.getUsersCount();
+		}
+		else {
+			String className = PortalUtil.getClassName(
+				announcementEntry.getClassNameId());
+
+			if (className.equals(Group.class.getName())) {
+				count = UserLocalServiceUtil.getGroupUsersCount(
+					announcementEntry.getClassPK());
+			}
+			else if (className.equals(Organization.class.getName())) {
+				count = UserLocalServiceUtil.getOrganizationUsersCount(
+					announcementEntry.getClassPK());
+			}
+			else if (className.equals(Role.class.getName())) {
+				count = UserLocalServiceUtil.getRoleUsersCount(
+					announcementEntry.getClassPK());
+			}
+			else if (className.equals(UserGroup.class.getName())) {
+				count = UserLocalServiceUtil.getUserGroupUsersCount(
+					announcementEntry.getClassPK());
+			}
+		}
+
+		List<User> users = new ArrayList<User>();
+
+		int pages = count / Indexer.DEFAULT_INTERVAL;
+
+		for (int i = 0; i <= pages; i++) {
+			int start = (i * Indexer.DEFAULT_INTERVAL);
+
+			int end = start + Indexer.DEFAULT_INTERVAL;
+
+			if (announcementEntry.getClassNameId() == 0) {
+				users = UserLocalServiceUtil.getUsers(start, end);
+			}
+			else {
+				String className = PortalUtil.getClassName(
+					announcementEntry.getClassNameId());
+
+				if (className.equals(Group.class.getName())) {
+					users = UserLocalServiceUtil.getGroupUsers(
+						announcementEntry.getClassPK(), start, end);
+				}
+				else if (className.equals(Organization.class.getName())) {
+					users = UserLocalServiceUtil.getOrganizationUsers(
+						announcementEntry.getClassPK(), start, end);
+				}
+				else if (className.equals(Role.class.getName())) {
+					users = UserLocalServiceUtil.getRoleUsers(
+						announcementEntry.getClassPK(), start, end);
+				}
+				else if (className.equals(UserGroup.class.getName())) {
+					users = UserLocalServiceUtil.getUserGroupUsers(
+						announcementEntry.getClassPK(), start, end);
+				}
+			}
+
+			for (User user : users) {
+				NotificationEvent notificationEvent =
+					NotificationEventFactoryUtil.createNotificationEvent(
+						System.currentTimeMillis(), "6_WAR_soportlet",
+						notificationEventJSONObject);
+
+				notificationEvent.setDeliveryRequired(0);
+
+				ChannelHubManagerUtil.sendNotificationEvent(
+					user.getCompanyId(), user.getUserId(), notificationEvent);
+			}
+		}
+	}
+
 	@Override
 	public AnnouncementsEntry updateEntry(
 			long userId, long entryId, String title, String content, String url,
@@ -561,87 +642,6 @@ public class AnnouncementsEntryLocalServiceImpl
 		subscriptionSender.addRuntimeSubscribers(toAddress, toName);
 
 		subscriptionSender.flushNotificationsAsync();
-	}
-
-	@Async
-	public void sendUserNotifications(
-			AnnouncementsEntry announcementEntry,
-			JSONObject notificationEventJSONObject)
-		throws Exception {
-
-		int count = 0;
-
-		if (announcementEntry.getClassNameId() == 0) {
-			count = UserLocalServiceUtil.getUsersCount();
-		}
-		else {
-			String className = PortalUtil.getClassName(
-				announcementEntry.getClassNameId());
-
-			if (className.equals(Group.class.getName())) {
-				count = UserLocalServiceUtil.getGroupUsersCount(
-					announcementEntry.getClassPK());
-			}
-			else if (className.equals(Organization.class.getName())) {
-				count = UserLocalServiceUtil.getOrganizationUsersCount(
-					announcementEntry.getClassPK());
-			}
-			else if (className.equals(Role.class.getName())) {
-				count = UserLocalServiceUtil.getRoleUsersCount(
-					announcementEntry.getClassPK());
-			}
-			else if (className.equals(UserGroup.class.getName())) {
-				count = UserLocalServiceUtil.getUserGroupUsersCount(
-					announcementEntry.getClassPK());
-			}
-		}
-
-		List<User> users = new ArrayList<User>();
-
-		int pages = count / Indexer.DEFAULT_INTERVAL;
-
-		for (int i = 0; i <= pages; i++) {
-			int start = (i * Indexer.DEFAULT_INTERVAL);
-
-			int end = start + Indexer.DEFAULT_INTERVAL;
-
-			if (announcementEntry.getClassNameId() == 0) {
-				users = UserLocalServiceUtil.getUsers(start, end);
-			}
-			else {
-				String className = PortalUtil.getClassName(
-					announcementEntry.getClassNameId());
-
-				if (className.equals(Group.class.getName())) {
-					users = UserLocalServiceUtil.getGroupUsers(
-						announcementEntry.getClassPK(), start, end);
-				}
-				else if (className.equals(Organization.class.getName())) {
-					users = UserLocalServiceUtil.getOrganizationUsers(
-						announcementEntry.getClassPK(), start, end);
-				}
-				else if (className.equals(Role.class.getName())) {
-					users = UserLocalServiceUtil.getRoleUsers(
-						announcementEntry.getClassPK(), start, end);
-				}
-				else if (className.equals(UserGroup.class.getName())) {
-					users = UserLocalServiceUtil.getUserGroupUsers(
-						announcementEntry.getClassPK(), start, end);
-				}
-			}
-
-			for (User user : users) {
-				NotificationEvent notificationEvent =
-					NotificationEventFactoryUtil.createNotificationEvent(
-						System.currentTimeMillis(), "6_WAR_soportlet",
-						notificationEventJSONObject);
-
-				notificationEvent.setDeliveryRequired(0);
-
-				ChannelHubManagerUtil.sendNotificationEvent(
-					user.getCompanyId(), user.getUserId(), notificationEvent);
-			}
-		}
 	}
 
 	protected void validate(String title, String content, String url)
