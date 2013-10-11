@@ -489,6 +489,15 @@ public class AnnouncementsEntryLocalServiceUtil {
 			priority);
 	}
 
+	public static void sendUserNotifications(
+		com.liferay.portlet.announcements.model.AnnouncementsEntry announcementEntry,
+		com.liferay.portal.kernel.json.JSONObject notificationEventJSONObject)
+		throws java.lang.Exception {
+		getService()
+			.sendUserNotifications(announcementEntry,
+			notificationEventJSONObject);
+	}
+
 	public static AnnouncementsEntryLocalService getService() {
 		if (_service == null) {
 			_service = (AnnouncementsEntryLocalService)PortalBeanLocatorUtil.locate(AnnouncementsEntryLocalService.class.getName());

@@ -395,4 +395,9 @@ public interface AnnouncementsEntryLocalService extends BaseLocalService,
 		int expirationDateMinute, int priority)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.liferay.portal.kernel.exception.SystemException;
+
+	public void sendUserNotifications(
+		com.liferay.portlet.announcements.model.AnnouncementsEntry announcementEntry,
+		com.liferay.portal.kernel.json.JSONObject notificationEventJSONObject)
+		throws java.lang.Exception;
 }

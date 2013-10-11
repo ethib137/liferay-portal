@@ -518,6 +518,15 @@ public class AnnouncementsEntryLocalServiceWrapper
 			expirationDateHour, expirationDateMinute, priority);
 	}
 
+	@Override
+	public void sendUserNotifications(
+		com.liferay.portlet.announcements.model.AnnouncementsEntry announcementEntry,
+		com.liferay.portal.kernel.json.JSONObject notificationEventJSONObject)
+		throws java.lang.Exception {
+		_announcementsEntryLocalService.sendUserNotifications(announcementEntry,
+			notificationEventJSONObject);
+	}
+
 	/**
 	 * @deprecated As of 6.1.0, replaced by {@link #getWrappedService}
 	 */
