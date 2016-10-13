@@ -71,22 +71,28 @@ class Profile extends Component {
 	}
 
 	getItemDetails_(obj) {
-		return Object.keys(obj).map(
-			key => {
-				const detail = {};
+		let details = [];
 
-				detail.label = key;
+		Object.keys(obj).forEach(
+			key => {
 				let value = obj[key];
 
 				if (typeof value === 'object') {
 					value = value.name;
 				}
 
-				detail.value = value;
-
-				return detail;
+				if (value) {
+					details.push(
+						{
+							label: key,
+							value
+						}
+					);
+				}
 			}
 		);
+
+		return details;
 	}
 
 	handleAssociated_(item) {
@@ -114,11 +120,7 @@ class Profile extends Component {
 					associated.push(this.handleAssociated_(data[key][0]));
 				}
 				else {
-					const value = data[key];
-
-					if (value !== '') {
-						attributes[key] = value;
-					}
+					attributes[key] = data[key];
 				}
 			}
 		);

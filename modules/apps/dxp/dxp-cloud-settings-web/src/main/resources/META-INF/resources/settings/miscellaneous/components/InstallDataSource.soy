@@ -1,8 +1,6 @@
 {namespace InstallDataSource}
 
 /**
- * @param? section
- * @param? portletNamespace
  * @param? typesMap_
  * @param? onAddDataSource_
  * @param? onCancel_
@@ -16,10 +14,8 @@
 	<div class="wrapper">
 		<div class="btn-wrapper">
 			<a class="btn btn-default {if $tab_ == 'installDataSource'}btn-primary{/if}" href="javascript:;" onClick="installDataSourceClick_">Install Data Source</a>
-			<a class="btn btn-default {if $tab_ == 'profile'}btn-primary{/if}" href="?{$portletNamespace}section=profile">View Profile</a>
+			<a class="btn btn-default {if $tab_ == 'profile'}btn-primary{/if}" href="javascript:;" onClick="viewProfileClick_">View Profile</a>
 		</div>
-
-		Section: {$section ? $section : 'None'}
 
 		<br />
 
@@ -30,7 +26,7 @@
 						<div class="choose-data-source col-lg-16">
 							{call EvanSelect.render}
 								{param items: $types_ /}
-								{param label: 'Instal DS' /}
+								{param label: 'Install DS' /}
 								{param open_: false /}
 								{param onSelect: $onTypeSelect_ /}
 							{/call}
@@ -45,7 +41,7 @@
 							{param typesMap: $typesMap_ /}
 						{/call}
 					{else}
-						{if $onCancel_ and $onAddDataSource_ and $type_ and $typesMap_}
+						{if $onCancel_ and $onAddDataSource_ and isNonnull($type_) and $typesMap_}
 							{call DSForm.render}
 								{param onCancel: $onCancel_ /}
 								{param onSuccess: $onAddDataSource_ /}
