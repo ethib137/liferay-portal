@@ -1,0 +1,43 @@
+{namespace InstallDataSource}
+
+/**
+ * @param? tab_
+ * @param? type_
+ * @param? types_
+ */
+{template .render}
+	<div class="wrapper">
+		<div class="btn-wrapper">
+			<a class="btn btn-default {if $tab_ == 'installDataSource'}btn-primary{/if}" href="javascript:;" onClick="installDataSourceClick_">Install Data Source</a>
+			<a class="btn btn-default {if $tab_ == 'profile'}btn-primary{/if}" href="javascript:;" onClick="viewProfileClick_">View Profile</a>
+		</div>
+
+		<br />
+
+		{if $tab_ == 'installDataSource'}
+			<div key="installDataSource" class="install-data-source">
+				<div class="container container-fluid container-lg">
+					<div class="row">
+						<div class="choose-data-source col-lg-16">
+							{call EvanSelect.render}
+								{param items: $types_ /}
+								{param label: 'Instal DS' /}
+								{param open_: false /}
+							{/call}
+						</div>
+					</div>
+
+					{if $type_ < 0}
+						<h1>Current Data Sources:</h1>
+					{else}
+						Add a new data source
+					{/if}
+				</div>
+			</div>
+		{else}
+			<div key="profile" class="profile-component">
+				profile
+			</div>
+		{/if}
+	<div>
+{/template}

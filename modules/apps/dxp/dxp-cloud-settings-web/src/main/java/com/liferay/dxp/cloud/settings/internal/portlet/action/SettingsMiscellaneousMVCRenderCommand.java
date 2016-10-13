@@ -45,6 +45,11 @@ public class SettingsMiscellaneousMVCRenderCommand implements MVCRenderCommand {
 	public String render(
 		RenderRequest renderRequest, RenderResponse renderResponse) {
 
+		Template template = (Template)renderRequest.getAttribute(
+			WebKeys.TEMPLATE);
+
+		template.put("tab_", "installDataSource");
+
 		return "SettingsMiscellaneous.render";
 	}
 

@@ -1,0 +1,43 @@
+'use strict';
+
+import templates from './EvanSelect.soy';
+import core from 'metal';
+import Component from 'metal-component';
+import Soy from 'metal-soy';
+
+import './SelectItem.es';
+
+class EvanSelect extends Component {
+	onClick_() {
+		this.open_ = !this.open_;
+	}
+
+	onSelect_(i) {
+		this.open_ = false;
+
+		this.onSelect(this.items[i], i);
+	}
+}
+
+EvanSelect.STATE = {
+	items: {
+		validator: core.isArray
+	},
+
+	label: {
+		validator: core.isString
+	},
+
+	open_: {
+		validator: core.isBool,
+		value: false
+	},
+
+	onSelect: {
+		validator: core.isFunc
+	}
+};
+
+Soy.register(EvanSelect, templates);
+
+export default EvanSelect;

@@ -1,0 +1,14 @@
+{namespace SelectItem}
+
+/**
+ * This renders the component's whole content.
+ *
+ * @param? onClick_
+ * @param? href
+ * @param label
+ */
+{template .render}
+	<li class="item">
+		<a href="{$href}" onClick="{$onClick_}">{$label}</a>
+	</li>
+{/template}

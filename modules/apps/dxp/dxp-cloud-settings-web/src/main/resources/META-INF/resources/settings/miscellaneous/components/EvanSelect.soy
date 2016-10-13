@@ -1,0 +1,31 @@
+{namespace EvanSelect}
+
+/**
+ * This renders the component's whole content.
+ *
+ * @param open_
+ * @param label
+ * @param? items
+ */
+{template .render}
+	<div class="select-component">
+		<a class="btn btn-primary" href="javascript:;" onClick="onClick_">
+			{$label}
+
+			<span class="icon-16-arrow-down-short"></span>
+		</a>
+
+		{if $open_}
+			<ul class="items">
+				{if $items	}
+					{foreach $item in $items}
+						{call SelectItem.render}
+							{param label: $item /}
+							{param i: index($item) /}
+						{/call}
+					{/foreach}
+				{/if}
+			</ul>
+		{/if}
+	</div>
+{/template}
