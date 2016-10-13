@@ -1,0 +1,18 @@
+{namespace DSList}
+
+/**
+ * @param items
+ * @param typesMap
+ */
+{template .render}
+	<div class="ds-list-component row">
+		{foreach $item in $items}
+			<div class="col-xs-4 item-container">
+				{call DSItem.render}
+					{param item: $item /}
+					{param typesMap: $typesMap /}
+				{/call}
+			</div>
+		{/foreach}
+	</div>
+{/template}

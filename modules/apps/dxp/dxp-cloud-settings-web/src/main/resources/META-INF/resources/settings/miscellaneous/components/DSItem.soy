@@ -1,0 +1,36 @@
+{namespace DSItem}
+
+/**
+ * @param item
+ * @param typesMap
+ */
+{template .render}
+	<div class="ds-item-component card-component">
+		<h2>{$item.name}</h2>
+
+		<div class="info-group">
+			<span class="key">Type:</span>
+			<span class="value" title="{$item.type}">{$typesMap[$item.type]}</span>
+		</div>
+
+		<div class="info-group">
+			<span class="key">Created On:</span>
+			<span class="value" title="{$item.createDate}">{$item.createDate}</span>
+		</div>
+
+		<div class="info-group">
+			<span class="key">Last Modified:</span>
+			<span class="value" title="{$item.modifiedDate}">{$item.modifiedDate}</span>
+		</div>
+
+		<div class="info-group">
+			<span class="key">URL:</span>
+			<span class="value" title="{$item.url}">{$item.url}</span>
+		</div>
+
+		<div class="info-group">
+			<span class="key">Login:</span>
+			<span class="value" title="{$item.login}">{$item.login}</span>
+		</div>
+	</div>
+{/template}

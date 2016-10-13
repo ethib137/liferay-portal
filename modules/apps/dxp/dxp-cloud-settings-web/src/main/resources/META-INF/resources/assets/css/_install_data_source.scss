@@ -1,0 +1,17 @@
+.install-data-source {
+	.choose-data-source {
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+	}
+}
+
+.wrapper {
+	.btn-wrapper {
+		margin-bottom: 40px;
+
+		.btn {
+			margin-right: 10px;
+		}
+	}
+}

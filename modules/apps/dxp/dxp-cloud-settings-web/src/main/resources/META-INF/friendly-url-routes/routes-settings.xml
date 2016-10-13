@@ -18,4 +18,12 @@
 		<pattern>/settings/miscellaneous</pattern>
 		<implicit-parameter name="mvcRenderCommandName">/settings/miscellaneous/SettingsMiscellaneous</implicit-parameter>
 	</route>
+	<route>
+		<pattern>/settings/miscellaneous/installDataSource</pattern>
+		<implicit-parameter name="mvcRenderCommandName">/settings/miscellaneous/SettingsMiscellaneous</implicit-parameter>
+	</route>
+	<route>
+		<pattern>/settings/miscellaneous/profile</pattern>
+		<implicit-parameter name="mvcRenderCommandName">/settings/miscellaneous/SettingsMiscellaneous</implicit-parameter>
+	</route>
 </routes>

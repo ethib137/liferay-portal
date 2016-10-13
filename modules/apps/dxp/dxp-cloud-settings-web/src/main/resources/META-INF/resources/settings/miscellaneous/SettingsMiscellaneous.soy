@@ -26,8 +26,8 @@
 					<div class="col-xs-16">
 						{call SettingsSections.render data="all" /}
 					</div>
-					Evan Thibodeau Tab is: 
-					{call InstallDataSource.render}
+
+					{call InstallDataSource.render data="all"}
 						{param tab_: 'installDataSource' /}
 						{param type_: -1 /}
 					{/call}

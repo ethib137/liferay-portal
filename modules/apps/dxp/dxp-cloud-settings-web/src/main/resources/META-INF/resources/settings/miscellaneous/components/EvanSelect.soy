@@ -5,6 +5,7 @@
  *
  * @param open_
  * @param label
+ * @param? onSelect_
  * @param? items
  */
 {template .render}
@@ -21,6 +22,7 @@
 					{foreach $item in $items}
 						{call SelectItem.render}
 							{param label: $item /}
+							{param onClick: $onSelect_ /}
 							{param i: index($item) /}
 						{/call}
 					{/foreach}

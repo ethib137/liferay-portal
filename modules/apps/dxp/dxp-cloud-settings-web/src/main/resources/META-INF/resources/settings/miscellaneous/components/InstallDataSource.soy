@@ -1,6 +1,11 @@
 {namespace InstallDataSource}
 
 /**
+ * @param? section
+ * @param? portletNamespace
+ * @param? typesMap_
+ * @param? dataSources_
+ * @param? onTypeSelect_
  * @param? tab_
  * @param? type_
  * @param? types_
@@ -9,8 +14,10 @@
 	<div class="wrapper">
 		<div class="btn-wrapper">
 			<a class="btn btn-default {if $tab_ == 'installDataSource'}btn-primary{/if}" href="javascript:;" onClick="installDataSourceClick_">Install Data Source</a>
-			<a class="btn btn-default {if $tab_ == 'profile'}btn-primary{/if}" href="javascript:;" onClick="viewProfileClick_">View Profile</a>
+			<a class="btn btn-default {if $tab_ == 'profile'}btn-primary{/if}" href="?{$portletNamespace}section=profile">View Profile</a>
 		</div>
+
+		Section: {$section ? $section : 'None'}
 
 		<br />
 
@@ -23,12 +30,18 @@
 								{param items: $types_ /}
 								{param label: 'Instal DS' /}
 								{param open_: false /}
+								{param onSelect: $onTypeSelect_ /}
 							{/call}
 						</div>
 					</div>
 
-					{if $type_ < 0}
+					{if $type_ < 0 and $dataSources_ and $typesMap_}
 						<h1>Current Data Sources:</h1>
+
+						{call DSList.render}
+							{param items: $dataSources_ /}
+							{param typesMap: $typesMap_ /}
+						{/call}
 					{else}
 						Add a new data source
 					{/if}
@@ -36,8 +49,8 @@
 			</div>
 		{else}
 			<div key="profile" class="profile-component">
-				profile
+				{call Profile.render /}
 			</div>
 		{/if}
-	<div>
+	</div>
 {/template}

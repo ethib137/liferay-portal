@@ -5,7 +5,9 @@ import core from 'metal';
 import Soy from 'metal-soy';
 import templates from './InstallDataSource.soy';
 
+import './DSList.es';
 import './EvanSelect.es';
+import './Profile.es';
 
 class InstallDataSource extends Component {
 	created() {
