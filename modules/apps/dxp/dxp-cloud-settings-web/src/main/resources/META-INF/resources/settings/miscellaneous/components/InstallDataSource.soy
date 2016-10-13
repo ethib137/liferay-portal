@@ -4,6 +4,8 @@
  * @param? section
  * @param? portletNamespace
  * @param? typesMap_
+ * @param? onAddDataSource_
+ * @param? onCancel_
  * @param? dataSources_
  * @param? onTypeSelect_
  * @param? tab_
@@ -43,7 +45,14 @@
 							{param typesMap: $typesMap_ /}
 						{/call}
 					{else}
-						Add a new data source
+						{if $onCancel_ and $onAddDataSource_ and $type_ and $typesMap_}
+							{call DSForm.render}
+								{param onCancel: $onCancel_ /}
+								{param onSuccess: $onAddDataSource_ /}
+								{param type: $type_ /}
+								{param typesMap: $typesMap_ /}
+							{/call}
+						{/if}
 					{/if}
 				</div>
 			</div>

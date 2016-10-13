@@ -1,0 +1,18 @@
+{namespace DSInput}
+
+/**
+ * @param? disabled
+ * @param? label
+ * @param name
+ * @param type
+ * @param? value
+ */
+{template .render}
+	<div class="form-group input-component">
+		{if isNonnull($label)}
+			<label for="{$name}">{$label}</label>
+		{/if}
+
+		<input class="form-control" {if $disabled}disabled="disabled"{/if} id="{$name}" onInput="onInput_" type="{$type}" value="{$value ? $value : ''}" />
+	</div>
+{/template}

@@ -1,0 +1,55 @@
+{namespace DSForm}
+
+/**
+ * @param? loading_
+ * @param? onInput_
+ * @param type
+ * @param typesMap
+ */
+{template .render}
+	<div class="ds-form-component row">
+		<div class="col-lg-16">
+			<h1 class="header">Install New {$typesMap[$type]} Data Source</h1>
+
+			<form class="clearfix form {if $loading_}loading{/if}">
+				{if $loading_}
+					<div class="loading-mask">
+						<span class="loading-spinner spinner spinner-large"></span>
+					</div>
+				{/if}
+
+				{call DSInput.render}
+					{param label: 'Name' /}
+					{param name: 'name' /}
+					{param onInput: $onInput_ /}
+					{param type: 'text' /}
+				{/call}
+
+				{call DSInput.render}
+					{param label: 'URL' /}
+					{param name: 'url' /}
+					{param onInput: $onInput_ /}
+					{param type: 'text' /}
+				{/call}
+
+				{call DSInput.render}
+					{param label: 'Login' /}
+					{param name: 'login' /}
+					{param onInput: $onInput_ /}
+					{param type: 'text' /}
+				{/call}
+
+				{call DSInput.render}
+					{param label: 'Password' /}
+					{param name: 'password' /}
+					{param onInput: $onInput_ /}
+					{param type: 'text' /}
+				{/call}
+
+				<input class="btn btn-success pull-right" onClick="onSubmit_" type="submit" value="Connect" />
+
+				<input class="btn btn-default pull-right" onClick="onCancel_" type="reset" value="Cancel" />
+			</form>
+		</div>
+	</div>
+{/template}
