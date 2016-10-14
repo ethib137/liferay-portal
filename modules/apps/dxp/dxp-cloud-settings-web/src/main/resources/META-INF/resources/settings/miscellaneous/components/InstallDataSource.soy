@@ -5,6 +5,7 @@
  * @param? onAddDataSource_
  * @param? onCancel_
  * @param? dataSources_
+ * @param? onItemDelete_
  * @param? onTypeSelect_
  * @param? tab_
  * @param? type_
@@ -24,7 +25,7 @@
 				<div class="container container-fluid container-lg">
 					<div class="row">
 						<div class="choose-data-source col-lg-16">
-							{call EvanSelect.render}
+							{call DSSelect.render}
 								{param items: $types_ /}
 								{param label: 'Install DS' /}
 								{param open_: false /}
@@ -33,13 +34,18 @@
 						</div>
 					</div>
 
-					{if $type_ < 0 and $dataSources_ and $typesMap_}
+					{if $type_ < 0 and $dataSources_ and $onItemDelete_ and $typesMap_}
 						<h1>Current Data Sources:</h1>
 
-						{call DSList.render}
-							{param items: $dataSources_ /}
-							{param typesMap: $typesMap_ /}
-						{/call}
+						{if length($dataSources_) > 0}
+							{call DSList.render}
+								{param items: $dataSources_ /}
+								{param onItemDelete: $onItemDelete_ /}
+								{param typesMap: $typesMap_ /}
+							{/call}
+						{else}
+							You do not have any data sources.
+						{/if}
 					{else}
 						{if $onCancel_ and $onAddDataSource_ and isNonnull($type_) and $typesMap_}
 							{call DSForm.render}

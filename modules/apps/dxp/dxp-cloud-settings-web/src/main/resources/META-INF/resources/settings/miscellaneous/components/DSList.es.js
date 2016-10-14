@@ -16,6 +16,10 @@ DSList.STATE = {
 		value: []
 	},
 
+	onItemDelete: {
+		validator: core.isFunc
+	},
+
 	typesMap: {
 		validator: core.isObj
 	}

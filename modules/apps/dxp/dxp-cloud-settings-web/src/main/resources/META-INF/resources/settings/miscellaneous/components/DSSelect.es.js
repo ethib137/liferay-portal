@@ -1,13 +1,13 @@
 'use strict';
 
-import templates from './EvanSelect.soy';
+import templates from './DSSelect.soy';
 import core from 'metal';
 import Component from 'metal-component';
 import Soy from 'metal-soy';
 
 import './SelectItem.es';
 
-class EvanSelect extends Component {
+class DSSelect extends Component {
 	onClick_() {
 		this.open_ = !this.open_;
 	}
@@ -19,7 +19,7 @@ class EvanSelect extends Component {
 	}
 }
 
-EvanSelect.STATE = {
+DSSelect.STATE = {
 	items: {
 		validator: core.isArray
 	},
@@ -38,6 +38,6 @@ EvanSelect.STATE = {
 	}
 };
 
-Soy.register(EvanSelect, templates);
+Soy.register(DSSelect, templates);
 
-export default EvanSelect;
+export default DSSelect;

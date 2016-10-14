@@ -7,17 +7,38 @@ import templates from './InstallDataSource.soy';
 
 import './DSForm.es';
 import './DSList.es';
-import './EvanSelect.es';
+import './DSSelect.es';
 import './Profile.es';
 
 class InstallDataSource extends Component {
 	created() {
-		this.typesMap_ = {
-			0: "custom",
-			1: "liferay",
-			2: "salesforce",
-			3: "hubspot"
-		};
+		this.getDataSources_();
+		this.getDataSourceTypes_();
+	}
+
+	getDataSources_() {
+		const instance = this;
+
+		Liferay.Service(
+			'/osb_scv.mappingdatasource/get-mapping-data-sources',
+			function(dataSources) {
+				console.log('dataSources:', dataSources);
+				instance.dataSources_ = dataSources;
+			}
+		);
+	}
+
+	getDataSourceTypes_() {
+		const instance = this;
+
+		Liferay.Service(
+			'/osb_scv.mappingdatasource/get-mapping-data-source-types',
+			function(types) {
+				console.log(types);
+
+				instance.typesMap_ = types;
+			}
+		);
 	}
 
 	onCancel_() {
@@ -25,28 +46,24 @@ class InstallDataSource extends Component {
 	}
 
 	onAddDataSource_(data) {
+		console.log('onAddDataSource_:', data);
 		const dataSources = this.dataSources_;
 
-		dataSources.push(
-			{
-				availableFields: "",
-				companyId: "20116",
-				createDate: 1476279728827,
-				login: data.login,
-				mappingDataSourceId: "32103",
-				modifiedDate: 1476279728827,
-				name: data.name,
-				password: data.password,
-				type: data.type,
-				url: data.url,
-				userId: "0",
-				userName: ""
-			}
-		);
+		dataSources.push(data);
 
 		this.dataSources_ = dataSources;
 
 		this.type_ = -1;
+	}
+
+	onItemDelete_(id) {
+		let {dataSources_} = this;
+
+		dataSources_ = dataSources_.filter(
+			item => item.mappingDataSourceId !== id
+		);
+
+		this.dataSources_ = dataSources_;
 	}
 
 	onTypeSelect_(type, i) {
@@ -73,64 +90,7 @@ class InstallDataSource extends Component {
 InstallDataSource.STATE = {
 	dataSources_: {
 		validator: core.isArray,
-		value: [
-			{
-				availableFields: "",
-				companyId: "20116",
-				createDate: 1476279728827,
-				login: "test@liferay.com",
-				mappingDataSourceId: "32103",
-				modifiedDate: 1476279728827,
-				name: "First",
-				password: "test",
-				type: "1",
-				url: "http://localhost:8080/api/jsonws/SCVUser.scvuserjsonws",
-				userId: "0",
-				userName: ""
-			},
-			{
-				availableFields: "",
-				companyId: "20116",
-				createDate: 1476279728827,
-				login: "test@liferay.com",
-				mappingDataSourceId: "32103",
-				modifiedDate: 1476279728827,
-				name: "Second",
-				password: "test",
-				type: "1",
-				url: "http://localhost:8080/api/jsonws/SCVUser.scvuserjsonws",
-				userId: "0",
-				userName: ""
-			},
-			{
-				availableFields: "",
-				companyId: "20116",
-				createDate: 1476279728827,
-				login: "test@liferay.com",
-				mappingDataSourceId: "32103",
-				modifiedDate: 1476279728827,
-				name: "Third",
-				password: "test",
-				type: "1",
-				url: "http://localhost:8080/api/jsonws/SCVUser.scvuserjsonws",
-				userId: "0",
-				userName: ""
-			},
-			{
-				availableFields: "",
-				companyId: "20116",
-				createDate: 1476279728827,
-				login: "test@liferay.com",
-				mappingDataSourceId: "32103",
-				modifiedDate: 1476279728827,
-				name: "Fourth",
-				password: "test",
-				type: "1",
-				url: "http://localhost:8080/api/jsonws/SCVUser.scvuserjsonws",
-				userId: "0",
-				userName: ""
-			}
-		]
+		value: []
 	},
 
 	tab_: {

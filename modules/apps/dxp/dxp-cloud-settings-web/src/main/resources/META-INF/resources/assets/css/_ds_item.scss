@@ -1,11 +1,24 @@
 .ds-item-component {
 	padding: 20px;
+	position: relative;
 
 	> h2 {
 		color: #777;
 		margin-bottom: 40px;
 		margin-top: 10px;
 		text-align: center;
+	}
+
+	> .close {
+		position: absolute;
+		opacity: 0;
+		right: 10px;
+		top: 10px;
+		transition: opacity 0.4s;
+	}
+
+	&:hover .close {
+		opacity: 1;
 	}
 
 	.info-group {

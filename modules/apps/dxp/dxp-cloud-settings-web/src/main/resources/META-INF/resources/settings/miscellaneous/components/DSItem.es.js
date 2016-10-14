@@ -6,18 +6,34 @@ import Soy from 'metal-soy';
 import templates from './DSItem.soy';
 
 class DSItem extends Component {
-	setItem_(item) {
-		// const type = this.typesMap[item.type];
+	onCloseClick_() {
+		const instance = this;
 
-		// item.type = type;
+		const {mappingDataSourceId} = instance.item;
 
-		return item;
+		if (confirm('Are you sure you want to delete this Data Source? This cannot be undone.')) {
+			Liferay.Service(
+				'/osb_scv.mappingdatasource/delete-mapping-data-source',
+				{
+					mappingDataSourceId
+				},
+				function(obj) {
+					console.log('onCloseClick_', obj);
+
+					instance.onDelete(mappingDataSourceId);
+				}
+			);
+		}
 	}
 }
 
 DSItem.STATE = {
 	item: {
 		validator: core.isObj
+	},
+
+	onDelete: {
+		validator: core.isFunc
 	},
 
 	typesMap: {

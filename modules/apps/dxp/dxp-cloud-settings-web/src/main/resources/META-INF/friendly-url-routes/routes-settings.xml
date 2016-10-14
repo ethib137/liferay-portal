@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!DOCTYPE routes PUBLIC "-//Liferay//DTD Friendly URL Routes 7.0.0//EN" "http://www.liferay.com/dtd/liferay-friendly-url-routes_7_0_0.dtd">
 
 <routes>
 	<route>
@@ -24,6 +23,12 @@
 	</route>
 	<route>
 		<pattern>/settings/miscellaneous/profile</pattern>
+		<pattern-metal-router>/settings/miscellaneous/:tab(profile)</pattern-metal-router>
+		<implicit-parameter name="mvcRenderCommandName">/settings/miscellaneous/SettingsMiscellaneous</implicit-parameter>
+	</route>
+	<route>
+		<pattern>/settings/miscellaneous/installDataSource</pattern>
+		<pattern-metal-router>/settings/miscellaneous/:tab(installDataSource)</pattern-metal-router>
 		<implicit-parameter name="mvcRenderCommandName">/settings/miscellaneous/SettingsMiscellaneous</implicit-parameter>
 	</route>
 </routes>

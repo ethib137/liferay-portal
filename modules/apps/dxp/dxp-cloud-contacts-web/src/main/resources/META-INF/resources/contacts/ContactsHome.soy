@@ -3,6 +3,7 @@
 /**
  * Prints the DXP Cloud Portlet Contacts Main View
  *
+ * @param? contacts_
  * @param id
  * @param mvcRenderCommandName
  * @param sidebar
@@ -23,6 +24,18 @@
 				<div class="content-header"></div>
 				<div class="row">
 					<h1>Contacts</h1>
+
+					<div class="contacts-list">
+						{if $contacts_ and length($contacts_) > 0}
+							contacts
+
+							{foreach $contact in $contacts_}
+								<div class="contact-item">
+									{$contact['Email Address']}
+								</div>
+							{/foreach}
+						{/if}
+					</div>
 				</div>
 			</div>
 		</div>

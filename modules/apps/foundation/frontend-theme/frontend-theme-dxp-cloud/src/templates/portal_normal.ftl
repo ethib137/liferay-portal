@@ -5,6 +5,8 @@
 <html>
 
 <head>
+	<script src="http://cdn.wedeploy.com/api/latest/wedeploy.js"></script>
+
 	<@liferay_util["include"] page=top_head_include />
 
 	<link rel="stylesheet" href="//westyle.wedeploy.io/build/westyle.css">

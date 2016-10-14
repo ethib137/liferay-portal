@@ -23,21 +23,33 @@ class DSForm extends Component {
 	onSubmit_(event) {
 		const instance = this;
 
-		const data = instance.data_;
-
-		data.type = instance._type;
+		const {
+			login,
+			name,
+			password,
+			url
+		} = instance.data_;
 
 		event.preventDefault();
 
 		instance.loading_ = true;
 
-		window.setTimeout(
-			function() {
+		console.log('onSubmit', this);
+
+		Liferay.Service(
+			'/Cloud.cloud/add-data-source',
+			{
+				login,
+				name,
+				password,
+				type: instance.type.toString(),
+				url
+			},
+			function(obj) {
 				instance.loading_ = false;
 
-				instance.onSuccess(data);
-			},
-			400
+				instance.onSuccess(obj);
+			}
 		);
 	}
 
