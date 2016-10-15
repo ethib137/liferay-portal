@@ -11,7 +11,7 @@
 			{foreach $contact in $contacts}
 				{if isFirst($contact)}
 					<div class="list-item list-heading">
-						{foreach $attr in $contact}
+						{foreach $attr in $contact.data}
 							<span class="attr {$attr.class}" title="{$attr.label}">
 								{$attr.label}
 							</span>
