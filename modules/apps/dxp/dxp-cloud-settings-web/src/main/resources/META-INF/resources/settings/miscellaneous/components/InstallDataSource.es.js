@@ -73,14 +73,6 @@ class InstallDataSource extends Component {
 		console.log('this.type_:', this.type_, i);
 	}
 
-	installDataSourceClick_() {
-		this.tab_ = 'installDataSource';
-	}
-
-	viewProfileClick_() {
-		this.tab_ = 'profile';
-	}
-
 	syncTypesMap_(newVal) {
 		this.types_ = Object.keys(newVal).map(key => newVal[key]);
 	}
@@ -90,10 +82,6 @@ InstallDataSource.STATE = {
 	dataSources_: {
 		validator: core.isArray,
 		value: []
-	},
-
-	tab_: {
-		validator: core.isString
 	},
 
 	type_: {
