@@ -18,11 +18,15 @@ class InstallDataSource extends Component {
 	getDataSources_() {
 		const instance = this;
 
+		instance.DSListLoading_ = true;
+
 		Liferay.Service(
 			'/osb_scv.mappingdatasource/get-mapping-data-sources',
 			function(dataSources) {
 				console.log('dataSources:', dataSources);
 				instance.dataSources_ = dataSources;
+
+				instance.DSListLoading_ = false;
 			}
 		);
 	}
@@ -82,6 +86,11 @@ InstallDataSource.STATE = {
 	dataSources_: {
 		validator: core.isArray,
 		value: []
+	},
+
+	DSListLoading_: {
+		validator: core.isBool,
+		value: true
 	},
 
 	type_: {

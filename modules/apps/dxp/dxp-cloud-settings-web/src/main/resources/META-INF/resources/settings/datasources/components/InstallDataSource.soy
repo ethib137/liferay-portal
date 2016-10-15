@@ -5,6 +5,7 @@
  * @param? onAddDataSource_
  * @param? onCancel_
  * @param? dataSources_
+ * @param? DSListLoading_
  * @param? onItemDelete_
  * @param? onTypeSelect_
  * @param? type_
@@ -31,11 +32,10 @@
 					{if length($dataSources_) > 0}
 						{call DSList.render}
 							{param items: $dataSources_ /}
+							{param loading: $DSListLoading_ /}
 							{param onItemDelete: $onItemDelete_ /}
 							{param typesMap: $typesMap_ /}
 						{/call}
-					{else}
-						You do not have any data sources.
 					{/if}
 				{else}
 					{if $onCancel_ and $onAddDataSource_ and isNonnull($type_) and $typesMap_}

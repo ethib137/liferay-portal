@@ -2,6 +2,7 @@
 
 /**
  * @param items
+ * @param loading
  * @param onItemDelete
  * @param typesMap
  */
@@ -15,6 +16,16 @@
 					{param typesMap: $typesMap /}
 				{/call}
 			</div>
+		{ifempty}
+			{if not $loading}
+				You do not have any data sources.
+			{/if}
 		{/foreach}
+
+		{if $loading} 
+			<div class="spinner-component">
+				<span class="loading-spinner spinner spinner-large"></span>
+			</div>
+		{/if}
 	</div>
 {/template}
