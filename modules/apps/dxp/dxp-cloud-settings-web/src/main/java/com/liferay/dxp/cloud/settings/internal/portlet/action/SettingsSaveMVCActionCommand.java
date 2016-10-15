@@ -60,7 +60,7 @@ public class SettingsSaveMVCActionCommand extends BaseMVCActionCommand {
 	protected String getRedirect(
 		ActionRequest actionRequest, ActionResponse actionResponse) {
 
-		return "/web/guest/home/-/dxp/settings/userinformation";
+		return "/web/guest/home/dxp/settings/datasources";
 	}
 
 }

@@ -3,11 +3,11 @@
 <routes>
 	<route>
 		<pattern>/settings</pattern>
-		<implicit-parameter name="mvcRenderCommandName">/settings/userinformation/SettingsUserInformation</implicit-parameter>
+		<implicit-parameter name="mvcRenderCommandName">/settings/datasources/SettingsDataSources</implicit-parameter>
 	</route>
 	<route>
-		<pattern>/settings/userinformation</pattern>
-		<implicit-parameter name="mvcRenderCommandName">/settings/userinformation/SettingsUserInformation</implicit-parameter>
+		<pattern>/settings/datasources</pattern>
+		<implicit-parameter name="mvcRenderCommandName">/settings/datasources/SettingsDataSources</implicit-parameter>
 	</route>
 	<route>
 		<pattern>/settings/identification</pattern>
@@ -15,20 +15,6 @@
 	</route>
 	<route>
 		<pattern>/settings/miscellaneous</pattern>
-		<implicit-parameter name="mvcRenderCommandName">/settings/miscellaneous/SettingsMiscellaneous</implicit-parameter>
-	</route>
-	<route>
-		<pattern>/settings/miscellaneous/installDataSource</pattern>
-		<implicit-parameter name="mvcRenderCommandName">/settings/miscellaneous/SettingsMiscellaneous</implicit-parameter>
-	</route>
-	<route>
-		<pattern>/settings/miscellaneous/profile</pattern>
-		<pattern-metal-router>/settings/miscellaneous/:tab(profile)</pattern-metal-router>
-		<implicit-parameter name="mvcRenderCommandName">/settings/miscellaneous/SettingsMiscellaneous</implicit-parameter>
-	</route>
-	<route>
-		<pattern>/settings/miscellaneous/installDataSource</pattern>
-		<pattern-metal-router>/settings/miscellaneous/:tab(installDataSource)</pattern-metal-router>
 		<implicit-parameter name="mvcRenderCommandName">/settings/miscellaneous/SettingsMiscellaneous</implicit-parameter>
 	</route>
 </routes>
