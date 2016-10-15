@@ -1,0 +1,39 @@
+{namespace ContactsList}
+
+/**
+ * @param contacts
+ * @param loading
+ * @param onContactClick
+ */
+{template .render}
+	<div class="contacts-list">
+		{if $contacts and $onContactClick}
+			{foreach $contact in $contacts}
+				{if isFirst($contact)}
+					<div class="list-item list-heading">
+						{foreach $attr in $contact}
+							<span class="attr {$attr.class}" title="{$attr.label}">
+								{$attr.label}
+							</span>
+						{/foreach}
+					</div>
+				{/if}
+
+				{call ContactListItem.render}
+					{param contact: $contact /}
+					{param onClick: $onContactClick /}
+				{/call}
+			{ifempty}
+				{if not $loading}
+					You do not have any contacts.
+				{/if}
+			{/foreach}
+		{/if}
+
+		{if $loading}
+			<div class="spinner-component">
+				<span class="loading-spinner spinner spinner-large"></span>
+			</div>
+		{/if}
+	</div>
+{/template}

@@ -2,10 +2,14 @@
 
 /**
  * @param? associated_
+ * @param? loading_
+ * @param onBackClick
  */
 {template .render}
-	<div class="container container-fluid">
+	<div class="container container-fluid profile-component">
 		<div class="row">
+			<a class="btn btn-link" href="javascript:;" onClick="{$onBackClick}">Back</a>
+
 			{if $associated_}
 				{foreach $item in $associated_}
 					<div class="{if isFirst($item)}col-lg-16 personal-info{else}col-lg-8{/if} item-container">
@@ -23,6 +27,12 @@
 						</div>
 					</div>
 				{/foreach}
+			{/if}
+
+			{if $loading_}
+				<div class="spinner-component">
+					<span class="loading-spinner spinner spinner-large"></span>
+				</div>
 			{/if}
 		</div>
 	</div>

@@ -8,7 +8,6 @@ import templates from './InstallDataSource.soy';
 import './DSForm.es';
 import './DSList.es';
 import './DSSelect.es';
-import './Profile.es';
 
 class InstallDataSource extends Component {
 	created() {

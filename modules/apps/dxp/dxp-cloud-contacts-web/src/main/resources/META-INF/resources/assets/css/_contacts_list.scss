@@ -1,0 +1,49 @@
+.contacts-list {
+	a.list-item {
+		transition: background-color 0.4s;
+		
+		&:hover {
+			background-color: rgba(0, 0, 0, 0.1);
+		}
+	}
+
+	.list-item {
+		display: flex;
+
+		&.list-heading .attr {
+			font-weight: bold;
+		}
+
+		.attr {
+			overflow: hidden;
+			padding: 10px 20px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: calc(100% / 6);
+		}
+
+		.scv-user-profile-id {
+			order: 6;
+		}
+
+		.screen-name {
+			order: 4;
+		}
+
+		.first-name {
+			order: 1;
+		}
+
+		.last-name {
+			order: 2;
+		}
+
+		.user-id {
+			order: 5;
+		}
+
+		.email-address {
+			order: 3;
+		}
+	}
+}

@@ -1,0 +1,45 @@
+.profile-component {
+	.item-container {
+		padding: 10px;
+	}
+
+	.card-component {
+		.header {
+			border-bottom: 1px solid #CCC;
+			color: #999;
+			font-size: 20px;
+			padding: 20px;
+		}
+
+		.content {
+			padding: 10px 20px;
+		}
+
+		.detail {
+			margin: 10px 0;
+
+			.key {
+				font-weight: bold;
+				color: #AAA;
+				font-size: 12px;
+				margin-right: 8px;
+			}
+
+			.value {
+				color: #777;
+				font-size: 16px;
+			}
+		}
+	}
+
+	.personal-info {
+		.content {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		.detail {
+			flex-basis: 50%;
+		}
+	}
+}

@@ -3,7 +3,12 @@
 /**
  * Prints the DXP Cloud Portlet Contacts Main View
  *
+ * @param? contactId_
  * @param? contacts_
+ * @param? contactsLoading_
+ * @param? getContacts_
+ * @param? onContactClick_
+ * @param? onBackClick_
  * @param id
  * @param mvcRenderCommandName
  * @param sidebar
@@ -20,22 +25,26 @@
 		{/if}
 
 		<div class="sidebar-offset">
-			<div class="container-hybrid-half">
-				<div class="content-header"></div>
-				<div class="row">
+			<div class="conatainer container-fluid">
+				<div class="content-header">
 					<h1>Contacts</h1>
-
-					<div class="contacts-list">
-						{if $contacts_ and length($contacts_) > 0}
-							contacts
-
-							{foreach $contact in $contacts_}
-								<div class="contact-item">
-									{$contact['Email Address']}
-								</div>
-							{/foreach}
+				</div>
+				<div class="row">
+					{if $contactId_ and $contactId_ > 0 and $onBackClick_}
+						{call Profile.render}
+							{param id: $contactId_ /}
+							{param onBackClick: $onBackClick_ /}
+						{/call}
+					{else}
+						{if $contacts_ and $getContacts_ and $onContactClick_}
+							{call ContactsList.render}
+								{param contacts: $contacts_ /}
+								{param loading: $contactsLoading_ ? $contactsLoading_ : true /}
+								{param loadMore: $getContacts_ /}
+								{param onContactClick: $onContactClick_ /}
+							{/call}
 						{/if}
-					</div>
+					{/if}
 				</div>
 			</div>
 		</div>

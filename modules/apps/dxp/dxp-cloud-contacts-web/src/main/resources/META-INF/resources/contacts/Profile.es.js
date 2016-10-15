@@ -11,63 +11,29 @@ const REGEX_ASSOC = /\$ASSOCIATED\$/;
 
 class Profile extends Component {
 	created() {
-		this.data_ = {
-			"$ASSOCIATED$address": [
-				{
-					"Zip": "58321",
-					"State": "{mvccVersion=0, regionId=19019, countryId=19, regionCode=LA, name=Louisiana , active=true}",
-					"Street": "",
-					"Country": "{mvccVersion=0, countryId=19, name=united-states, a2=US, a3=USA, number=840, idd=001, zipRequired=true, active=true}",
-					"City": "New Orleans",
-					"mappingDataSourceId": "30501",
-					"id": "39271",
-					"tableName": "address",
-					"addressId": "39271"
-				}
-			],
-			"First Name": "Jeffrey",
-			"Middle Name": "",
-			"Job Title": "",
-			"userId": "39254",
-			"$ASSOCIATED$phone": [
-				{
-					"Extension": "9247",
-					"Number": "471-73-8208",
-					"Primary": "true",
-					"phoneId": "39270",
-					"mappingDataSourceId": "30501",
-					"id": "39270",
-					"tableName": "phone"
-				}
-			],
-			"scvUserProfileId": 31023,
-			"Screen Name": "jparkerdv",
-			"Google User Id": "",
-			"$ASSOCIATED$contact": [
-				{
-					"Facebook SN": "",
-					"Twitter SN": "",
-					"Is Male?": "true",
-					"contactId": "39255",
-					"Skype SN": "",
-					"Date of Birth": "Sun Dec 27 00:00:00 GMT 1959",
-					"mappingDataSourceId": "30501",
-					"id": "39255",
-					"tableName": "contact"
-				}
-			],
-			"Last Name": "Parker",
-			"Open ID": "",
-			"Email Address": "jparkerdv@hugedomains.com"
-		};
+		this.getProfileData_();
+	}
 
-		this.data_ = this.handleTypes_(this.data_);
+	getProfileData_() {
+		const instance = this;
 
-		this.getAttributes_(this.data_);
+		instance.loading_ = true;
 
-		console.log('this.associated_:', this.associated_);
+		Liferay.Service(
+			'/SCVUserProfileUtil.userprofileutil/get-scv-user-profile',
+			{
+				scvUserProfileId: instance.id
+			},
+			function(data) {
+				console.log(data);
 
-		console.log('this.data_2:', this.data_);
+				const parsedData = instance.handleTypes_(data);
+
+				instance.getAttributes_(parsedData);
+
+				instance.loading_ = false;
+			}
+		);
 	}
 
 	getItemDetails_(obj) {
@@ -209,6 +175,11 @@ Profile.STATE = {
 
 	id: {
 		validator: core.isNumber
+	},
+
+	loading_: {
+		validator: core.isBool,
+		value: true
 	}
 };
 

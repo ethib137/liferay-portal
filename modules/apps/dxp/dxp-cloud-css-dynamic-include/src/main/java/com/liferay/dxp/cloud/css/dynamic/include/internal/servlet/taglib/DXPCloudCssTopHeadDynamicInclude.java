@@ -48,7 +48,7 @@ public class DXPCloudCssTopHeadDynamicInclude extends BaseDynamicInclude {
 
 		PrintWriter printWriter = response.getWriter();
 
-		StringBundler sb = new StringBundler(24);
+		StringBundler sb = new StringBundler(30);
 
 		sb.append("<link href=\"");
 		sb.append(themeDisplay.getPortalURL());
@@ -76,6 +76,13 @@ public class DXPCloudCssTopHeadDynamicInclude extends BaseDynamicInclude {
 		sb.append(PortalUtil.getPathProxy());
 		sb.append("/o/dxp-cloud-settings");
 		sb.append("/assets/css/settings.css\" rel=\"stylesheet\" type = ");
+		sb.append("\"text/css\" />");
+
+		sb.append("<link href=\"");
+		sb.append(themeDisplay.getPortalURL());
+		sb.append(PortalUtil.getPathProxy());
+		sb.append("/o/dxp-cloud-contacts");
+		sb.append("/assets/css/contacts.css\" rel=\"stylesheet\" type = ");
 		sb.append("\"text/css\" />");
 
 		printWriter.println(sb.toString());

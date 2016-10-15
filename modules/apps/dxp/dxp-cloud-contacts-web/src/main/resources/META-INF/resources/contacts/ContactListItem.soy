@@ -1,0 +1,14 @@
+{namespace ContactListItem}
+
+/**
+ * @param contact
+ */
+{template .render}
+	<a class="list-item" href="javascript:;" key="" onClick="onClick_">
+		{foreach $attr in $contact.data}
+			<span class="attr {$attr.class}" title="{$attr.value}">
+				{$attr.value}
+			</span>
+		{/foreach}
+	</a>
+{/template}
