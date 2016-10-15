@@ -49,12 +49,6 @@ public class SettingsMVCRenderCommand implements MVCRenderCommand {
 	public String render(
 		RenderRequest renderRequest, RenderResponse renderResponse) {
 
-		Template template = (Template)renderRequest.getAttribute(WebKeys.TEMPLATE);
-
-		PortletURL saveURL = renderResponse.createActionURL();
-		saveURL.setParameter(ActionRequest.ACTION_NAME, "SaveSettingsAction");
-		template.put("saveURL", saveURL.toString());
-
 		return "SettingsDataSources.render";
 	}
 

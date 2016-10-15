@@ -9,6 +9,8 @@ import '../sections/SettingsSections.soy';
 import 'dxp-cloud-sidebar/DXPSidebar.es';
 import 'dxp-cloud-topbar/DXPTopbar.es';
 
+import './components/InstallDataSource.es';
+
 class SettingsDataSources extends Component {
 }
 

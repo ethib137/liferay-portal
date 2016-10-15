@@ -5,7 +5,6 @@
  *
  * @param id
  * @param mvcRenderCommandName
- * @param saveURL
  * @param sessionMessages
  * @param sidebar
  */
@@ -21,17 +20,18 @@
 		{/if}
 
 		<div class="sidebar-offset">
-			<div class="container-hybrid-half">
+			<div class="container-hybrid topbar-offset">
 				<div class="content-header"></div>
 				<div class="row">
 					<div class="col-xs-16">
 						{call SettingsSections.render data="all" /}
 					</div>
-				</div>
 
-				{call .form}
-					{param saveURL: $saveURL /}
-				{/call}
+					{call InstallDataSource.render data="all"}
+						{param tab_: 'installDataSource' /}
+						{param type_: -1 /}
+					{/call}
+				</div>
 			</div>
 		</div>
 
@@ -54,24 +54,4 @@
 			{/call}
 		{/if}
 	</div>
-{/template}
-
-/**
- * @param saveURL
- */
-{template .form}
-	<form action="{$saveURL}" enctype="multipart/form-data" method="post">
-		<div class="form-group">
-			<label for="input-regular">Label</label>
-			<input id="input-regular" name="sometext" class="form-control" type="text" placeholder="Write something here...">
-			<p class="help-block">A block of auxiliar text</p>
-		</div>
-
-		<div class="form-group">
-			<label for="input-file">Label</label>
-			<input id="input-file" name="somefile" class="form-control" type="file" placeholder="Select a file...">
-		</div>
-
-		<button class="btn btn-primary" type="submit">Submit</button>
-	</form>
 {/template}
