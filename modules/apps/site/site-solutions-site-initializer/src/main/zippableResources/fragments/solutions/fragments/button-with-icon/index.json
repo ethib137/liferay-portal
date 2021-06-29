@@ -1,0 +1,125 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "#",
+					"label": "link",
+					"name": "link",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "plus",
+					"label": "icon-name",
+					"name": "iconName",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": false,
+					"label": "icon-only",
+					"name": "iconOnly",
+					"type": "checkbox"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "start",
+					"label": "icon-placement",
+					"name": "iconPlacement",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "start",
+								"value": "start"
+							},
+							{
+								"label": "end",
+								"value": "end"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"label": "style",
+					"name": "buttonStyle",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "solid",
+								"value": ""
+							},
+							{
+								"label": "ghost",
+								"value": "ghost"
+							},
+							{
+								"label": "borderless",
+								"value": "borderless"
+							},
+							{
+								"label": "rounded",
+								"value": "rounded"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "primary",
+					"label": "type",
+					"name": "buttonType",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"value": "primary"
+							},
+							{
+								"value": "secondary"
+							},
+							{
+								"value": "neutral"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "nm",
+					"label": "size",
+					"name": "buttonSize",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "small",
+								"value": "sm"
+							},
+							{
+								"label": "normal",
+								"value": "nm"
+							},
+							{
+								"label": "large",
+								"value": "lg"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": false,
+					"label": "inverted",
+					"name": "inverted",
+					"type": "checkbox"
+				}
+			]
+		}
+	]
+}

@@ -2,3 +2,4 @@ Bundle-Name: Liferay Site Solutions Site Initializer
 Bundle-SymbolicName: com.liferay.site.solutions.site.initializer
 Bundle-Version: 1.0.0
 Web-ContextPath: /site-solutions-site-initializer
+-dsannotations-options: inherit

@@ -1,0 +1,5 @@
+{
+	"className": "com.liferay.portal.kernel.theme.NavItem",
+	"ddmTemplateKey": "SOLUTIONS-NAV-PRIMARY",
+	"name": "Solutions Nav Primary"
+}

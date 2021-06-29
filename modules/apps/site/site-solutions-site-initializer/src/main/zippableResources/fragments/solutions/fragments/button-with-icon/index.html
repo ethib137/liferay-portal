@@ -1,0 +1,29 @@
+<div class="component-button text-break">
+	[#assign icon]	
+		[@clay["icon"] symbol="${configuration.iconName}" /]
+	[/#assign]
+
+	<a
+		class="btn btn-${configuration.buttonSize} btn-${configuration.buttonType} btn-${configuration.buttonStyle} [#if configuration.inverted]btn-inverted[/#if] [#if configuration.iconOnly]btn-monospaced[/#if]"
+		href="${configuration.link}"
+		id="fragment-${fragmentEntryLinkNamespace}-link"
+	>
+		[#if configuration.iconPlacement == "start" && !configuration.iconOnly]
+			<span class="inline-item inline-item-before">
+				${icon}
+			</span>
+		[/#if]
+
+		[#if configuration.iconOnly]
+			${icon}
+		[#else]
+			<span data-lfr-editable-id="linkText" data-lfr-editable-type="text">Go Somewhere</span>
+		[/#if]
+
+		[#if configuration.iconPlacement == "end" && !configuration.iconOnly]
+			<span class="inline-item inline-item-after">
+				${icon}
+			</span>
+		[/#if]
+	</a>
+</div>
