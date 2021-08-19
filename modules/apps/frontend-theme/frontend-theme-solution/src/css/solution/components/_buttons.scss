@@ -58,7 +58,7 @@
 .btn,
 .btn-rounded,
 .btn-solid {
-	&.btn-primary {
+	&.btn-color-primary {
 		&:not(.btn-inverted) {
 			--btn-active-background-color: #{$action-primary-active};
 			--btn-active-border-color: #{$action-primary-active};
@@ -81,7 +81,7 @@
 		}
 	}
 
-	&.btn-secondary {
+	&.btn-color-secondary {
 		&:not(.btn-inverted) {
 			--btn-active-background-color: #{$action-secondary-active};
 			--btn-active-border-color: #{$action-secondary-active};
@@ -104,7 +104,7 @@
 		}
 	}
 
-	&.btn-neutral {
+	&.btn-color-neutral {
 		&:not(.btn-inverted) {
 			--btn-active-background-color: #{$action-neutral-active};
 			--btn-active-border-color: #{$action-neutral-active};
@@ -156,15 +156,15 @@
 // Ghost
 
 .btn-ghost {
-	&.btn-primary,
-	&.btn-secondary,
-	&.btn-neutral {
+	&.btn-color-primary,
+	&.btn-color-secondary,
+	&.btn-color-neutral {
 		&.btn-inverted {
 			--btn-default-background-color: transparent;
 		}
 	}
 
-	&.btn-primary {
+	&.btn-color-primary {
 		&:not(.btn-inverted) {
 			--btn-active-background-color: #{$action-primary-inverted};
 			--btn-active-border-color: #{$action-primary-active};
@@ -192,7 +192,7 @@
 		}
 	}
 
-	&.btn-secondary {
+	&.btn-color-secondary {
 		&:not(.btn-inverted) {
 			--btn-active-background-color: #{$action-secondary-inverted};
 			--btn-active-border-color: #{$action-secondary-active};
@@ -220,7 +220,7 @@
 		}
 	}
 
-	&.btn-neutral {
+	&.btn-color-neutral {
 		&:not(.btn-inverted) {
 			--btn-active-background-color: #{$action-neutral-inverted};
 			--btn-active-border-color: #{$action-neutral-active};
@@ -266,7 +266,7 @@
 		}
 	}
 
-	&.btn-primary {
+	&.btn-color-primary {
 		&:not(.btn-inverted) {
 			--btn-active-background-color: #{$action-primary-inverted};
 			--btn-active-border-color: #{$action-primary-active};
@@ -288,7 +288,7 @@
 		}
 	}
 
-	&.btn-secondary {
+	&.btn-color-secondary {
 		&:not(.btn-inverted) {
 			--btn-active-background-color: #{$action-secondary-inverted};
 			--btn-active-border-color: #{$action-secondary-active};
@@ -310,7 +310,7 @@
 		}
 	}
 
-	&.btn-neutral {
+	&.btn-color-neutral {
 		&:not(.btn-inverted) {
 			--btn-active-background-color: #{$action-neutral-inverted};
 			--btn-active-border-color: #{$action-neutral-active};
@@ -361,15 +361,15 @@
 		);
 	}
 
-	&.btn-primary {
+	&.btn-color-primary {
 		box-shadow: $elevation-tight-4 $action-primary-disabled;
 	}
 
-	&.btn-secondary {
+	&.btn-color-secondary {
 		box-shadow: $elevation-tight-4 $action-secondary-disabled;
 	}
 
-	&.btn-neutral {
+	&.btn-color-neutral {
 		box-shadow: $elevation-tight-4 $action-neutral-disabled;
 	}
 }
@@ -380,4 +380,27 @@
 	align-items: center;
 	display: flex;
 	justify-content: center;
+}
+
+.btn-primary {
+	@extend .btn-solid, .btn-color-primary;
+}
+
+.btn-secondary {
+	border-width: $btn-border-width;
+	padding: calc(#{$btn-padding-y} - #{$btn-border-width})
+				calc(#{$btn-padding-x} - #{$btn-border-width});
+
+	--btn-active-background-color: #{$action-neutral-inverted};
+	--btn-active-border-color: #{$action-neutral-active};
+	--btn-active-color: #{$action-neutral-active};
+	--btn-default-background-color: #{$action-neutral-inverted};
+	--btn-default-border-color: #{$action-neutral-default};
+	--btn-default-color: #{$action-neutral-default};
+	--btn-disabled-background-color: #{$action-neutral-inverted};
+	--btn-disabled-border-color: #{$action-neutral-disabled};
+	--btn-disabled-color: #{$action-neutral-disabled};
+	--btn-hover-background-color: #{$action-neutral-inverted};
+	--btn-hover-border-color: #{$action-neutral-hover};
+	--btn-hover-color: #{$action-neutral-hover};
 }
