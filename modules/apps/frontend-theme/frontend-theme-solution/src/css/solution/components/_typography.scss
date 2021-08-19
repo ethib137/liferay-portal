@@ -1,0 +1,26 @@
+// Links
+
+.text-link {
+	font-weight: var(--text-link-font-weight);
+}
+
+.text-link-lg {
+	@extend .text-link;
+
+	font-size: var(--text-link-lg-font-size);
+	line-height: var(--text-link-lg-line-height);
+}
+
+.text-link-md {
+	@extend .text-link;
+
+	font-size: var(--text-link-md-font-size);
+	line-height: var(--text-link-md-line-height);
+}
+
+.text-link-sm {
+	@extend .text-link;
+
+	font-size: var(--text-link-sm-font-size);
+	line-height: var(--text-link-sm-line-height);
+}
