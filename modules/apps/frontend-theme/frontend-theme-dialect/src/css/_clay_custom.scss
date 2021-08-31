@@ -1,0 +1,15 @@
+// This file can be used to extend clay.css. It's imported near the end of base.scss and atlas.scss
+
+.btn-neutral {
+	@extend %btn-outline-secondary;
+}
+//
+.btn-ghost {
+	&.btn-primary {
+		@extend %btn-outline-primary;
+	}
+
+	&.btn-neutral {
+		@extend %btn-secondary;
+	}
+}

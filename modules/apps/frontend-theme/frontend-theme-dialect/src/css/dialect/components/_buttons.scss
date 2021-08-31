@@ -1,371 +1,467 @@
-.btn.disabled,
-.btn:disabled {
-	opacity: 1;
-}
+.btn-inverted {
+	--btn-primary-background-color: #{$white};
+	--btn-primary-border-color: #{$primary};
+	--btn-primary-color: #{$primary};
+	--btn-primary-hover-background-color: #{$white};
+	--btn-primary-hover-border-color: transparent;
+	--btn-primary-hover-color: #{$primary-d1};
+	--btn-primary-active-background-color: #{$white};
+	--btn-primary-active-border-color: transparent;
+	--btn-primary-active-color: #{$primary-d2};
+	--btn-primary-disabled-background-color: #{$white};
+	--btn-primary-disabled-border-color: transparent;
+	--btn-primary-disabled-color: #{$primary-l1};
+	--btn-outline-primary-border-color: #{$white};
+	--btn-outline-primary-color: #{$white};
+	--btn-outline-primary-hover-background-color: #{rgba($white, 0.1)};
+	--btn-outline-primary-hover-border-color: #{$white};
+	--btn-outline-primary-hover-color: #{$white};
+	--btn-outline-primary-active-background-color: #{rgba($white, 0.2)};
+	--btn-outline-primary-active-border-color: #{$white};
+	--btn-outline-primary-active-color: #{$white};
+	--btn-outline-primary-disabled-background-color: transparent;
+	--btn-outline-primary-disabled-border-color: #{rgba($white, 0.501961)};
+	--btn-outline-primary-disabled-color: #{rgba($white, 0.501961)};
+	--btn-secondary-background-color: transparent;
+	--btn-secondary-border-color: #{$white};
+	--btn-secondary-color: #{$white};
+	--btn-secondary-hover-background-color: #{rgba($white, 0.1)};
+	--btn-secondary-hover-border-color: #{$white};
+	--btn-secondary-hover-color: #{$white};
+	--btn-secondary-active-background-color: #{rgba($white, 0.2)};
+	--btn-secondary-active-border-color: #{$white};
+	--btn-secondary-active-color: #{$white};
+	--btn-secondary-disabled-background-color: transparent;
+	--btn-secondary-disabled-border-color: #{rgba($white, 0.501961)};
+	--btn-secondary-disabled-color: #{rgba($white, 0.501961)};
+	--btn-outline-secondary-background-color: #{$white};
+	--btn-outline-secondary-border-color: transparent;
+	--btn-outline-secondary-color: #{$secondary};
+	--btn-outline-secondary-hover-background-color: #{$white};
+	--btn-outline-secondary-hover-border-color: transparent;
+	--btn-outline-secondary-hover-color: #{$secondary-d1};
+	--btn-outline-secondary-active-background-color: #{$white};
+	--btn-outline-secondary-active-border-color: transparent;
+	--btn-outline-secondary-active-color: #{$secondary-d2};
+	--btn-outline-secondary-disabled-background-color: #{$white};
+	--btn-outline-secondary-disabled-border-color: transparent;
+	--btn-outline-secondary-disabled-color: #{$secondary-l1};
 
-.btn {
-	border-width: 0;
-}
-
-.btn:not(.alert-btn):not(.dropdown-item) {
-	&,
-	&:focus {
-		background-color: var(--btn-default-background-color);
-		border-color: var(--btn-default-border-color);
-		color: var(--btn-default-color);
-	}
-
-	&:hover {
-		background-color: var(
-			--btn-hover-background-color,
-			var(--btn-default-background-color)
-		);
-		border-color: var(
-			--btn-hover-border-color,
-			var(--btn-default-border-color)
-		);
-		color: var(--btn-hover-color, var(--btn-default-color));
-	}
-
-	&:active {
-		background-color: var(
-			--btn-active-background-color,
-			var(--btn-default-background-color)
-		);
-		border-color: var(
-			--btn-active-border-color,
-			var(--btn-default-border-color)
-		);
-		color: var(--btn-active-color);
-	}
-
-	&.disabled,
-	&:disabled {
-		background-color: var(
-			--btn-disabled-background-color,
-			var(--btn-default-background-color)
-		);
-		border-color: var(
-			--btn-disabled-border-color,
-			var(--btn-default-border-color)
-		);
-		color: var(--btn-disabled-color, var(--btn-default-color));
-	}
-}
-
-// Solid & Rounded
-
-.btn-rounded,
-.btn-solid {
-	&.btn-variant-primary {
-		&:not(.btn-inverted) {
-			--btn-active-background-color: #{$action-primary-active};
-			--btn-active-border-color: #{$action-primary-active};
-			--btn-default-background-color: #{$action-primary-default};
-			--btn-default-border-color: #{$action-primary-default};
-			--btn-default-color: #{$action-primary-inverted};
-			--btn-disabled-background-color: #{$action-primary-disabled};
-			--btn-disabled-border-color: #{$action-primary-disabled};
-			--btn-hover-background-color: #{$action-primary-hover};
-			--btn-hover-border-color: #{$action-primary-hover};
-		}
-
-		&.btn-inverted {
-			--btn-active-color: #{$action-primary-active};
-			--btn-default-background-color: #{$action-primary-inverted};
-			--btn-default-border-color: #{$action-primary-inverted};
-			--btn-default-color: #{$action-primary-default};
-			--btn-disabled-color: #{$action-primary-disabled};
-			--btn-hover-color: #{$action-primary-hover};
-		}
-	}
-
-	&.btn-variant-secondary {
-		&:not(.btn-inverted) {
-			--btn-active-background-color: #{$action-secondary-active};
-			--btn-active-border-color: #{$action-secondary-active};
-			--btn-default-background-color: #{$action-secondary-default};
-			--btn-default-border-color: #{$action-secondary-default};
-			--btn-default-color: #{$action-secondary-inverted};
-			--btn-disabled-background-color: #{$action-secondary-disabled};
-			--btn-disabled-border-color: #{$action-secondary-disabled};
-			--btn-hover-background-color: #{$action-secondary-hover};
-			--btn-hover-border-color: #{$action-secondary-hover};
-		}
-
-		&.btn-inverted {
-			--btn-active-color: #{$action-secondary-active};
-			--btn-default-background-color: #{$action-secondary-inverted};
-			--btn-default-border-color: #{$action-secondary-inverted};
-			--btn-default-color: #{$action-secondary-default};
-			--btn-disabled-color: #{$action-secondary-disabled};
-			--btn-hover-color: #{$action-secondary-hover};
-		}
-	}
-
-	&.btn-variant-neutral {
-		&:not(.btn-inverted) {
-			--btn-active-background-color: #{$action-neutral-active};
-			--btn-active-border-color: #{$action-neutral-active};
-			--btn-default-background-color: #{$action-neutral-default};
-			--btn-default-border-color: #{$action-neutral-default};
-			--btn-default-color: #{$action-neutral-inverted};
-			--btn-disabled-background-color: #{$action-neutral-disabled};
-			--btn-disabled-border-color: #{$action-neutral-disabled};
-			--btn-hover-background-color: #{$action-neutral-hover};
-			--btn-hover-border-color: #{$action-neutral-hover};
-		}
-
-		&.btn-inverted {
-			--btn-active-color: #{$action-neutral-active};
-			--btn-default-background-color: #{$action-neutral-inverted};
-			--btn-default-border-color: #{$action-neutral-inverted};
-			--btn-default-color: #{$action-neutral-default};
-			--btn-disabled-color: #{$action-neutral-disabled};
-			--btn-hover-color: #{$action-neutral-hover};
-		}
+	&.btn-outline-borderless {
+		--btn-outline-primary-border-color: transparent;
+		--btn-outline-primary-color: #{$white};
+		--btn-outline-primary-hover-background-color: #{rgba($white, 0.1)};
+		--btn-outline-primary-hover-border-color: #{$white};
+		--btn-outline-primary-hover-color: #{$white};
+		--btn-outline-primary-active-background-color: #{rgba($white, 0.2)};
+		--btn-outline-primary-active-border-color: #{$white};
+		--btn-outline-primary-active-color: #{$white};
+		--btn-outline-primary-disabled-background-color: transparent;
+		--btn-outline-primary-disabled-border-color: transparent;
+		--btn-outline-primary-disabled-color: #{rgba($white, 0.501961)};
 	}
 }
-
-// Buttons with Borders
-
-.btn-borderless,
-.btn-ghost {
-	border-width: $btn-border-width;
-
-	&:not(.btn-monospaced) {
-		&.btn-sm {
-			padding: calc(#{$btn-padding-y-sm} - #{$btn-border-width})
-				calc(#{$btn-padding-x-sm} - #{$btn-border-width});
-		}
-
-		&.btn-nm,
-		&:not(.btn-sm):not(.btn-lg) {
-			padding: calc(#{$btn-padding-y} - #{$btn-border-width})
-				calc(#{$btn-padding-x} - #{$btn-border-width});
-		}
-
-		&.btn-lg {
-			padding: calc(#{$btn-padding-y-lg} - #{$btn-border-width})
-				calc(#{$btn-padding-x-lg} - #{$btn-border-width});
-		}
-	}
-}
-
-// Ghost
-
-.btn-ghost {
-	&.btn-variant-primary,
-	&.btn-variant-secondary,
-	&.btn-variant-neutral {
-		&.btn-inverted {
-			--btn-default-background-color: transparent;
-		}
-	}
-
-	&.btn-variant-primary {
-		&:not(.btn-inverted) {
-			--btn-active-background-color: #{$action-primary-inverted};
-			--btn-active-border-color: #{$action-primary-active};
-			--btn-active-color: #{$action-primary-active};
-			--btn-default-background-color: #{$action-primary-inverted};
-			--btn-default-border-color: #{$action-primary-default};
-			--btn-default-color: #{$action-primary-default};
-			--btn-disabled-background-color: #{$action-primary-inverted};
-			--btn-disabled-border-color: #{$action-primary-disabled};
-			--btn-disabled-color: #{$action-primary-disabled};
-			--btn-hover-background-color: #{$action-primary-inverted};
-			--btn-hover-border-color: #{$action-primary-hover};
-			--btn-hover-color: #{$action-primary-hover};
-		}
-
-		&.btn-inverted {
-			--btn-active-color: #{$action-primary-inverted};
-			--btn-default-border-color: #{$action-primary-inverted};
-			--btn-default-color: #{$action-primary-inverted};
-			--btn-disabled-border-color: #{$action-primary-inverted-disabled};
-			--btn-disabled-color: #{$action-primary-inverted-disabled};
-			--btn-hover-background-color: #{$action-primary-inverted-hover};
-			--btn-hover-border-color: #{$action-primary-inverted};
-			--btn-hover-color: #{$action-primary-inverted};
-		}
-	}
-
-	&.btn-variant-secondary {
-		&:not(.btn-inverted) {
-			--btn-active-background-color: #{$action-secondary-inverted};
-			--btn-active-border-color: #{$action-secondary-active};
-			--btn-active-color: #{$action-secondary-active};
-			--btn-default-background-color: #{$action-secondary-inverted};
-			--btn-default-border-color: #{$action-secondary-default};
-			--btn-default-color: #{$action-secondary-default};
-			--btn-disabled-background-color: #{$action-secondary-inverted};
-			--btn-disabled-border-color: #{$action-secondary-disabled};
-			--btn-disabled-color: #{$action-secondary-disabled};
-			--btn-hover-background-color: #{$action-secondary-inverted};
-			--btn-hover-border-color: #{$action-secondary-hover};
-			--btn-hover-color: #{$action-secondary-hover};
-		}
-
-		&.btn-inverted {
-			--btn-active-color: #{$action-secondary-inverted};
-			--btn-default-border-color: #{$action-secondary-inverted};
-			--btn-default-color: #{$action-secondary-inverted};
-			--btn-disabled-border-color: #{$action-secondary-inverted-disabled};
-			--btn-disabled-color: #{$action-secondary-inverted-disabled};
-			--btn-hover-background-color: #{$action-secondary-inverted-hover};
-			--btn-hover-border-color: #{$action-secondary-inverted};
-			--btn-hover-color: #{$action-secondary-inverted};
-		}
-	}
-
-	&.btn-variant-neutral {
-		&:not(.btn-inverted) {
-			--btn-active-background-color: #{$action-neutral-inverted};
-			--btn-active-border-color: #{$action-neutral-active};
-			--btn-active-color: #{$action-neutral-active};
-			--btn-default-background-color: #{$action-neutral-inverted};
-			--btn-default-border-color: #{$action-neutral-default};
-			--btn-default-color: #{$action-neutral-default};
-			--btn-disabled-background-color: #{$action-neutral-inverted};
-			--btn-disabled-border-color: #{$action-neutral-disabled};
-			--btn-disabled-color: #{$action-neutral-disabled};
-			--btn-hover-background-color: #{$action-neutral-inverted};
-			--btn-hover-border-color: #{$action-neutral-hover};
-			--btn-hover-color: #{$action-neutral-hover};
-		}
-
-		&.btn-inverted {
-			--btn-active-color: #{$action-neutral-inverted};
-			--btn-default-border-color: #{$action-neutral-inverted};
-			--btn-default-color: #{$action-neutral-inverted};
-			--btn-disabled-border-color: #{$action-neutral-inverted-disabled};
-			--btn-disabled-color: #{$action-neutral-inverted-disabled};
-			--btn-hover-background-color: #{$action-neutral-inverted-hover};
-			--btn-hover-border-color: #{$action-neutral-inverted};
-			--btn-hover-color: #{$action-neutral-inverted};
-		}
-	}
-}
-
-// Borderless
-
-.btn-borderless {
-	--btn-active-background-color: transparent;
-	--btn-default-background-color: transparent;
-	--btn-default-border-color: transparent;
-	--btn-disabled-background-color: transparent;
-	--btn-disabled-border-color: transparent;
-	--btn-focus-background-color: transparent;
-	--btn-focus-border-color: transparent;
-
-	&:not(.btn-inverted) {
-		--btn-hover-background-color: transparent;
-	}
-
-	&.btn-variant-primary {
-		&:not(.btn-inverted) {
-			--btn-active-background-color: #{$action-primary-inverted};
-			--btn-active-border-color: #{$action-primary-active};
-			--btn-active-color: #{$action-primary-active};
-			--btn-default-color: #{$action-primary-default};
-			--btn-disabled-color: #{$action-primary-disabled};
-			--btn-hover-border-color: #{$action-primary-hover};
-			--btn-hover-color: #{$action-primary-hover};
-		}
-
-		&.btn-inverted {
-			--btn-active-border-color: #{$action-primary-inverted};
-			--btn-active-color: #{$action-primary-inverted};
-			--btn-default-color: #{$action-primary-inverted};
-			--btn-disabled-color: #{$action-primary-inverted-disabled};
-			--btn-hover-background-color: #{$action-primary-inverted-hover};
-			--btn-hover-border-color: #{$action-primary-inverted};
-			--btn-hover-color: #{$action-primary-inverted};
-		}
-	}
-
-	&.btn-variant-secondary {
-		&:not(.btn-inverted) {
-			--btn-active-background-color: #{$action-secondary-inverted};
-			--btn-active-border-color: #{$action-secondary-active};
-			--btn-active-color: #{$action-secondary-active};
-			--btn-default-color: #{$action-secondary-default};
-			--btn-disabled-color: #{$action-secondary-disabled};
-			--btn-hover-border-color: #{$action-secondary-hover};
-			--btn-hover-color: #{$action-secondary-hover};
-		}
-
-		&.btn-inverted {
-			--btn-active-border-color: #{$action-secondary-inverted};
-			--btn-active-color: #{$action-secondary-inverted};
-			--btn-default-color: #{$action-secondary-inverted};
-			--btn-disabled-color: #{$action-secondary-inverted-disabled};
-			--btn-hover-background-color: #{$action-secondary-inverted-hover};
-			--btn-hover-border-color: #{$action-secondary-inverted};
-			--btn-hover-color: #{$action-secondary-inverted};
-		}
-	}
-
-	&.btn-variant-neutral {
-		&:not(.btn-inverted) {
-			--btn-active-background-color: #{$action-neutral-inverted};
-			--btn-active-border-color: #{$action-neutral-active};
-			--btn-active-color: #{$action-neutral-active};
-			--btn-default-color: #{$action-neutral-default};
-			--btn-disabled-color: #{$action-neutral-disabled};
-			--btn-hover-border-color: #{$action-neutral-hover};
-			--btn-hover-color: #{$action-neutral-hover};
-		}
-
-		&.btn-inverted {
-			--btn-active-border-color: #{$action-neutral-inverted};
-			--btn-active-color: #{$action-neutral-inverted};
-			--btn-default-color: #{$action-neutral-inverted};
-			--btn-disabled-color: #{$action-neutral-inverted-disabled};
-			--btn-hover-background-color: #{$action-neutral-inverted-hover};
-			--btn-hover-border-color: #{$action-neutral-inverted};
-			--btn-hover-color: #{$action-neutral-inverted};
-		}
-	}
-}
-
-// Rounded
 
 .btn-rounded {
-	border-radius: $rounded-pill;
+	--btn-primary-box-shadow: #{$elevation-tight-4 $action-primary-disabled};
+	--btn-primary-hover-box-shadow: #{$elevation-tight-4 $action-primary-disabled};
+	--btn-primary-focus-box-shadow: #{$btn-focus-box-shadow, $elevation-tight-4 $action-primary-disabled};
+	--btn-primary-active-box-shadow: #{$elevation-tight-4 $action-primary-disabled};
+	--btn-primary-disabled-box-shadow: #{$elevation-tight-4 $action-primary-disabled};
+	--btn-outline-primary-box-shadow: #{$elevation-tight-4 $action-primary-disabled};
+	--btn-outline-primary-hover-box-shadow: #{$elevation-tight-4 $action-primary-disabled};
+	--btn-outline-primary-focus-box-shadow: #{$btn-focus-box-shadow, $elevation-tight-4 $action-primary-disabled};
+	--btn-outline-primary-active-box-shadow: #{$elevation-tight-4 $action-primary-disabled};
+	--btn-outline-primary-disabled-box-shadow: #{$elevation-tight-4 $action-primary-disabled};
+	--btn-secondary-box-shadow: #{$elevation-tight-4 $action-neutral-disabled};
+	--btn-secondary-hover-box-shadow: #{$elevation-tight-4 $action-neutral-disabled};
+	--btn-secondary-focus-box-shadow: #{$btn-focus-box-shadow, $elevation-tight-4 $action-primary-disabled};
+	--btn-secondary-active-box-shadow: #{$elevation-tight-4 $action-neutral-disabled};
+	--btn-secondary-disabled-box-shadow: #{$elevation-tight-4 $action-neutral-disabled};
+	--btn-outline-secondary-box-shadow: #{$elevation-tight-4 $action-neutral-disabled};
+	--btn-outline-secondary-hover-box-shadow: #{$elevation-tight-4 $action-neutral-disabled};
+	--btn-outline-secondary-focus-box-shadow: #{$btn-focus-box-shadow, $elevation-tight-4 $action-primary-disabled};
+	--btn-outline-secondary-active-box-shadow: #{$elevation-tight-4 $action-neutral-disabled};
+	--btn-outline-secondary-disabled-box-shadow: #{$elevation-tight-4 $action-neutral-disabled};
 
-	&.btn-variant-primary {
-		box-shadow: $elevation-tight-4 $action-primary-disabled;
-	}
-
-	&.btn-variant-secondary {
-		box-shadow: $elevation-tight-4 $action-secondary-disabled;
-	}
-
-	&.btn-variant-neutral {
-		box-shadow: $elevation-tight-4 $action-neutral-disabled;
-	}
+	border-radius: $rounded-pill !important;
 }
 
-// Monospaced
-
-.btn-monospaced {
-	align-items: center;
-	display: flex;
-	justify-content: center;
+.btn-borderless {
+	--btn-primary-border-color: transparent;
+	--btn-outline-primary-border-color: transparent;
+	--btn-secondary-border-color: transparent;
+	--btn-outline-secondary-border-color: transparent;
 }
 
-// Defaults
+// .btn.disabled,
+// .btn:disabled {
+// 	opacity: 1;
+// }
 
-.btn-primary {
-	@extend .btn-solid, .btn-variant-primary, :not(.btn-inverted);
-}
+// .btn {
+// 	border-width: 0;
+// }
 
-.btn-secondary {
-	@extend .btn-ghost, .btn-variant-neutral, :not(.btn-inverted);
-}
+// .btn:not(.alert-btn):not(.dropdown-item) {
+// 	&,
+// 	&:focus {
+// 		background-color: var(--btn-default-background-color);
+// 		border-color: var(--btn-default-border-color);
+// 		color: var(--btn-default-color);
+// 	}
 
-.btn-tertiary {
-	@extend .btn-borderless, .btn-variant-neutral, :not(.btn-inverted);
-}
+// 	&:hover {
+// 		background-color: var(
+// 			--btn-hover-background-color,
+// 			var(--btn-default-background-color)
+// 		);
+// 		border-color: var(
+// 			--btn-hover-border-color,
+// 			var(--btn-default-border-color)
+// 		);
+// 		color: var(--btn-hover-color, var(--btn-default-color));
+// 	}
+
+// 	&:active {
+// 		background-color: var(
+// 			--btn-active-background-color,
+// 			var(--btn-default-background-color)
+// 		);
+// 		border-color: var(
+// 			--btn-active-border-color,
+// 			var(--btn-default-border-color)
+// 		);
+// 		color: var(--btn-active-color);
+// 	}
+
+// 	&.disabled,
+// 	&:disabled {
+// 		background-color: var(
+// 			--btn-disabled-background-color,
+// 			var(--btn-default-background-color)
+// 		);
+// 		border-color: var(
+// 			--btn-disabled-border-color,
+// 			var(--btn-default-border-color)
+// 		);
+// 		color: var(--btn-disabled-color, var(--btn-default-color));
+// 	}
+// }
+
+// // Solid & Rounded
+
+// .btn-rounded,
+// .btn-solid {
+// 	&.btn-variant-primary {
+// 		&:not(.btn-inverted) {
+// 			--btn-active-background-color: #{$action-primary-active};
+// 			--btn-active-border-color: #{$action-primary-active};
+// 			--btn-default-background-color: #{$action-primary-default};
+// 			--btn-default-border-color: #{$action-primary-default};
+// 			--btn-default-color: #{$action-primary-inverted};
+// 			--btn-disabled-background-color: #{$action-primary-disabled};
+// 			--btn-disabled-border-color: #{$action-primary-disabled};
+// 			--btn-hover-background-color: #{$action-primary-hover};
+// 			--btn-hover-border-color: #{$action-primary-hover};
+// 		}
+
+// 		&.btn-inverted {
+// 			--btn-active-color: #{$action-primary-active};
+// 			--btn-default-background-color: #{$action-primary-inverted};
+// 			--btn-default-border-color: #{$action-primary-inverted};
+// 			--btn-default-color: #{$action-primary-default};
+// 			--btn-disabled-color: #{$action-primary-disabled};
+// 			--btn-hover-color: #{$action-primary-hover};
+// 		}
+// 	}
+
+// 	&.btn-variant-secondary {
+// 		&:not(.btn-inverted) {
+// 			--btn-active-background-color: #{$action-secondary-active};
+// 			--btn-active-border-color: #{$action-secondary-active};
+// 			--btn-default-background-color: #{$action-secondary-default};
+// 			--btn-default-border-color: #{$action-secondary-default};
+// 			--btn-default-color: #{$action-secondary-inverted};
+// 			--btn-disabled-background-color: #{$action-secondary-disabled};
+// 			--btn-disabled-border-color: #{$action-secondary-disabled};
+// 			--btn-hover-background-color: #{$action-secondary-hover};
+// 			--btn-hover-border-color: #{$action-secondary-hover};
+// 		}
+
+// 		&.btn-inverted {
+// 			--btn-active-color: #{$action-secondary-active};
+// 			--btn-default-background-color: #{$action-secondary-inverted};
+// 			--btn-default-border-color: #{$action-secondary-inverted};
+// 			--btn-default-color: #{$action-secondary-default};
+// 			--btn-disabled-color: #{$action-secondary-disabled};
+// 			--btn-hover-color: #{$action-secondary-hover};
+// 		}
+// 	}
+
+// 	&.btn-variant-neutral {
+// 		&:not(.btn-inverted) {
+// 			--btn-active-background-color: #{$action-neutral-active};
+// 			--btn-active-border-color: #{$action-neutral-active};
+// 			--btn-default-background-color: #{$action-neutral-default};
+// 			--btn-default-border-color: #{$action-neutral-default};
+// 			--btn-default-color: #{$action-neutral-inverted};
+// 			--btn-disabled-background-color: #{$action-neutral-disabled};
+// 			--btn-disabled-border-color: #{$action-neutral-disabled};
+// 			--btn-hover-background-color: #{$action-neutral-hover};
+// 			--btn-hover-border-color: #{$action-neutral-hover};
+// 		}
+
+// 		&.btn-inverted {
+// 			--btn-active-color: #{$action-neutral-active};
+// 			--btn-default-background-color: #{$action-neutral-inverted};
+// 			--btn-default-border-color: #{$action-neutral-inverted};
+// 			--btn-default-color: #{$action-neutral-default};
+// 			--btn-disabled-color: #{$action-neutral-disabled};
+// 			--btn-hover-color: #{$action-neutral-hover};
+// 		}
+// 	}
+// }
+
+// // Buttons with Borders
+
+// .btn-borderless,
+// .btn-ghost {
+// 	border-width: $btn-border-width;
+
+// 	&:not(.btn-monospaced) {
+// 		&.btn-sm {
+// 			padding: calc(#{$btn-padding-y-sm} - #{$btn-border-width})
+// 				calc(#{$btn-padding-x-sm} - #{$btn-border-width});
+// 		}
+
+// 		&.btn-nm,
+// 		&:not(.btn-sm):not(.btn-lg) {
+// 			padding: calc(#{$btn-padding-y} - #{$btn-border-width})
+// 				calc(#{$btn-padding-x} - #{$btn-border-width});
+// 		}
+
+// 		&.btn-lg {
+// 			padding: calc(#{$btn-padding-y-lg} - #{$btn-border-width})
+// 				calc(#{$btn-padding-x-lg} - #{$btn-border-width});
+// 		}
+// 	}
+// }
+
+// // Ghost
+
+// .btn-ghost {
+// 	&.btn-variant-primary,
+// 	&.btn-variant-secondary,
+// 	&.btn-variant-neutral {
+// 		&.btn-inverted {
+// 			--btn-default-background-color: transparent;
+// 		}
+// 	}
+
+// 	&.btn-variant-primary {
+// 		&:not(.btn-inverted) {
+// 			--btn-active-background-color: #{$action-primary-inverted};
+// 			--btn-active-border-color: #{$action-primary-active};
+// 			--btn-active-color: #{$action-primary-active};
+// 			--btn-default-background-color: #{$action-primary-inverted};
+// 			--btn-default-border-color: #{$action-primary-default};
+// 			--btn-default-color: #{$action-primary-default};
+// 			--btn-disabled-background-color: #{$action-primary-inverted};
+// 			--btn-disabled-border-color: #{$action-primary-disabled};
+// 			--btn-disabled-color: #{$action-primary-disabled};
+// 			--btn-hover-background-color: #{$action-primary-inverted};
+// 			--btn-hover-border-color: #{$action-primary-hover};
+// 			--btn-hover-color: #{$action-primary-hover};
+// 		}
+
+// 		&.btn-inverted {
+// 			--btn-active-color: #{$action-primary-inverted};
+// 			--btn-default-border-color: #{$action-primary-inverted};
+// 			--btn-default-color: #{$action-primary-inverted};
+// 			--btn-disabled-border-color: #{$action-primary-inverted-disabled};
+// 			--btn-disabled-color: #{$action-primary-inverted-disabled};
+// 			--btn-hover-background-color: #{$action-primary-inverted-hover};
+// 			--btn-hover-border-color: #{$action-primary-inverted};
+// 			--btn-hover-color: #{$action-primary-inverted};
+// 		}
+// 	}
+
+// 	&.btn-variant-secondary {
+// 		&:not(.btn-inverted) {
+// 			--btn-active-background-color: #{$action-secondary-inverted};
+// 			--btn-active-border-color: #{$action-secondary-active};
+// 			--btn-active-color: #{$action-secondary-active};
+// 			--btn-default-background-color: #{$action-secondary-inverted};
+// 			--btn-default-border-color: #{$action-secondary-default};
+// 			--btn-default-color: #{$action-secondary-default};
+// 			--btn-disabled-background-color: #{$action-secondary-inverted};
+// 			--btn-disabled-border-color: #{$action-secondary-disabled};
+// 			--btn-disabled-color: #{$action-secondary-disabled};
+// 			--btn-hover-background-color: #{$action-secondary-inverted};
+// 			--btn-hover-border-color: #{$action-secondary-hover};
+// 			--btn-hover-color: #{$action-secondary-hover};
+// 		}
+
+// 		&.btn-inverted {
+// 			--btn-active-color: #{$action-secondary-inverted};
+// 			--btn-default-border-color: #{$action-secondary-inverted};
+// 			--btn-default-color: #{$action-secondary-inverted};
+// 			--btn-disabled-border-color: #{$action-secondary-inverted-disabled};
+// 			--btn-disabled-color: #{$action-secondary-inverted-disabled};
+// 			--btn-hover-background-color: #{$action-secondary-inverted-hover};
+// 			--btn-hover-border-color: #{$action-secondary-inverted};
+// 			--btn-hover-color: #{$action-secondary-inverted};
+// 		}
+// 	}
+
+// 	&.btn-variant-neutral {
+// 		&:not(.btn-inverted) {
+// 			--btn-active-background-color: #{$action-neutral-inverted};
+// 			--btn-active-border-color: #{$action-neutral-active};
+// 			--btn-active-color: #{$action-neutral-active};
+// 			--btn-default-background-color: #{$action-neutral-inverted};
+// 			--btn-default-border-color: #{$action-neutral-default};
+// 			--btn-default-color: #{$action-neutral-default};
+// 			--btn-disabled-background-color: #{$action-neutral-inverted};
+// 			--btn-disabled-border-color: #{$action-neutral-disabled};
+// 			--btn-disabled-color: #{$action-neutral-disabled};
+// 			--btn-hover-background-color: #{$action-neutral-inverted};
+// 			--btn-hover-border-color: #{$action-neutral-hover};
+// 			--btn-hover-color: #{$action-neutral-hover};
+// 		}
+
+// 		&.btn-inverted {
+// 			--btn-active-color: #{$action-neutral-inverted};
+// 			--btn-default-border-color: #{$action-neutral-inverted};
+// 			--btn-default-color: #{$action-neutral-inverted};
+// 			--btn-disabled-border-color: #{$action-neutral-inverted-disabled};
+// 			--btn-disabled-color: #{$action-neutral-inverted-disabled};
+// 			--btn-hover-background-color: #{$action-neutral-inverted-hover};
+// 			--btn-hover-border-color: #{$action-neutral-inverted};
+// 			--btn-hover-color: #{$action-neutral-inverted};
+// 		}
+// 	}
+// }
+
+// // Borderless
+
+// .btn-borderless {
+// 	--btn-active-background-color: transparent;
+// 	--btn-default-background-color: transparent;
+// 	--btn-default-border-color: transparent;
+// 	--btn-disabled-background-color: transparent;
+// 	--btn-disabled-border-color: transparent;
+// 	--btn-focus-background-color: transparent;
+// 	--btn-focus-border-color: transparent;
+
+// 	&:not(.btn-inverted) {
+// 		--btn-hover-background-color: transparent;
+// 	}
+
+// 	&.btn-variant-primary {
+// 		&:not(.btn-inverted) {
+// 			--btn-active-background-color: #{$action-primary-inverted};
+// 			--btn-active-border-color: #{$action-primary-active};
+// 			--btn-active-color: #{$action-primary-active};
+// 			--btn-default-color: #{$action-primary-default};
+// 			--btn-disabled-color: #{$action-primary-disabled};
+// 			--btn-hover-border-color: #{$action-primary-hover};
+// 			--btn-hover-color: #{$action-primary-hover};
+// 		}
+
+// 		&.btn-inverted {
+// 			--btn-active-border-color: #{$action-primary-inverted};
+// 			--btn-active-color: #{$action-primary-inverted};
+// 			--btn-default-color: #{$action-primary-inverted};
+// 			--btn-disabled-color: #{$action-primary-inverted-disabled};
+// 			--btn-hover-background-color: #{$action-primary-inverted-hover};
+// 			--btn-hover-border-color: #{$action-primary-inverted};
+// 			--btn-hover-color: #{$action-primary-inverted};
+// 		}
+// 	}
+
+// 	&.btn-variant-secondary {
+// 		&:not(.btn-inverted) {
+// 			--btn-active-background-color: #{$action-secondary-inverted};
+// 			--btn-active-border-color: #{$action-secondary-active};
+// 			--btn-active-color: #{$action-secondary-active};
+// 			--btn-default-color: #{$action-secondary-default};
+// 			--btn-disabled-color: #{$action-secondary-disabled};
+// 			--btn-hover-border-color: #{$action-secondary-hover};
+// 			--btn-hover-color: #{$action-secondary-hover};
+// 		}
+
+// 		&.btn-inverted {
+// 			--btn-active-border-color: #{$action-secondary-inverted};
+// 			--btn-active-color: #{$action-secondary-inverted};
+// 			--btn-default-color: #{$action-secondary-inverted};
+// 			--btn-disabled-color: #{$action-secondary-inverted-disabled};
+// 			--btn-hover-background-color: #{$action-secondary-inverted-hover};
+// 			--btn-hover-border-color: #{$action-secondary-inverted};
+// 			--btn-hover-color: #{$action-secondary-inverted};
+// 		}
+// 	}
+
+// 	&.btn-variant-neutral {
+// 		&:not(.btn-inverted) {
+// 			--btn-active-background-color: #{$action-neutral-inverted};
+// 			--btn-active-border-color: #{$action-neutral-active};
+// 			--btn-active-color: #{$action-neutral-active};
+// 			--btn-default-color: #{$action-neutral-default};
+// 			--btn-disabled-color: #{$action-neutral-disabled};
+// 			--btn-hover-border-color: #{$action-neutral-hover};
+// 			--btn-hover-color: #{$action-neutral-hover};
+// 		}
+
+// 		&.btn-inverted {
+// 			--btn-active-border-color: #{$action-neutral-inverted};
+// 			--btn-active-color: #{$action-neutral-inverted};
+// 			--btn-default-color: #{$action-neutral-inverted};
+// 			--btn-disabled-color: #{$action-neutral-inverted-disabled};
+// 			--btn-hover-background-color: #{$action-neutral-inverted-hover};
+// 			--btn-hover-border-color: #{$action-neutral-inverted};
+// 			--btn-hover-color: #{$action-neutral-inverted};
+// 		}
+// 	}
+// }
+
+// // Rounded
+
+// .btn-rounded {
+// 	border-radius: $rounded-pill;
+
+// 	&.btn-variant-primary {
+// 		box-shadow: $elevation-tight-4 $action-primary-disabled;
+// 	}
+
+// 	&.btn-variant-secondary {
+// 		box-shadow: $elevation-tight-4 $action-secondary-disabled;
+// 	}
+
+// 	&.btn-variant-neutral {
+// 		box-shadow: $elevation-tight-4 $action-neutral-disabled;
+// 	}
+// }
+
+// // Monospaced
+
+// .btn-monospaced {
+// 	align-items: center;
+// 	display: flex;
+// 	justify-content: center;
+// }
+
+// // Defaults
+
+// .btn-primary {
+// 	@extend .btn-solid, .btn-variant-primary, :not(.btn-inverted);
+// }
+
+// .btn-secondary {
+// 	@extend .btn-ghost, .btn-variant-neutral, :not(.btn-inverted);
+// }
+
+// .btn-tertiary {
+// 	@extend .btn-borderless, .btn-variant-neutral, :not(.btn-inverted);
+// }
