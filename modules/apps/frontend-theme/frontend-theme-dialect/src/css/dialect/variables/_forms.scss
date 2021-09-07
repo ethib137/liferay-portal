@@ -1,38 +1,145 @@
-$input-label-color: var(--current-form-input-label-color);
-$input-label-disabled-color: var(--current-form-input-disabled-label-color);
-$input-label-font-weight: var(--current-form-input-label-font-weight);
-$input-label-reference-mark-color: var(--color-state-error);
+// Clay Sass Variables
+
+// I'm not using any Clay CSS global variables, but I've mapped Dialect's neutral colors to $black, $gray-*, and $white. We can replace #3F3851 with $gray-800 and 800 (font-weight) with $font-weight-bolder.
+
+// | Dialect    | Clay      | Value     |
+// |------------|-----------|-----------|
+// | neutral-0  | $black    | #1D1C22   |
+// | neutral-1  | $gray-900 | #2B3A4B   |
+// | neutral-2  | $gray-800 | #3F3851   |
+// | neutral-3  | $gray-700 | #5A5469   |
+// | neutral-4  | $gray-600 | #716C7F   |
+// | neutral-5  | $gray-500 | #898593   |
+// | neutral-6  | $gray-400 | #A7A3B2   |
+// | neutral-7  | $gray-300 | #DCD9E2   |
+// | neutral-8  | $gray-200 | #EEECF3   |
+// | neutral-9  | $gray-100 | #F7F6F9   |
+// | neutral-10 | $white    | #FFFFFF   |
+
+$input-label-color: var(--form-input-label-color, #3f3851);
+$input-label-font-size: var(--form-input-label-font-size, 1rem);
+$input-label-font-weight: var(--form-input-label-font-weight, 800);
+$input-label-margin-bottom: var(--form-input-label-margin-bottom, 0.25rem);
+
+$input-label-disabled-color: var(---form-input-disabled-label-color, #3f3851);
+
+// Changed reference mark to use an undefined CSS variable --form-input-label-reference-mark-color. --color-state-error, --color-state-warning, --color-state-success, etc should only be used for Error, Warning, Success states. Using --color-state-error in reference-mark takes away the variable meaning since the base reference-mark isn't associated with those states.
+
+$input-label-reference-mark-color: var(--form-input-label-reference-mark-color, #da1414);
+
+// Nitpick: Doesn't matter if you set reference-mark variables here. It's already set in atlas theme.
+
 $input-label-reference-mark-font-size: 0.3125rem;
 $input-label-reference-mark-vertical-align: super;
 
-$input-bg: var(--current-form-input-background-color);
-$input-border-color: var(--current-form-input-border-color);
-$input-border-radius: var(--form-input-border-radius);
-$input-color: var(--form-input-color);
-$input-disabled-border-color: var(--current-form-input-border-color);
-$input-disabled-bg: var(--current-form-input-background-color);
-$input-disabled-color: var(--form-input-disabled-color);
-$input-font-weight: var(--form-input-font-weight);
-$input-focus-bg: var(--current-form-input-background-color);
-$input-padding-x: var(--form-input-padding-x);
-$input-padding-y: var(--form-input-padding-y);
-$input-placeholder-color: var(
-	--current-form-input-placeholder-color,
-	var(--form-input-placeholder-color)
-);
-$input-placeholder-disabled-color: var(--current-form-input-placeholder-color);
+// .form-control
+
+$input-bg: var(--form-input-background-color, #fff);
+$input-border-color: var(--form-input-border-color, #a7a3b2);
+$input-border-radius: var(--form-input-border-radius, 0.5rem);
+$input-color: var(--form-input-color, #1d1c22);
+$input-font-size: var(--form-input-font-size, 1rem);
+$input-font-weight: var(--form-input-font-weight, 800);
+
+// Clay CSS quirk (needs fixed height), it uses height instead of line-height to set input height. A large line-height makes spacing between new lines too big in textarea.
+
+$input-height: 3rem;
+$input-line-height: var(--form-input-line-height, 1.5);
+$input-padding-x: var(--form-input-padding-x, 1rem);
+
+// .form-control height is 48px, 48px - 2px - (16px * 1.5) = 22px (padding-bottom/top: 11px)
+
+$input-padding-y: var(--form-input-padding-y, 0.6875rem);
+$input-transition: background-color 0.15s ease-in-out;
+
+$input-placeholder-color: var(--form-input-placeholder-color, #a7a3b2);
+
+$input-focus-bg: var(--form-input-focus-background-color, #fff);
+$input-focus-border-color: var(--form-input-focus-border-color, #5924eb);
+$input-focus-box-shadow: none;
+$input-focus-color: var(--form-input-focus-color, #1d1c22);
+
 $input-placeholder-focus-color: var(--form-input-placeholder-focus-color);
 
-$input-danger-bg: var(--current-form-input-background-color);
-$input-danger-border-color: var(--color-state-error);
-$input-warning-bg: var(--current-form-input-background-color);
-$input-warning-border-color: var(--color-state-warning);
-$input-success-bg: var(--current-form-input-background-color);
-$input-success-border-color: var(--color-state-success);
+$input-disabled-border-color: var(--form-input-disabled-border-color);
+$input-disabled-bg: var(--form-input-disabled-background-color);
+$input-disabled-color: var(--form-input-disabled-color);
+$input-disabled-opacity: var(--form-input-disabled-opacity, 0.5);
+
+$input-placeholder-disabled-color: var(--form-input-placeholder-disabled-color);
+
+$input-danger-bg: var(
+	--form-input-error-background-color,
+	var(--color-state-error-lighten)
+);
+$input-danger-border-color: var(
+	--form-input-error-border-color,
+	var(--color-state-error)
+);
+$input-danger-focus-bg: var(
+	--form-input-focus-error-background-color,
+	var(--color-neutral-10)
+);
+$input-danger-focus-border-color: var(
+	--form-input-focus-error-border-color,
+	var(--action-primary-default)
+);
+$input-danger-focus-box-shadow: none;
+
+$input-warning-bg: var(
+	--form-input-warning-background-color,
+	var(--color-state-warning-lighten)
+);
+$input-warning-border-color: var(
+	--form-input-warning-border-color,
+	var(--color-state-warning)
+);
+$input-warning-focus-bg: var(
+	--form-input-focus-warning-background-color,
+	var(--color-neutral-10)
+) !default;
+$input-warning-focus-border-color: var(
+	--form-input-focus-warning-border-color,
+	var(--action-primary-default)
+) !default;
+$input-warning-focus-box-shadow: none !default;
+$input-warning-focus-color: null !default;
+
+$input-success-bg: var(
+	--form-input-success-background-color,
+	var(--color-state-success-lighten)
+);
+$input-success-border-color: var(
+	--form-input-success-border-color,
+	var(--color-state-success)
+);
+$input-success-focus-bg: var(
+	--form-input-focus-success-background-color,
+	var(--color-neutral-10)
+) !default;
+$input-success-focus-border-color: var(
+	--form-input-focus-success-border-color,
+	var(--action-primary-default)
+) !default;
+$input-success-focus-box-shadow: none !default;
+$input-success-focus-color: null !default;
 
 $form-feedback-indicator-margin-x: 0.25rem;
 
-$form-text-font-size: var(--current-form-text-font-size);
+$form-feedback-font-size: var(--form-feedback-item-font-size);
+$form-feedback-font-weight: var(--form-feedback-item-font-weight);
+
+$form-text-font-size: var(--form-text-font-size);
 $form-text-color: var(--form-text-color);
 $form-text-line-height: var(--form-text-line-height);
-$form-text-font-weight: var(--current-form-text-font-weight);
+$form-text-font-weight: var(--form-text-font-weight);
+
+$form-control-inset-min-height: 1.5rem;
+
+$form-group-item-label-spacer: 0.3125rem !default;
+
+// Deprecated Bootstrap 4 variables causes errors with CSS custom properties as values
+
+$input-height-inner: 1;
+$input-height-inner-half: 1;
+$input-height-inner-quarter: 1;
