@@ -1771,7 +1771,7 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "var(--text-paragraph-font-weight-heavy)",
+							"defaultValue": "var(--text-paragraph-font-weight-regular)",
 							"label": "form-input-font-weight",
 							"mappings": [
 								{
@@ -1876,7 +1876,7 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "var(--text-paragraph-font-weight-heavy)",
+							"defaultValue": "var(--text-paragraph-font-weight-regular)",
 							"label": "form-input-placeholder-font-weight",
 							"mappings": [
 								{

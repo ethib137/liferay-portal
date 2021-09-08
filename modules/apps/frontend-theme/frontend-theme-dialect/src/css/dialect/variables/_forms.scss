@@ -8,10 +8,13 @@ $input-label-reference-mark-vertical-align: super;
 $input-bg: var(--current-form-input-background-color);
 $input-border-color: var(--current-form-input-border-color);
 $input-border-radius: var(--form-input-border-radius);
-$input-color: var(--form-input-color);
+$input-color: var(--current-form-input-color, var(--form-input-color));
 $input-disabled-border-color: var(--current-form-input-border-color);
 $input-disabled-bg: var(--current-form-input-background-color);
-$input-disabled-color: var(--form-input-disabled-color);
+$input-disabled-color: var(
+	--current-form-input-disabled-color,
+	var(--form-input-disabled-color)
+);
 $input-font-weight: var(--form-input-font-weight);
 $input-focus-bg: var(--current-form-input-background-color);
 $input-focus-box-shadow: none;

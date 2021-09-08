@@ -40,8 +40,14 @@ body {
 
 	&.form-group,
 	.form-group {
-		&:focus-within label {
+		&:focus-within > label {
 			--current-form-input-label-color: #{$form-input-focus-color};
+		}
+
+		&.filled {
+			--current-form-input-label-color: var(
+				--condensed-form-input-filled-label-color
+			);
 		}
 
 		&.filled,
@@ -57,53 +63,64 @@ body {
 				--condensed-form-input-filled-border-color
 			);
 
-			label {
+			label.disabled,
+			fieldset[disabled],
+			.form-control[disabled] {
+				--current-form-input-background-color: #{$form-white-color};
+			}
+
+			> label {
 				transform: translateY(-0.5em);
 			}
 		}
 
-		&:not(.filled) {
-			&:not(:focus-within) .form-control {
-				--current-form-input-placeholder-color: var(
-					--current-form-input-background-color
-				);
+		&:not(.filled):not(:focus-within) {
+			--current-form-input-placeholder-color: var(
+				--current-form-input-background-color
+			);
+			--current-form-input-color: transparent;
+			--current-form-input-disabled-color: transparent;
+
+			label.disabled,
+			fieldset[disabled],
+			.form-control[disabled] {
+				--current-form-input-placeholder-color: transparent;
 			}
 
-			label {
+			> label {
 				pointer-events: none;
 			}
 		}
-	}
 
-	&.filled,
-	.filled {
-		--current-form-input-label-color: var(
-			--condensed-form-input-filled-label-color
-		);
-
-		label.disabled,
-		fieldset[disabled],
-		.form-control[disabled] {
-			--current-form-input-background-color: #{$form-white-color};
+		> label {
+			background-color: var(--current-form-input-background-color);
+			margin: 0 var(--condensed-form-input-label-margin-x);
+			padding: 0 var(--condensed-form-input-label-padding-x);
+			position: absolute;
+			top: 0;
+			transform: translateY(
+				calc(
+					(
+							#{$input-border-width} + #{$input-padding-y} +
+								(var(--form-input-line-height) / 2)
+						) - 0.5em
+				)
+			);
+			transition: background-color 0.15s ease-in-out,
+				font-size 0.15s ease-in-out, transform 0.15s ease-in-out;
+			z-index: 1;
 		}
 	}
 
-	label {
-		background-color: var(--current-form-input-background-color);
-		margin: 0 var(--condensed-form-input-label-margin-x);
-		padding: 0 var(--condensed-form-input-label-padding-x);
-		position: absolute;
-		top: 0;
-		transform: translateY(
-			calc(
-				(
-						#{$input-border-width} + #{$input-padding-y} +
-							(var(--form-input-line-height) / 2)
-					) - 0.5em
-			)
+	label.disabled,
+	fieldset[disabled],
+	.form-control[disabled] {
+		--current-form-input-background-color: var(
+			--condensed-form-input-disabled-background-color
 		);
-		transition: background-color 0.15s ease-in-out,
-			font-size 0.15s ease-in-out, transform 0.15s ease-in-out;
+		--current-form-input-border-color: var(
+			--condensed-form-input-disabled-background-color
+		);
 	}
 
 	&.has-error,
@@ -129,17 +146,6 @@ body {
 	.has-success {
 		--current-form-input-label-color: var(--color-state-success);
 	}
-
-	label.disabled,
-	fieldset[disabled],
-	.form-control[disabled] {
-		--current-form-input-background-color: var(
-			--condensed-form-input-disabled-background-color
-		);
-		--current-form-input-border-color: var(
-			--condensed-form-input-disabled-background-color
-		);
-	}
 }
 
 label {
@@ -156,14 +162,16 @@ label {
 	font-size: var(--form-input-font-size);
 	height: auto;
 	line-height: var(--form-input-line-height);
-	transition: background-color 0.15s ease-in-out;
+	transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
 
-	&::placeholder {
-		font-size: var(--form-input-placeholder-font-size);
-		font-weight: var(--form-input-placeholder-font-weight);
-		line-height: var(--form-input-placeholder-line-height);
-		transition: color 0.15s ease-in-out;
-	}
+.form-control::placeholder,
+.form-builder-select-field .form-control .option-selected-placeholder {
+	color: $input-placeholder-color;
+	font-size: var(--form-input-placeholder-font-size);
+	font-weight: var(--form-input-placeholder-font-weight);
+	line-height: var(--form-input-placeholder-line-height);
+	transition: color 0.15s ease-in-out;
 }
 
 .form-control,
