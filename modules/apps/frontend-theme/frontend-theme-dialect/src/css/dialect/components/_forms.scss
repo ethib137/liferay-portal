@@ -1,3 +1,7 @@
+body {
+	--form-input-focus-color: #{$primary};
+}
+
 .form-control {
 	&::placeholder {
 		font-size: var(--form-input-placeholder-font-size);
@@ -8,6 +12,8 @@
 }
 
 .form-condensed {
+	--form-input-label-line-height: 1;
+
 	label {
 		background-color: var(--condensed-form-input-background-color);
 		margin: 0 var(--condensed-form-input-label-margin-x);
@@ -17,6 +23,14 @@
 		position: absolute;
 		transform: translateY(
 			calc(#{$input-border-top-width} + #{$input-padding-y})
+		);
+		transform: translateY(
+			calc(
+				(
+						#{$input-border-width} + #{$input-padding-y} +
+							(var(--form-input-line-height) / 2)
+					) - 0.5em
+			)
 		);
 		transition: background-color 0.15s ease-in-out,
 			font-size 0.15s ease-in-out, transform 0.15s ease-in-out;
@@ -40,10 +54,7 @@
 					--condensed-form-input-focus-label-background-color,
 					var(--form-input-background-color)
 				);
-				color: var(
-					--condensed-form-input-focus-label-color,
-					var(--action-primary-default)
-				);
+				color: var(--form-input-focus-color);
 				font-size: var(--condensed-form-input-filled-label-font-size);
 				font-weight: var(
 					--condensed-form-input-filled-label-font-weight
@@ -58,8 +69,7 @@
 					var(--form-input-background-color)
 				);
 				border-color: var(
-					--condensed-form-input-focus-border-color,
-					#{$primary}
+					--form-input-focus-color
 				);
 			}
 		}

@@ -1783,6 +1783,18 @@
 							"type": "String"
 						},
 						{
+							"defaultValue": "3em",
+							"label": "form-input-height",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "form-input-height"
+								}
+							],
+							"name": "formInputHeight",
+							"type": "String"
+						},
+						{
 							"defaultValue": "var(--text-paragraph-line-height)",
 							"label": "form-input-line-height",
 							"mappings": [

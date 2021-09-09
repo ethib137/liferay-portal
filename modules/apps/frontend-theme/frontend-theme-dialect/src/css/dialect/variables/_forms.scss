@@ -21,7 +21,7 @@ $input-label-font-size: var(--form-input-label-font-size, 1rem);
 $input-label-font-weight: var(--form-input-label-font-weight, 800);
 $input-label-margin-bottom: var(--form-input-label-margin-bottom, 0.25rem);
 
-$input-label-disabled-color: var(---form-input-disabled-label-color, #3f3851);
+$input-label-disabled-color: var(--form-input-disabled-label-color, #3f3851);
 
 // Changed reference mark to use an undefined CSS variable --form-input-label-reference-mark-color. --color-state-error, --color-state-warning, --color-state-success, etc should only be used for Error, Warning, Success states. Using --color-state-error in reference-mark takes away the variable meaning since the base reference-mark isn't associated with those states.
 
@@ -43,13 +43,13 @@ $input-font-weight: var(--form-input-font-weight, 800);
 
 // Clay CSS quirk (needs fixed height), it uses height instead of line-height to set input height. A large line-height makes spacing between new lines too big in textarea.
 
-$input-height: 3rem;
-$input-line-height: var(--form-input-line-height, 1.5);
+$input-height: var(--form-input-height);
+$input-line-height: var(--form-input-line-height);
 $input-padding-x: var(--form-input-padding-x, 1rem);
 
 // .form-control height is 48px, 48px - 2px - (16px * 1.5) = 22px (padding-bottom/top: 11px)
 
-$input-padding-y: var(--form-input-padding-y, 0.6875rem);
+$input-padding-y: var(--form-input-padding-y);
 $input-transition: background-color 0.15s ease-in-out;
 
 $input-placeholder-color: var(--form-input-placeholder-color, #a7a3b2);
@@ -143,3 +143,9 @@ $form-group-item-label-spacer: 0.3125rem !default;
 $input-height-inner: 1;
 $input-height-inner-half: 1;
 $input-height-inner-quarter: 1;
+
+$form-control-inset-margin-y: calc((
+    $input-height - $input-border-bottom-width - $input-border-top-width -
+        ($form-control-tag-group-padding-y * 2) -
+        $form-control-inset-min-height
+) / 2);
