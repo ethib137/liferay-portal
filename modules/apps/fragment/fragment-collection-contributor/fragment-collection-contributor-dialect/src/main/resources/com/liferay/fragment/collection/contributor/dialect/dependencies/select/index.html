@@ -1,0 +1,23 @@
+<div class="form-group ${configuration.state} [#if configuration.condensed]form-condensed[/#if] [#if configuration.filled]filled[/#if]">
+	<label [#if configuration.disabled]class="disabled"[/#if] for="inputSuccess1">
+		Field Label
+		[@clay["icon"] className="reference-mark" symbol="asterisk" /]
+	</label>
+
+	<select aria-label="Select Label"  [#if configuration.disabled]disabled[/#if] id="mySelectId" class="form-control">
+		<option value="">--Please choose an option--</option>
+		<option value="1">A Very Long Option 1</option>
+		<option value="2">Option 2</option>
+	</select>
+
+	<div class="form-feedback-group">
+		<div class="form-feedback-item">
+			<span class="form-feedback-indicator">
+				[@clay["icon"] symbol="check-circle-full" /]
+			</span>
+			This is a form-feedback-indicator.
+		</div>
+
+		<div class="form-text">This is form-text.</div>
+	</div>
+</div>

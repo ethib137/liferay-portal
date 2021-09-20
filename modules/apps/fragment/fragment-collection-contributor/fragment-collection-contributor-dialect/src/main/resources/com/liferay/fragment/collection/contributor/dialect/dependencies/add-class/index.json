@@ -1,0 +1,14 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"defaultValue": "",
+					"label": "container-class",
+					"name": "className",
+					"type": "text"
+				}
+			]
+		}
+	]
+}

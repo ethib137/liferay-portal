@@ -1,0 +1,87 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "",
+					"label": "state",
+					"name": "state",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "none",
+								"value": ""
+							},
+							{
+								"label": "has-success",
+								"value": "has-success"
+							},
+							{
+								"label": "has-warning",
+								"value": "has-warning"
+							},
+							{
+								"label": "has-error",
+								"value": "has-error"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "input",
+					"label": "element-type",
+					"name": "elementType",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "input",
+								"value": "input"
+							},
+							{
+								"label": "textarea",
+								"value": "textarea"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": false,
+					"label": "condensed",
+					"name": "condensed",
+					"type": "checkbox"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": false,
+					"label": "disabled",
+					"name": "disabled",
+					"type": "checkbox"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": false,
+					"label": "filled",
+					"name": "filled",
+					"type": "checkbox"
+				},
+				{
+					"defaultValue": "",
+					"label": "default-value",
+					"name": "defaultValue",
+					"type": "text"
+				},
+				{
+					"defaultValue": "",
+					"label": "placeholder",
+					"name": "placeholder",
+					"type": "text"
+				}
+			]
+		}
+	]
+}
