@@ -1,32 +1,5 @@
 <div class="solution-nav ${configuration.navType} ${configuration.orientation} [#if configuration.inverted]nav-inverted[/#if]">
-	[#assign displayDepth = configuration.sublevels?number + 1 /]
-	[#assign parentSiteNavigationMenuItemId = "null" /]
-	[#assign siteNavigationMenuId = 0 /]
-
-	[#if configuration.source?has_content]
-		${configuration.source}
-		[#assign source = configuration.source?eval /]
-
-		[#assign parentSiteNavigationMenuItemId = source.parentSiteNavigationMenuItemId!"null" /]
-		[#assign siteNavigationMenuId = source.siteNavigationMenuId!0 /]
-	[/#if]
-
-	<h2>parentSiteNavigationMenuItemId: ${parentSiteNavigationMenuItemId}</h2>
-
-	[#attempt]
-		[#if themeDisplay??]
-			[@liferay_site_navigation["navigation-menu"]
-				ddmTemplateGroupId=themeDisplay.siteGroupId
-				ddmTemplateKey="NAVBAR-BLANK-FTL"
-				displayDepth=displayDepth
-				expandedLevels="auto"
-				rootItemType="select"
-				rootItemLevel=1
-				rootItemId="${parentSiteNavigationMenuItemId}"
-				siteNavigationMenuId=siteNavigationMenuId?number
-			/]
-		[/#if]
-	[#recover]
-		${.error}
-	[/#attempt]
+	[@liferay_site_navigation["navigation-menu-selector"]
+		source=configuration.source
+	/]
 </div>

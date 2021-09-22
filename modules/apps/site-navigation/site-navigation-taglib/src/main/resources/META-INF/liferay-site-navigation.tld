@@ -145,4 +145,14 @@
 			<type>long</type>
 		</attribute>
 	</tag>
+	<tag>
+		<name>navigation-menu-selector</name>
+		<tag-class>com.liferay.site.navigation.taglib.servlet.taglib.NavigationMenuSelectorTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>source</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
 </taglib>
