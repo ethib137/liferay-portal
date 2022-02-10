@@ -22,6 +22,7 @@ import CardGuide from './guides/CardGuide';
 import ColorGuide from './guides/ColorGuide';
 import FormGuide from './guides/FormGuide';
 import GeneralGuide from './guides/GeneralGuide';
+import HotkeyGuide from './guides/HotkeysGuide';
 import LabelGuide from './guides/LabelGuide';
 import TypographyGuide from './guides/TypographyGuide';
 
@@ -55,6 +56,11 @@ const TABS = [
 		content: <FormGuide />,
 		hash: '#forms',
 		label: Liferay.Language.get('forms'),
+	},
+	{
+		content: <HotkeyGuide />,
+		hash: '#hotkeys',
+		label: Liferay.Language.get('hotkeys'),
 	},
 	{
 		content: <LabelGuide />,
