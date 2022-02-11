@@ -22,7 +22,7 @@ import CardGuide from './guides/CardGuide';
 import ColorGuide from './guides/ColorGuide';
 import FormGuide from './guides/FormGuide';
 import GeneralGuide from './guides/GeneralGuide';
-import HotkeyGuide from './guides/HotkeysGuide';
+import HotkeyGuide from './guides/HotkeyGuide';
 import LabelGuide from './guides/LabelGuide';
 import TypographyGuide from './guides/TypographyGuide';
 
