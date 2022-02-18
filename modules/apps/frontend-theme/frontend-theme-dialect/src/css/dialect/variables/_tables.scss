@@ -1,0 +1,151 @@
+$table-cell-lg: (
+    min-height: var(--table-lg-cell-min-height),
+    padding: var(--table-lg-cell-padding-y) var(--table-lg-cell-padding-x),
+    font-size: var(--table-lg-font-size), 
+    font-weight: var(--table-lg-font-weight),
+    line-height: var(--table-lg-line-height),
+);
+
+$table-header-lg:(
+    min-height: var(--table-lg-header-cell-min-height),
+    padding: var(--table-lg-header-cell-padding-y) var(--table-lg-header-cell-padding-x),
+    font-size: var(--table-lg-header-font-size), 
+    font-weight: var(--table-lg-header-font-weight),
+    line-height: var(--table-lg-header-line-height),
+
+);
+
+$table-cell-sm: (
+    min-height: var(--table-sm-cell-min-height),
+    padding: var(--table-sm-cell-padding-y) var(--table-sm-cell-padding-x),
+    font-size: var(--table-sm-font-size), 
+    font-weight: var(--table-sm-font-weight),
+    line-height: var(--table-sm-line-height),
+);
+
+$table-header-sm:(
+    min-height: var(--table-sm-header-cell-min-height),
+    padding: var(--table-sm-header-cell-padding-y) var(--table-sm-header-cell-padding-x),
+    font-size: var(--table-sm-header-font-size), 
+    font-weight: var(--table-sm-header-font-weight),
+    line-height: var(--table-sm-header-line-height),
+);
+
+$table-spaced: (
+    border: 0,
+    border-spacing: 0 0.5rem,
+    border-collapse: separate,
+);
+    
+$table-head-cell-spaced: (
+    border-radius: 0,
+);
+        
+$table-bordeless-spaced: (
+    border-top: 0,
+);
+
+$table-header-first-cell-spaced: (
+    border-top-left-radius: var(--table-spaced-row-border-radius),
+);
+
+$table-header-last-cell-spaced: (
+    border-top-right-radius: var(--table-spaced-row-border-radius),
+);
+
+$table-left-cell-spaced: ( 
+    border-bottom-left-radius: var(--table-spaced-row-border-radius),
+);
+
+$table-right-cell-spaced: ( 
+    border-bottom-right-radius: var(--table-spaced-row-border-radius),
+);
+
+$table-title: (
+    color: #f989,
+);
+
+$table-list-title: (
+    color: var(--table-title-color),
+    font-weight: var(--table-title-font-weight),
+    font-size: var(--table-title-font-size),
+    line-height: var(--table-title-line-height,)
+);
+
+$table-list-border-radius: var(--table-border-radius);
+
+$c-table-list: (
+    color: var(--table-color),
+    border-color: var(--table-border-color),
+    border-radius: $table-list-border-radius,
+    border-width: var(--table-border-width),
+    box-shadow: var(--table-box-shadow),
+    font-size: var(--table-font-size),
+    font-weight: var(--table-font-weight),
+);
+
+$table-list-head-bg: var(--table-header-background-color);
+$table-list-head-font-size: var(--table-header-font-size);
+$table-list-head-font-weight: var(--table-header-font-weight);
+$table-list-head-height: var(--table-header-cell-min-height);
+$table-list-head-vertical-alignment: var(--table-header-vertical-align);
+
+$table-head-cell: (
+    color: var(--table-header-color),
+    padding: var(--table-header-cell-padding-y) var(--table-header-cell-padding-x),
+    line-height: var(--table-header-line-height),
+);
+
+$table-list-accent-bg: var(--table-striped-row-background-color);
+
+
+$table-list-hover-bg: var(--table-row-background-color-hover);
+$table-hover-color: var(--table-row-color-hover);
+
+$c-table-list-cell: (
+    border-color: var(--table-row-border-color),
+    border-width: var(--table-row-border-width),
+    line-height: var(--table-line-height),
+);
+
+$table-header-first-cell: (
+    border-top-left-radius: calc(var(--table-border-radius) - var(--table-border-width)),
+);
+
+$table-header-last-cell: (
+    border-top-right-radius: calc(var(--table-border-radius) - var(--table-border-width)),
+);
+
+$table-first-cell: (
+    border-bottom-left-radius: calc(var(--table-border-radius) - var(--table-border-width)),
+);
+
+$table-last-cell: (
+    border-bottom-right-radius: calc(var(--table-border-radius) - var(--table-border-width)),
+);
+
+$table-cell: (
+    vertical-align: var(--table-row-vertical-align),
+    background-color: var(--table-row-background-color),
+);
+
+$table-title-link: (
+    color: var(--table-link-color),
+    text-decoration: var(--table-link-text-decoration),
+    cursor: pointer,
+
+    hover: (
+        color: var(--table-link-color-hover),
+        text-decoration: var(--table-link-text-decoration-hover), 
+    ),
+);
+
+$table-padding: (
+    padding: var(--table-padding-y) var(--table-padding-x),
+);
+
+$table-active:  (
+    background-color: var(--table-row-background-color-active),
+);
+
+$table-img-max-height:  var(--table-image-height);
