@@ -1,0 +1,84 @@
+.table-lg > tbody > tr > td {
+	@include clay-css($table-cell-lg);
+}
+
+.table-lg > thead > tr > .table-header-cell {
+	@include clay-css($table-header-lg);
+}
+
+.table-sm > tbody > tr > td {
+    @include clay-css($table-cell-sm);
+}
+
+.table-sm > thead > tr > .table-header-cell {
+    @include clay-css($table-header-sm);
+}
+
+.table-spaced > tbody > tr > td.cell-spaced,
+.table-spaced > thead > tr > th.cell-spaced,
+.table-spaced tbody:last-child tr:last-child td:last-child.cell-spaced,
+.table-spaced tbody:last-child tr:last-child td:first-child.cell-spaced {
+	@include clay-css($table-bordeless-spaced);
+}
+
+.table-list.table-spaced thead:first-child tr:first-child th:first-child {
+    @include clay-css($table-header-first-cell-spaced)
+}
+
+.table-list.table-spaced thead:first-child tr:first-child th:last-child {
+    @include clay-css($table-header-last-cell-spaced)
+}
+
+.table-list.table-spaced tbody:last-child tr:last-child td:first-child.cell-spaced {
+    @include clay-css($table-left-cell-spaced)
+}
+.table-list.table-spaced tbody:last-child tr:last-child td:last-child.cell-spaced {
+    @include clay-css($table-right-cell-spaced)
+}
+
+.table-spaced {
+    @include clay-css($table-spaced)
+}
+
+.table-list.table-spaced thead:first-child tr:first-child .cell-spaced {
+    @include clay-css($table-head-cell-spaced);
+}
+
+.table-list { 
+
+    .table-active > td {
+        @include clay-css($table-active)
+    }
+
+    thead > tr > th {
+        @include clay-css($table-head-cell)
+    }
+
+    tbody > tr > td {
+        @include clay-css($table-cell)
+    }
+
+    thead:first-child tr:first-child th:first-child {
+        @include clay-css($table-header-first-cell)
+    }
+
+    thead:first-child tr:first-child th:last-child {
+        @include clay-css($table-header-last-cell)
+    }
+
+    tbody:last-child tr:last-child td:last-child {
+        @include clay-css($table-last-cell)
+    }
+
+    tbody:last-child tr:last-child td:first-child {
+        @include clay-css($table-first-cell)
+    }
+}
+
+.table-list-title a {
+    @include clay-link($table-title-link);
+}
+
+.table-list:not(.table-sm, .table-lg) tbody tr td {
+    @include clay-css($table-padding);
+}
