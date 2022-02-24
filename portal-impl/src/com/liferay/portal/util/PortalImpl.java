@@ -7333,6 +7333,16 @@ public class PortalImpl implements Portal {
 
 			layouts = LayoutLocalServiceUtil.getLayouts(
 				groupId, privateLayout,
+				LayoutConstants.TYPE_CONTENT);
+
+			plid = getPlidFromPortletId(layouts, portletId, scopeGroupId);
+
+			if (plid != LayoutConstants.DEFAULT_PLID) {
+				return plid;
+			}
+
+			layouts = LayoutLocalServiceUtil.getLayouts(
+				groupId, privateLayout,
 				LayoutConstants.TYPE_FULL_PAGE_APPLICATION);
 
 			plid = getPlidFromPortletId(layouts, portletId, scopeGroupId);
