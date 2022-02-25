@@ -35,12 +35,18 @@ import com.liferay.commerce.product.service.CPOptionCategoryLocalService;
 import com.liferay.commerce.product.util.CPCompareHelper;
 import com.liferay.commerce.product.util.CPDefinitionHelper;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
+import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.processor.PortletRegistry;
+import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -102,9 +108,17 @@ public class CPCompareContentHelperImpl implements CPCompareContentHelper {
 
 		Layout curLayout = themeDisplay.getLayout();
 
+		long scopeGroupdId = themeDisplay.getScopeGroupId();
+		boolean privateLayout = curLayout.isPrivateLayout();
+
 		long plid = _portal.getPlidFromPortletId(
-			themeDisplay.getScopeGroupId(), curLayout.isPrivateLayout(),
-			CPPortletKeys.CP_COMPARE_CONTENT_WEB);
+			scopeGroupdId, privateLayout, CPPortletKeys.CP_COMPARE_CONTENT_WEB);
+
+		if (plid == LayoutConstants.DEFAULT_PLID) {
+			plid = getPlidFromPortletId(
+				scopeGroupdId, privateLayout,
+				CPPortletKeys.CP_COMPARE_CONTENT_WEB);
+		}
 
 		Layout layout = _layoutLocalService.fetchLayout(plid);
 
@@ -399,6 +413,49 @@ public class CPCompareContentHelperImpl implements CPCompareContentHelper {
 		return multiValueCPDefinitionOptionRels;
 	}
 
+	private long getPlidFromPortletId(
+		long scopeGroupId, boolean privateLayout, String portletId) {
+
+		try {
+			Group group = _groupLocalService.getGroup(scopeGroupId);
+
+			if (group.isLayout()) {
+				Layout scopeLayout = _layoutLocalService.getLayout(
+					group.getClassPK());
+
+				scopeGroupId = scopeLayout.getGroupId();
+			}
+
+			List<Layout> layouts = _layoutLocalService.getLayouts(
+				scopeGroupId, privateLayout, LayoutConstants.TYPE_CONTENT);
+
+			for (Layout layout : layouts) {
+				List<FragmentEntryLink> fragmentEntryLinks =
+					_fragmentEntryLinkLocalService.getFragmentEntryLinksByPlid(
+						scopeGroupId, layout.getPlid());
+
+				for (FragmentEntryLink fragmentEntryLink : fragmentEntryLinks) {
+					List<String> fragmentEntryLinkPortletIds =
+						_portletRegistry.getFragmentEntryLinkPortletIds(
+							fragmentEntryLink);
+
+					for (String fragmentEntryLinkPortletId :
+							fragmentEntryLinkPortletIds) {
+
+						if (fragmentEntryLinkPortletId.equals(portletId)) {
+							return layout.getPlid();
+						}
+					}
+				}
+			}
+		}
+		catch (PortalException pe) {
+			System.out.println(pe.toString());
+		}
+
+		return LayoutConstants.DEFAULT_PLID;
+	}
+
 	@Reference
 	private CPCompareHelper _cpCompareHelper;
 
@@ -422,9 +479,18 @@ public class CPCompareContentHelperImpl implements CPCompareContentHelper {
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 
 	@Reference
+	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
+
+	@Reference
 	private LayoutLocalService _layoutLocalService;
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private PortletRegistry _portletRegistry;
 
 }
