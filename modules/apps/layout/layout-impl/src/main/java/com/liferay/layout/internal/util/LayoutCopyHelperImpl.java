@@ -40,19 +40,15 @@ import com.liferay.portal.kernel.model.Image;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.Portlet;
-import com.liferay.portal.kernel.model.PortletPreferences;
-import com.liferay.portal.kernel.model.PortletPreferencesIds;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactory;
-import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.ImageLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
-import com.liferay.portal.kernel.service.PortletPreferenceValueLocalService;
 import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
@@ -562,42 +558,8 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 
 				targetPortletIds.remove(portletId);
 
-				PortletPreferencesIds portletPreferencesIds =
-					_portletPreferencesFactory.getPortletPreferencesIds(
-						sourceLayout.getCompanyId(), sourceLayout.getGroupId(),
-						0, sourceLayout.getPlid(), portletId);
-
-				javax.portlet.PortletPreferences jxPortletPreferences =
-					_portletPreferencesLocalService.fetchPreferences(
-						portletPreferencesIds);
-
-				if (jxPortletPreferences == null) {
-					continue;
-				}
-
-				PortletPreferences targetPortletPreferences =
-					_portletPreferencesLocalService.fetchPortletPreferences(
-						portletPreferencesIds.getOwnerId(),
-						portletPreferencesIds.getOwnerType(),
-						targetLayout.getPlid(), portletId);
-
-				if (targetPortletPreferences != null) {
-					_portletPreferencesLocalService.updatePreferences(
-						targetPortletPreferences.getOwnerId(),
-						targetPortletPreferences.getOwnerType(),
-						targetPortletPreferences.getPlid(),
-						targetPortletPreferences.getPortletId(),
-						jxPortletPreferences);
-				}
-				else {
-					_portletPreferencesLocalService.addPortletPreferences(
-						targetLayout.getCompanyId(),
-						portletPreferencesIds.getOwnerId(),
-						portletPreferencesIds.getOwnerType(),
-						targetLayout.getPlid(), portletId, portlet,
-						PortletPreferencesFactoryUtil.toXML(
-							jxPortletPreferences));
-				}
+				_portletPreferencesFactory.getLayoutPortletSetup(
+					targetLayout, portletId);
 			}
 
 			for (String portletId : targetPortletIds) {
@@ -902,10 +864,6 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 
 	@Reference
 	private PortletPreferencesLocalService _portletPreferencesLocalService;
-
-	@Reference
-	private PortletPreferenceValueLocalService
-		_portletPreferenceValueLocalService;
 
 	@Reference
 	private PortletRegistry _portletRegistry;
