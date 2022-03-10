@@ -896,6 +896,12 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			_sites.copyLookAndFeel(_targetLayout, _sourceLayout);
 			_sites.copyPortletSetups(_sourceLayout, _targetLayout);
 
+			// LPS-135170 Copy preferences before structure so that preferences
+			// are removed when portlets are removed.
+
+			_copyPortletPreferences(
+				_segmentsExperiencesIds, _sourceLayout, _targetLayout);
+
 			if (Objects.equals(
 					_sourceLayout.getType(), LayoutConstants.TYPE_PORTLET)) {
 
@@ -903,7 +909,7 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			}
 			else {
 
-				// LPS-108378 Copy structure before permissions and preferences
+				// LPS-108378 Copy structure before permissions
 
 				_consumer.accept(_targetLayout);
 
@@ -918,9 +924,6 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 			_copyAssetCategoryIdsAndAssetTagNames(_sourceLayout, _targetLayout);
 
 			_copyLayoutSEOEntry(_sourceLayout, _targetLayout);
-
-			_copyPortletPreferences(
-				_segmentsExperiencesIds, _sourceLayout, _targetLayout);
 
 			_layoutLocalService.updateMasterLayoutPlid(
 				_targetLayout.getGroupId(), _targetLayout.isPrivateLayout(),
