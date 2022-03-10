@@ -258,10 +258,8 @@ public class AssetCategoryAssetDisplayPageFriendlyURLResolver
 				}
 			}
 
-			long plid =
-				_assetDisplayPageFriendlyURLResolverHelper.getPlidFromPortletId(
-					groupId, privateLayout,
-					CPPortletKeys.CP_CATEGORY_CONTENT_WEB);
+			long plid = _portal.getPlidFromPortletId(
+				groupId, privateLayout, CPPortletKeys.CP_CATEGORY_CONTENT_WEB);
 
 			return _layoutLocalService.getLayout(plid);
 		}

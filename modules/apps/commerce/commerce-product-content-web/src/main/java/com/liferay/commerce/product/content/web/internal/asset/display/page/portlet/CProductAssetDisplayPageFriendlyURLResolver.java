@@ -383,9 +383,8 @@ public class CProductAssetDisplayPageFriendlyURLResolver
 			}
 		}
 
-		long plid =
-			_assetDisplayPageFriendlyURLResolverHelper.getPlidFromPortletId(
-				groupId, privateLayout, CPPortletKeys.CP_CONTENT_WEB);
+		long plid = _portal.getPlidFromPortletId(
+			groupId, privateLayout, CPPortletKeys.CP_CONTENT_WEB);
 
 		try {
 			return _layoutLocalService.getLayout(plid);
