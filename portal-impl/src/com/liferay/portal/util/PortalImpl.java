@@ -7661,21 +7661,12 @@ public class PortalImpl implements Portal {
 		List<Layout> layouts, String portletId, long scopeGroupId) {
 
 		for (Layout layout : layouts) {
-			LayoutTypePortlet layoutTypePortlet =
-				(LayoutTypePortlet)layout.getLayoutType();
-
 			if (getScopeGroupId(layout, portletId) != scopeGroupId) {
 				continue;
 			}
 
-			for (Portlet portlet : layoutTypePortlet.getAllPortlets()) {
-				if ((portletId.equals(portlet.getPortletId()) ||
-					 portletId.equals(portlet.getRootPortletId())) &&
-					!layout.isPortletEmbedded(portletId, layout.getGroupId()) &&
-					!layoutTypePortlet.isPortletCustomizable(portletId)) {
-
-					return layout.getPlid();
-				}
+			if (_layoutContainsPortletId(layout, portletId)) {
+				return layout.getPlid();
 			}
 		}
 
@@ -8522,13 +8513,8 @@ public class PortalImpl implements Portal {
 			boolean validPlid = false;
 
 			try {
-				Layout layout = LayoutLocalServiceUtil.getLayout(plid);
-
-				LayoutTypePortlet layoutTypePortlet =
-					(LayoutTypePortlet)layout.getLayoutType();
-
-				if (layoutTypePortlet.hasDefaultScopePortletId(
-						groupId, portletId)) {
+				if (_layoutContainsPortletId(
+						LayoutLocalServiceUtil.getLayout(plid), portletId)) {
 
 					validPlid = true;
 				}
@@ -8734,6 +8720,23 @@ public class PortalImpl implements Portal {
 		}
 
 		return virtualHostnames.firstKey();
+	}
+
+	private boolean _layoutContainsPortletId(Layout layout, String portletId) {
+		LayoutTypePortlet layoutTypePortlet =
+			(LayoutTypePortlet)layout.getLayoutType();
+
+		for (Portlet portlet : layoutTypePortlet.getAllPortlets()) {
+			if ((portletId.equals(portlet.getPortletId()) ||
+				 portletId.equals(portlet.getRootPortletId())) &&
+				!layout.isPortletEmbedded(portletId, layout.getGroupId()) &&
+				!layoutTypePortlet.isPortletCustomizable(portletId)) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private boolean _requiresLayoutFriendlyURL(
