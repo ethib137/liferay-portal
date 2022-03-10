@@ -3927,54 +3927,11 @@ public class PortalImpl implements Portal {
 	public long getPlidFromPortletId(
 		long groupId, boolean privateLayout, String portletId) {
 
-		long plid = LayoutConstants.DEFAULT_PLID;
+		long plid = _getPlidFromPlidToPortletIdMap(
+			groupId, privateLayout, portletId);
 
-		String key = StringBundler.concat(
-			groupId, StringPool.SPACE, privateLayout, StringPool.SPACE,
-			portletId);
-
-		Long plidObj = _plidToPortletIdMap.get(key);
-
-		if (plidObj == null) {
+		if (plid == LayoutConstants.DEFAULT_PLID) {
 			plid = doGetPlidFromPortletId(groupId, privateLayout, portletId);
-
-			if (plid != LayoutConstants.DEFAULT_PLID) {
-				_plidToPortletIdMap.put(key, plid);
-			}
-		}
-		else {
-			plid = plidObj.longValue();
-
-			boolean validPlid = false;
-
-			try {
-				Layout layout = LayoutLocalServiceUtil.getLayout(plid);
-
-				LayoutTypePortlet layoutTypePortlet =
-					(LayoutTypePortlet)layout.getLayoutType();
-
-				if (layoutTypePortlet.hasDefaultScopePortletId(
-						groupId, portletId)) {
-
-					validPlid = true;
-				}
-			}
-			catch (Exception exception) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(exception);
-				}
-			}
-
-			if (!validPlid) {
-				_plidToPortletIdMap.remove(key);
-
-				plid = doGetPlidFromPortletId(
-					groupId, privateLayout, portletId);
-
-				if (plid != LayoutConstants.DEFAULT_PLID) {
-					_plidToPortletIdMap.put(key, plid);
-				}
-			}
 		}
 
 		return plid;
@@ -3982,10 +3939,18 @@ public class PortalImpl implements Portal {
 
 	@Override
 	public long getPlidFromPortletId(long groupId, String portletId) {
-		long plid = getPlidFromPortletId(groupId, false, portletId);
+		long plid = _getPlidFromPlidToPortletIdMap(groupId, false, portletId);
 
 		if (plid == LayoutConstants.DEFAULT_PLID) {
-			plid = getPlidFromPortletId(groupId, true, portletId);
+			plid = _getPlidFromPlidToPortletIdMap(groupId, true, portletId);
+		}
+
+		if (plid == LayoutConstants.DEFAULT_PLID) {
+			plid = doGetPlidFromPortletId(groupId, false, portletId);
+		}
+
+		if (plid == LayoutConstants.DEFAULT_PLID) {
+			plid = doGetPlidFromPortletId(groupId, true, portletId);
 		}
 
 		if (plid == LayoutConstants.DEFAULT_PLID) {
@@ -7317,6 +7282,11 @@ public class PortalImpl implements Portal {
 					layouts, portletId, scopeGroupId);
 
 				if (plid != LayoutConstants.DEFAULT_PLID) {
+					String key = _getPlidToPortletIdMapKey(
+						groupId, privateLayout, portletId);
+
+					_plidToPortletIdMap.put(key, plid);
+
 					return plid;
 				}
 			}
@@ -8534,6 +8504,55 @@ public class PortalImpl implements Portal {
 		}
 
 		return sb.toString();
+	}
+
+	private long _getPlidFromPlidToPortletIdMap(
+		long groupId, boolean privateLayout, String portletId) {
+
+		long plid = LayoutConstants.DEFAULT_PLID;
+
+		String key = _getPlidToPortletIdMapKey(
+			groupId, privateLayout, portletId);
+
+		Long plidObj = _plidToPortletIdMap.get(key);
+
+		if (plidObj != null) {
+			plid = plidObj.longValue();
+
+			boolean validPlid = false;
+
+			try {
+				Layout layout = LayoutLocalServiceUtil.getLayout(plid);
+
+				LayoutTypePortlet layoutTypePortlet =
+					(LayoutTypePortlet)layout.getLayoutType();
+
+				if (layoutTypePortlet.hasDefaultScopePortletId(
+						groupId, portletId)) {
+
+					validPlid = true;
+				}
+			}
+			catch (Exception exception) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(exception);
+				}
+			}
+
+			if (!validPlid) {
+				_plidToPortletIdMap.remove(key);
+			}
+		}
+
+		return plid;
+	}
+
+	private String _getPlidToPortletIdMapKey(
+		long groupId, boolean privateLayout, String portletId) {
+
+		return StringBundler.concat(
+			groupId, StringPool.SPACE, privateLayout, StringPool.SPACE,
+			portletId);
 	}
 
 	private String _getPortalURL(
