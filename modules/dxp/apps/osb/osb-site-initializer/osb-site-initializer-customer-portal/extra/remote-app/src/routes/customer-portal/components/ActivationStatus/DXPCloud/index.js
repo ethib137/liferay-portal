@@ -9,23 +9,29 @@
  * distribution rights of the Software.
  */
 
+import ClayAlert from '@clayui/alert';
+import {ButtonWithIcon} from '@clayui/core';
+import {Align} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import ClayModal, {useModal} from '@clayui/modal';
 import React, {useEffect, useState} from 'react';
 import client from '../../../../../apolloClient';
-import {Button} from '../../../../../common/components';
+import {Button, ButtonDropDown} from '../../../../../common/components';
 import SetupDXPCloud from '../../../../../common/containers/setup-forms/SetupDXPCloudForm';
 import {
 	getAccountSubscriptionGroups,
 	getAccountSubscriptionsTerms,
 } from '../../../../../common/services/liferay/graphql/queries';
 import getActivationStatusDateRange from '../../../../../common/utils/getActivationStatusDateRange';
+import {ALERT_UPDATE_DXP_CLOUD_STATUS} from '../../../containers/DXPActivationKeysTable/utils/constants';
 import {useCustomerPortal} from '../../../context';
 import {actionTypes} from '../../../context/reducer';
 import {
+	AUTO_CLOSE_ALERT_TIME,
 	STATUS_TAG_TYPES,
 	STATUS_TAG_TYPE_NAMES,
 } from '../../../utils/constants';
+import ModalDXPCActivationStatus from '../../ModalDXPCActivationStatus';
 import ActivationStatusLayout from '../Layout';
 
 const SetupDXPCloudModal = ({
@@ -97,18 +103,28 @@ const ActivationStatusDXPCloud = ({
 	subscriptionGroupDXPCloud,
 	userAccount,
 }) => {
+	const [projectIdValue, setProjectIdValue] = useState('');
+	const [
+		subscriptionGroupActivationStatus,
+		setSubscriptionGroupActivationStatus,
+	] = useState(subscriptionGroupDXPCloud?.activationStatus);
 	const [{assetsPath}, dispatch] = useCustomerPortal();
+	const [hasFinishedUpdate, setHasFinishedUpdate] = useState(false);
 	const [activationStatusDate, setActivationStatusDate] = useState('');
-	const [visible, setVisible] = useState(false);
-	const modalProps = useModal({
-		onClose: () => setVisible(false),
+	const [visibleSetup, setVisibleSetup] = useState(false);
+	const setupModalProps = useModal({
+		onClose: () => setVisibleSetup(false),
 	});
 
-	const subscriptionGroupActivationStatus =
-		subscriptionGroupDXPCloud?.activationStatus;
+	const [visibleStatus, setVisibleStatus] = useState(false);
+	const activationStatusModalProps = useModal({
+		onClose: () => setVisibleStatus(false),
+	});
 
-	const onCloseModal = async (isSuccess) => {
-		setVisible(false);
+	const projectID = dxpCloudEnvironment?.projectId;
+
+	const onCloseSetupModal = async (isSuccess) => {
+		setVisibleSetup(false);
 
 		if (isSuccess) {
 			const getSubscriptionGroups = async (accountKey) => {
@@ -127,6 +143,10 @@ const ActivationStatusDXPCloud = ({
 						payload: items,
 						type: actionTypes.UPDATE_SUBSCRIPTION_GROUPS,
 					});
+
+					setSubscriptionGroupActivationStatus(
+						STATUS_TAG_TYPE_NAMES.inProgress
+					);
 				}
 			};
 
@@ -153,18 +173,39 @@ const ActivationStatusDXPCloud = ({
 			title: 'Activation Status',
 		},
 		[STATUS_TAG_TYPE_NAMES.inProgress]: {
+			dropdownIcon: userAccount.isStaff && (
+				<ButtonDropDown
+					align={Align.BottomRight}
+					customDropDownButton={
+						<ButtonWithIcon
+							displayType="null"
+							small
+							symbol="caret-bottom"
+						/>
+					}
+					items={[
+						{
+							label: 'Set to Active',
+							onClick: () => setVisibleStatus(true),
+						},
+					]}
+					menuElementAttrs={{
+						className: 'p-0 cp-activation-key-icon rounded-xs',
+					}}
+				/>
+			),
 			id: STATUS_TAG_TYPES.inProgress,
 			subtitle:
 				'Your DXP Cloud environments are being set up and will be available soon.',
 			title: 'Activation Status',
 		},
 		[STATUS_TAG_TYPE_NAMES.notActivated]: {
-			buttonLink: userAccount.isAdmin && (
+			buttonLink: (userAccount.isAdmin || userAccount.isStaff) && (
 				<Button
 					appendIcon="order-arrow-right"
 					className="btn btn-link font-weight-semi-bold p-0 text-brand-primary text-paragraph"
 					displayType="link"
-					onClick={() => setVisible(true)}
+					onClick={() => setVisibleSetup(true)}
 				>
 					Finish Activation
 				</Button>
@@ -193,10 +234,10 @@ const ActivationStatusDXPCloud = ({
 			});
 
 			if (data) {
-				const ActivationStatusDateRange = getActivationStatusDateRange(
+				const activationStatusDateRange = getActivationStatusDateRange(
 					data.c?.accountSubscriptionTerms?.items
 				);
-				setActivationStatusDate(ActivationStatusDateRange);
+				setActivationStatusDate(activationStatusDateRange);
 			}
 		};
 
@@ -205,12 +246,12 @@ const ActivationStatusDXPCloud = ({
 
 	return (
 		<>
-			{visible && (
+			{visibleSetup && (
 				<SetupDXPCloudModal
-					{...modalProps}
-					onClose={onCloseModal}
+					{...setupModalProps}
+					onClose={onCloseSetupModal}
 					project={project}
-					setVisibleModal={setVisible}
+					setVisibleModal={visibleSetup}
 					subscriptionGroupId={
 						subscriptionGroupDXPCloud.accountSubscriptionGroupId
 					}
@@ -225,6 +266,30 @@ const ActivationStatusDXPCloud = ({
 					subscriptionGroupActivationStatus
 				}
 			/>
+			{visibleStatus && (
+				<ModalDXPCActivationStatus
+					{...activationStatusModalProps}
+					accountKey={project.accountKey}
+					projectID={projectID}
+					projectIdValue={projectIdValue}
+					setHasFinishedUpdate={setHasFinishedUpdate}
+					setProjectIdValue={setProjectIdValue}
+					setSubscriptionGroupActivationStatus={
+						setSubscriptionGroupActivationStatus
+					}
+				/>
+			)}
+			{hasFinishedUpdate && (
+				<ClayAlert.ToastContainer>
+					<ClayAlert
+						autoClose={AUTO_CLOSE_ALERT_TIME.success}
+						displayType="success"
+						onClose={() => setHasFinishedUpdate(false)}
+					>
+						{ALERT_UPDATE_DXP_CLOUD_STATUS.success}
+					</ClayAlert>
+				</ClayAlert.ToastContainer>
+			)}
 		</>
 	);
 };

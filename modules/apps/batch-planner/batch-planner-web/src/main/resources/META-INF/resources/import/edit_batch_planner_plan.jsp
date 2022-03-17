@@ -62,6 +62,18 @@ EditBatchPlannerPlanDisplayContext editBatchPlannerPlanDisplayContext = (EditBat
 								/>
 							</div>
 
+							<clay:alert
+								displayType="info"
+								title="download-a-sample-file-for-this-entity"
+							>
+								<clay:link
+									cssClass="link-primary single-link"
+									disabled="<%= true %>"
+									href="#"
+									label="download"
+								/>
+							</clay:alert>
+
 							<div class="mt-2">
 								<clay:checkbox
 									checked="<%= false %>"
@@ -86,6 +98,15 @@ EditBatchPlannerPlanDisplayContext editBatchPlannerPlanDisplayContext = (EditBat
 									disabled="<%= true %>"
 									label='<%= LanguageUtil.get(request, "ignore-blank-field-values-during-import") %>'
 									name="headerCheckbox"
+								/>
+							</div>
+
+							<div class="mt-2">
+								<clay:checkbox
+									checked="<%= true %>"
+									id='<%= liferayPortletResponse.getNamespace() + "onErrorFail" %>'
+									label='<%= LanguageUtil.get(request, "stop-the-import-on-error") %>'
+									name='<%= liferayPortletResponse.getNamespace() + "onErrorFail" %>'
 								/>
 							</div>
 						</liferay-frontend:edit-form-body>

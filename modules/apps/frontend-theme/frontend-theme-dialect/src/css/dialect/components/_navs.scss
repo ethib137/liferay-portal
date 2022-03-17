@@ -1,0 +1,83 @@
+.nav-underline {
+	@include clay-css($nav-underline);
+
+	.nav-link {
+		@include clay-link($nav-underline-link);
+	}
+}
+
+.nav-underline-vertical {
+	@include clay-css($nav-underline-vertical);
+
+	.nav-link {
+		@include clay-link($nav-underline-link-vertical);
+	}
+}
+
+.nav-underline-active-bar-top {
+	@include clay-css($nav-underline-active-bar-top);
+
+	.nav-link {
+		@include clay-link($nav-underline-link-active-bar-top);
+	}
+}
+
+.nav-secondary {
+	@include clay-css($nav-secondary);
+
+	.nav-link {
+		@include clay-link($nav-secondary-link);
+	}
+}
+
+.nav-secondary-vertical {
+	@include clay-css($nav-secondary-vertical);
+
+	.nav-link {
+		@include clay-link($nav-secondary-link-vertical);
+	}
+}
+
+.nav-secondary-active-bar-top {
+	@include clay-css($nav-secondary-active-bar-top);
+
+	.nav-link {
+		@include clay-link($nav-secondary-link-active-bar-top);
+	}
+}
+
+.nav-tertiary {
+	@include clay-css($nav-tertiary);
+
+	.nav-link {
+		@include clay-link($nav-tertiary-link);
+	}
+}
+
+.nav-tertiary-vertical {
+	@include clay-css($nav-tertiary-vertical);
+
+	.nav-link {
+		@include clay-link($nav-tertiary-link-vertical);
+	}
+}
+
+.nav-tertiary-link-active-bar-top {
+	@include clay-css($nav-tertiary-link-active-bar-top);
+}
+
+.nav-tertiary-active-bar-top {
+	@include clay-css($nav-tertiary-active-bar-top);
+
+	.nav-link {
+		@include clay-link($nav-tertiary-link-active-bar-top);
+	}
+}
+
+.nav-segment {
+	@include clay-css($nav-segment);
+
+	.nav-link {
+		@include clay-link($nav-segment-link);
+	}
+}

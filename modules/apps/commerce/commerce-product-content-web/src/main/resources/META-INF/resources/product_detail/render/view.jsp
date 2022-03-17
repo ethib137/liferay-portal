@@ -74,6 +74,26 @@ long cpDefinitionId = cpCatalogEntry.getCPDefinitionId();
 				</c:if>
 
 				<%
+				Date discontinuedDate = cpSku.getDiscontinuedDate();
+				%>
+
+				<c:if test="<%= discontinuedDate != null %>">
+
+					<%
+					Format format = FastDateFormatFactoryUtil.getSimpleDateFormat("MMMMM dd, yyyy", locale, timeZone);
+					%>
+
+					<p class="my-2">
+						<span class="font-weight-semi-bold">
+							<%= LanguageUtil.get(request, "end-of-life") %>
+						</span>
+						<span>
+							<%= format.format(discontinuedDate) %>
+						</span>
+					</p>
+				</c:if>
+
+				<%
 				String hideCssClass = StringPool.BLANK;
 
 				if (hasReplacement) {

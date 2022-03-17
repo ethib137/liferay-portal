@@ -18,11 +18,14 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalServiceUtil;
+import com.liferay.layout.responsive.ViewportSize;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
+import com.liferay.layout.util.structure.ColumnLayoutStructureItem;
 import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
+import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
@@ -40,6 +43,7 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.props.test.util.PropsTemporarySwapper;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -185,6 +189,112 @@ public class AddItemMVCActionCommandTest {
 			layoutStructureItem instanceof ContainerStyledLayoutStructureItem);
 	}
 
+	@Test
+	public void testAddItemToLayoutDataItemTypeRowMobileLandscapeConfig()
+		throws Exception {
+
+		try (PropsTemporarySwapper propsTemporarySwapper =
+				new PropsTemporarySwapper("feature.flag.LPS-119551", "false")) {
+
+			_assertMobileLandscapeConfig(null, null);
+		}
+
+		try (PropsTemporarySwapper propsTemporarySwapper =
+				new PropsTemporarySwapper("feature.flag.LPS-119551", "true")) {
+
+			_assertMobileLandscapeConfig(1, 12);
+		}
+	}
+
+	private void _assertMobileLandscapeConfig(
+			Integer expectedModulesPerRow,
+			Integer expectedColumnMobileLandscapeSize)
+		throws Exception {
+
+		MockLiferayPortletActionRequest mockLiferayPortletActionRequest =
+			_getMockLiferayPortletActionRequest();
+
+		mockLiferayPortletActionRequest.addParameter(
+			"itemType", LayoutDataItemTypeConstants.TYPE_ROW);
+		mockLiferayPortletActionRequest.addParameter(
+			"parentItemId", _layoutStructure.getMainItemId());
+		mockLiferayPortletActionRequest.addParameter("position", "0");
+
+		JSONObject jsonObject = ReflectionTestUtil.invoke(
+			_mvcActionCommand, "_addItemToLayoutData",
+			new Class<?>[] {ActionRequest.class},
+			mockLiferayPortletActionRequest);
+
+		JSONObject layoutDataJSONObject = jsonObject.getJSONObject(
+			"layoutData");
+
+		LayoutStructure layoutStructure = LayoutStructure.of(
+			layoutDataJSONObject.toString());
+
+		LayoutStructureItem rootLayoutStructureItem =
+			layoutStructure.getLayoutStructureItem(
+				layoutStructure.getMainItemId());
+
+		List<String> childrenItemIds =
+			rootLayoutStructureItem.getChildrenItemIds();
+
+		String itemId = childrenItemIds.get(0);
+
+		LayoutStructureItem layoutStructureItem =
+			layoutStructure.getLayoutStructureItem(itemId);
+
+		Assert.assertEquals(
+			_layoutStructure.getMainItemId(),
+			layoutStructureItem.getParentItemId());
+		Assert.assertEquals(
+			LayoutDataItemTypeConstants.TYPE_ROW,
+			layoutStructureItem.getItemType());
+		Assert.assertTrue(
+			layoutStructureItem instanceof RowStyledLayoutStructureItem);
+
+		RowStyledLayoutStructureItem rowStyledLayoutStructureItem =
+			(RowStyledLayoutStructureItem)layoutStructureItem;
+
+		JSONObject itemConfigJSONObject =
+			rowStyledLayoutStructureItem.getItemConfigJSONObject();
+
+		JSONObject mobileLandscapeConfigJSONObject =
+			itemConfigJSONObject.getJSONObject(
+				ViewportSize.MOBILE_LANDSCAPE.getViewportSizeId());
+
+		Assert.assertNotNull(mobileLandscapeConfigJSONObject);
+		Assert.assertEquals(
+			expectedModulesPerRow,
+			mobileLandscapeConfigJSONObject.get("modulesPerRow"));
+
+		List<String> columnsItemIds =
+			rowStyledLayoutStructureItem.getChildrenItemIds();
+
+		Assert.assertEquals(
+			columnsItemIds.toString(), _DEFAULT_ROW_COLUMNS,
+			columnsItemIds.size());
+
+		for (int i = 0; i < _DEFAULT_ROW_COLUMNS; i++) {
+			String columnItemId = columnsItemIds.get(i);
+
+			ColumnLayoutStructureItem columnLayoutStructureItem =
+				(ColumnLayoutStructureItem)
+					layoutStructure.getLayoutStructureItem(columnItemId);
+
+			itemConfigJSONObject =
+				columnLayoutStructureItem.getItemConfigJSONObject();
+
+			mobileLandscapeConfigJSONObject =
+				itemConfigJSONObject.getJSONObject(
+					ViewportSize.MOBILE_LANDSCAPE.getViewportSizeId());
+
+			Assert.assertNotNull(mobileLandscapeConfigJSONObject);
+			Assert.assertEquals(
+				expectedColumnMobileLandscapeSize,
+				mobileLandscapeConfigJSONObject.get("size"));
+		}
+	}
+
 	private MockLiferayPortletActionRequest
 			_getMockLiferayPortletActionRequest()
 		throws Exception {
@@ -216,6 +326,8 @@ public class AddItemMVCActionCommandTest {
 
 		return themeDisplay;
 	}
+
+	private static final int _DEFAULT_ROW_COLUMNS = 3;
 
 	private Company _company;
 

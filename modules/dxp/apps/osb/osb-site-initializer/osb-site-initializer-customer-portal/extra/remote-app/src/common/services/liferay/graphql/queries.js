@@ -32,6 +32,27 @@ export const getDXPCloudPageInfo = gql`
 	}
 `;
 
+export const getAnalyticsCloudPageInfo = gql`
+	query getAnalyticsCloudPageInfo($accountSubscriptionsFilter: String) {
+		c {
+			accountSubscriptions(filter: $accountSubscriptionsFilter) {
+				items {
+					accountKey
+					hasDisasterDataCenterRegion
+					name
+				}
+			}
+			analyticsCloudDataCenterLocation {
+				items {
+					analyticsCloudDataCenterLocationId
+					name
+					value
+				}
+			}
+		}
+	}
+`;
+
 export const getAccountSubscriptionsTerms = gql`
 	query getAccountSubscriptionsTerms(
 		$filter: String
@@ -161,11 +182,28 @@ export const addDXPCloudEnvironment = gql`
 	}
 `;
 
+export const updateDXPCloudEnvironment = gql`
+	mutation updateDXPCloudProjectId(
+		$dxpCloudEnvironmentId: Long!
+		$DXPCloudEnvironment: InputC_DXPCloudEnvironment!
+	) {
+		c {
+			updateDXPCloudEnvironment(
+				dxpCloudEnvironmentId: $dxpCloudEnvironmentId
+				DXPCloudEnvironment: $DXPCloudEnvironment
+			) {
+				dxpCloudEnvironmentId
+			}
+		}
+	}
+`;
+
 export const getDXPCloudEnvironment = gql`
 	query getDXPCloudEnvironment($scopeKey: String, $filter: String) {
 		c {
 			dXPCloudEnvironments(filter: $filter, scopeKey: $scopeKey) {
 				items {
+					dxpCloudEnvironmentId
 					projectId
 				}
 			}

@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -31,8 +32,12 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.ccr.CrossClusterReplicationHelper;
+import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch7.internal.index.IndexFactory;
+import com.liferay.portal.search.engine.ConnectionInformation;
+import com.liferay.portal.search.engine.NodeInformation;
+import com.liferay.portal.search.engine.SearchEngineInformation;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.cluster.ClusterHealthStatus;
 import com.liferay.portal.search.engine.adapter.cluster.HealthClusterRequest;
@@ -256,6 +261,8 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
+		_checkNodeVersions();
+
 		setVendor(MapUtil.getString(properties, "search.engine.impl"));
 
 		if (StartupHelperUtil.isDBNew()) {
@@ -287,6 +294,13 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		_crossClusterReplicationHelper = crossClusterReplicationHelper;
 	}
 
+	@Reference(unbind = "-")
+	protected void setElasticsearchConfigurationWrapper(
+		ElasticsearchConfigurationWrapper elasticsearchConfigurationWrapper) {
+
+		_elasticsearchConfigurationWrapper = elasticsearchConfigurationWrapper;
+	}
+
 	@Reference
 	protected void setElasticsearchConnectionManager(
 		ElasticsearchConnectionManager elasticsearchConnectionManager) {
@@ -309,6 +323,53 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		SearchEngineAdapter searchEngineAdapter) {
 
 		_searchEngineAdapter = searchEngineAdapter;
+	}
+
+	@Reference(unbind = "-")
+	protected void setSearchEngineInformation(
+		SearchEngineInformation searchEngineInformation) {
+
+		_searchEngineInformation = searchEngineInformation;
+	}
+
+	private void _checkNodeVersions() {
+		String minimumVersion =
+			_elasticsearchConfigurationWrapper.minimumRequiredNodeVersion();
+
+		if (minimumVersion.equals("0.0.0")) {
+			String clientVersion =
+				_searchEngineInformation.getClientVersionString();
+
+			minimumVersion = clientVersion.substring(
+				0, clientVersion.lastIndexOf("."));
+		}
+
+		MinimumVersionRequirementChecker minimumVersionRequirementChecker =
+			new MinimumVersionRequirementChecker(minimumVersion);
+
+		List<ConnectionInformation> connectionInformationList =
+			_searchEngineInformation.getConnectionInformationList();
+
+		for (ConnectionInformation connectionInformation :
+				connectionInformationList) {
+
+			List<NodeInformation> nodeInformationList =
+				connectionInformation.getNodeInformationList();
+
+			for (NodeInformation nodeInformation : nodeInformationList) {
+				if (!minimumVersionRequirementChecker.meetsRequirement(
+						nodeInformation.getVersion())) {
+
+					_log.error(
+						StringBundler.concat(
+							"Elasticsearch node ", nodeInformation.getName(),
+							" does not meet the minimum version requirement ",
+							"of ", minimumVersion));
+
+					System.exit(1);
+				}
+			}
+		}
 	}
 
 	private boolean _hasBackupRepository() {
@@ -395,9 +456,12 @@ public class ElasticsearchSearchEngine extends BaseSearchEngine {
 		ElasticsearchSearchEngine.class);
 
 	private CrossClusterReplicationHelper _crossClusterReplicationHelper;
+	private volatile ElasticsearchConfigurationWrapper
+		_elasticsearchConfigurationWrapper;
 	private ElasticsearchConnectionManager _elasticsearchConnectionManager;
 	private IndexFactory _indexFactory;
 	private IndexNameBuilder _indexNameBuilder;
 	private SearchEngineAdapter _searchEngineAdapter;
+	private SearchEngineInformation _searchEngineInformation;
 
 }
