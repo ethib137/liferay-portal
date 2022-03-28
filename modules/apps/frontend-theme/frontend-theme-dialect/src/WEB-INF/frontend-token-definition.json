@@ -7026,19 +7026,7 @@
 							],
 							"name": "tableBorderColor",
 							"type": "String"
-						},
-						{
-							"defaultValue": "var(--border-radius)",
-							"label": "table-border-radius",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "table-border-radius"
-								}
-							],
-							"name": "tableBorderRadius",
-							"type": "String"
-						},
+						},						
 						{
 							"defaultValue": "0.0625rem",
 							"label": "table-border-width",
@@ -7100,6 +7088,18 @@
 								}
 							],
 							"name": "tableHeaderColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "600",
+							"label": "table-header-font-weight",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "table-header-font-weight"
+								}
+							],
+							"name": "tableHeaderFontWeight",
 							"type": "String"
 						},
 						{
@@ -7753,10 +7753,10 @@
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "table-spaced-row-border-radius"
+									"value": "table-spaced-sm-row-border-radius"
 								}
 							],
-							"name": "tableSpacedRowBorderRadius",
+							"name": "tableSpacedSmRowBorderRadius",
 							"type": "String"
 						},
 						{

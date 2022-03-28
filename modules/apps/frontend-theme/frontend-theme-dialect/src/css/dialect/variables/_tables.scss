@@ -1,40 +1,8 @@
-$table-cell-lg: (
-    min-height: var(--table-lg-cell-min-height),
-    padding: var(--table-lg-cell-padding-y) var(--table-lg-cell-padding-x),
-    font-size: var(--table-lg-font-size), 
-    font-weight: var(--table-lg-font-weight),
-    line-height: var(--table-lg-line-height),
-);
-
-$table-header-lg:(
-    min-height: var(--table-lg-header-cell-min-height),
-    padding: var(--table-lg-header-cell-padding-y) var(--table-lg-header-cell-padding-x),
-    font-size: var(--table-lg-header-font-size), 
-    font-weight: var(--table-lg-header-font-weight),
-    line-height: var(--table-lg-header-line-height),
-
-);
-
-$table-cell-sm: (
-    min-height: var(--table-sm-cell-min-height),
-    padding: var(--table-sm-cell-padding-y) var(--table-sm-cell-padding-x),
-    font-size: var(--table-sm-font-size), 
-    font-weight: var(--table-sm-font-weight),
-    line-height: var(--table-sm-line-height),
-);
-
-$table-header-sm:(
-    min-height: var(--table-sm-header-cell-min-height),
-    padding: var(--table-sm-header-cell-padding-y) var(--table-sm-header-cell-padding-x),
-    font-size: var(--table-sm-header-font-size), 
-    font-weight: var(--table-sm-header-font-weight),
-    line-height: var(--table-sm-header-line-height),
-);
-
 $table-spaced: (
     border: 0,
     border-spacing: 0 0.5rem,
     border-collapse: separate,
+    box-shadow: var(--table-spaced-box-shadow)
 );
     
 $table-head-cell-spaced: (
@@ -46,7 +14,7 @@ $table-bordeless-spaced: (
 );
 
 $table-header-first-cell-spaced: (
-    border-top-left-radius: var(--table-spaced-row-border-radius),
+    border-top-left-radius: var(--table-spaced-sm-row-border-radius),
 );
 
 $table-header-last-cell-spaced: (
@@ -72,7 +40,7 @@ $table-list-title: (
     line-height: var(--table-title-line-height,)
 );
 
-$table-list-border-radius: var(--table-border-radius);
+$table-list-border-radius: var(--table-row-border-radius);
 
 $c-table-list: (
     color: var(--table-color),
@@ -92,11 +60,11 @@ $table-list-head-vertical-alignment: var(--table-header-vertical-align);
 
 $table-head-cell: (
     color: var(--table-header-color),
-    padding: var(--table-header-cell-padding-y) var(--table-header-cell-padding-x),
     line-height: var(--table-header-line-height),
+    padding: var(--table-header-cell-padding-y) var(--table-header-cell-padding-x),
 );
 
-$table-list-accent-bg: var(--table-striped-row-background-color);
+$table-list-accent-bg: var(--table-row-background-color-alternate);
 
 
 $table-list-hover-bg: var(--table-row-background-color-hover);
@@ -109,39 +77,35 @@ $c-table-list-cell: (
 );
 
 $table-header-first-cell: (
-    border-top-left-radius: calc(var(--table-border-radius) - var(--table-border-width)),
+    border-top-left-radius: calc(var(--table-row-border-radius) - var(--table-border-width)),
 );
 
 $table-header-last-cell: (
-    border-top-right-radius: calc(var(--table-border-radius) - var(--table-border-width)),
+    border-top-right-radius: calc(var(--table-row-border-radius) - var(--table-border-width)),
 );
 
 $table-first-cell: (
-    border-bottom-left-radius: calc(var(--table-border-radius) - var(--table-border-width)),
+    border-bottom-left-radius: calc(var(--table-row-border-radius) - var(--table-border-width)),
 );
 
 $table-last-cell: (
-    border-bottom-right-radius: calc(var(--table-border-radius) - var(--table-border-width)),
+    border-bottom-right-radius: calc(var(--table-row-border-radius) - var(--table-border-width)),
 );
 
 $table-cell: (
-    vertical-align: var(--table-row-vertical-align),
     background-color: var(--table-row-background-color),
+    padding: var(--table-cell-padding-y) var(--table-cell-padding-x),
 );
 
 $table-title-link: (
-    color: var(--table-link-color),
-    text-decoration: var(--table-link-text-decoration),
+    color: var(--table-title-link-color),
     cursor: pointer,
+    text-decoration: var(--table-title-link-text-decoration),
 
     hover: (
-        color: var(--table-link-color-hover),
-        text-decoration: var(--table-link-text-decoration-hover), 
+        color: var(--table-title-link-color-hover),
+        text-decoration: var(--table-title-link-text-decoration-hover), 
     ),
-);
-
-$table-padding: (
-    padding: var(--table-padding-y) var(--table-padding-x),
 );
 
 $table-active:  (

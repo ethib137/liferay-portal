@@ -1,17 +1,46 @@
-.table-lg > tbody > tr > td {
-	@include clay-css($table-cell-lg);
+.table-list.table-lg {
+    --table-cell-padding-y: var(--table-lg-cell-padding-y);
+    --table-cell-padding-x: var(--table-lg-cell-padding-x);
+    --table-cell-min-height: var(--table-lg-cell-min-height);
+    --table-font-size: var(--table-lg-header-font-size);
+    --table-font-weight: var(--table-lg-font-weight);
+    --table-line-height: var(--table-lg-line-height);
 }
 
-.table-lg > thead > tr > .table-header-cell {
-	@include clay-css($table-header-lg);
+.table-list.table-sm {
+    --table-cell-padding-y: var(--table-sm-cell-padding-y);
+    --table-cell-padding-x: var(--table-sm-cell-padding-x);
+    --table-cell-min-height: var(--table-sm-cell-min-height);
+    --table-font-size: var(--table-sm-header-font-size);
+    --table-font-weight: var(--table-sm-font-weight);
+    --table-line-height: var(--table-sm-line-height);
 }
 
-.table-sm > tbody > tr > td {
-    @include clay-css($table-cell-sm);
+.table-list.table-lg th {
+    --table-header-cell-padding-y: var(--table-lg-header-cell-padding-y);
+    --table-header-cell-padding-x: var(--table-lg-header-cell-padding-x);
+    --table-header-cell-min-height: var(--table-lg-header-cell-min-height);
+    --table-header-font-size: var(--table-lg-header-header-font-size);
+    --table-header-font-weight: var(--table-lg-header-font-weight);
+    --table-header-line-height: var(--table-lg-header-line-height);
 }
 
-.table-sm > thead > tr > .table-header-cell {
-    @include clay-css($table-header-sm);
+.table-list.table-sm th {
+    --table-header-cell-padding-y: var(--table-sm-header-cell-padding-y);
+    --table-header-cell-padding-x: var(--table-sm-header-cell-padding-x);
+    --table-header-cell-min-height: var(--table-sm-header-cell-min-height);
+    --table-header-font-size: var(--table-sm-header-header-font-size);
+    --table-header-font-weight: var(--table-sm-header-font-weight);
+    --table-header-line-height: var(--table-sm-header-line-height);
+}
+
+th {
+    --table-cell-padding-y: var(--table-header-cell-padding-y);
+    --table-cell-padding-x: var(--table-header-cell-padding-x);
+    --table-cell-min-height: var(--table-header-cell-min-height);
+    --table-font-size: var(--table-header-font-size); 
+    --table-font-weight: var(--table-header-font-weight);
+    --table-line-height: var(--table-header-line-height);
 }
 
 .table-spaced > tbody > tr > td.cell-spaced,
@@ -50,11 +79,11 @@
         @include clay-css($table-active)
     }
 
-    thead > tr > th {
+    thead tr th {
         @include clay-css($table-head-cell)
     }
 
-    tbody > tr > td {
+    tbody tr td {
         @include clay-css($table-cell)
     }
 
@@ -77,8 +106,4 @@
 
 .table-list-title a {
     @include clay-link($table-title-link);
-}
-
-.table-list:not(.table-sm, .table-lg) tbody tr td {
-    @include clay-css($table-padding);
 }
