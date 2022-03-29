@@ -65,6 +65,7 @@ const TABS = [
 	{
 		content: <TabsGuide />,
 		hash: '#tabs',
+		label: Liferay.Language.get('tabs'),
 	},
 ];
 

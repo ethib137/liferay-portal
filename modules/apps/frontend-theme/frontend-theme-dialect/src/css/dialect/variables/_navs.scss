@@ -1,20 +1,55 @@
+// nav-base-link
+
+$nav-base-link: (
+	after: (
+		bottom: 0,
+		content: '',
+		display: block,
+		position: absolute,
+		left: 0,
+		right: 0,
+		width: auto,
+	),
+);
+
 // Primary tab
 
-$nav-underline: ();
-
 $nav-underline-link: (
+	active-class: (
+		background-color: var(--tab-primary-item-background-color-active),
+		border-color: var(--tab-primary-item-border-color-active),
+		box-shadow: var(--tab-primary-item-box-shadow-active),
+		color: var(--tab-primary-item-color-active),
+		font-weight: var(--tab-primary-item-font-weight-active),
+		after: (
+			background-color: var(--tab-primary-item-active-bar-color-active),
+			border-radius: var(--tab-primary-item-active-bar-border-radius),
+			height: var(--tab-primary-item-active-bar-thickness),
+			width: var(--tab-primary-horizontal-item-active-bar-width),
+		),
+		inline-item: (
+			color: var(--tab-primary-item-icon-color-active),
+		),
+	),
 	background-color: var(--tab-primary-item-background-color),
 	border-color: var(--tab-primary-item-border-color),
 	border-radius: var(--tab-primary-item-border-radius),
 	border-style: solid,
 	border-width: var(--tab-primary-horizontal-item-border-width),
-	box-shadow: none,
 	color: var(--tab-primary-item-color),
+	disabled: (
+		background-color: var(--tab-primary-item-background-color-disabled),
+		color: var(--tab-primary-item-color-disabled),
+		font-weight: var(--tab-secondary-item-font-weight),
+		after: (
+			content: none,
+		),
+		inline-item: (
+			color: var(--tab-primary-item-icon-color-disabled),
+		),
+	),
 	font-size: var(--tab-primary-item-font-size),
 	font-weight: var(--tab-primary-item-font-weight),
-	line-height: var(--tab-primary-item-line-height),
-	padding: var(--tab-primary-horizontal-item-padding-y)
-		var(--tab-primary-horizontal-item-padding-x),
 	hover: (
 		background-color: var(--tab-primary-item-background-color-hover),
 		border-color: var(--tab-primary-item-border-color-hover),
@@ -32,33 +67,7 @@ $nav-underline-link: (
 			color: var(--tab-primary-item-icon-color-hover),
 		),
 	),
-	active-class: (
-		background-color: var(--tab-primary-item-background-color-active),
-		border-color: var(--tab-primary-item-border-color-active),
-		box-shadow: var(--tab-primary-item-box-shadow-active),
-		color: var(--tab-primary-item-color-active),
-		font-weight: var(--tab-primary-item-font-weight-active),
-		after: (
-			background-color: var(--tab-primary-item-active-bar-color-active),
-			border-radius: var(--tab-primary-item-active-bar-border-radius),
-			height: var(--tab-primary-item-active-bar-thickness),
-			width: var(--tab-primary-horizontal-item-active-bar-width),
-		),
-		inline-item: (
-			color: var(--tab-primary-item-icon-color-active),
-		),
-	),
-	disabled: (
-		background-color: var(--tab-primary-item-background-color-disabled),
-		color: var(--tab-primary-item-color-disabled),
-		font-weight: var(--tab-secondary-item-font-weight),
-		after: (
-			content: none,
-		),
-		inline-item: (
-			color: var(--tab-primary-item-icon-color-disabled),
-		),
-	),
+	line-height: var(--tab-primary-item-line-height),
 	inline-item: (
 		color: var(--tab-primary-item-icon-color),
 		font-size: var(--tab-primary-item-icon-font-size),
@@ -70,27 +79,28 @@ $nav-underline-link: (
 	inline-item-before: (
 		margin-right: var(--tab-primary-item-inline-item-spacer-x),
 	),
+	padding: var(--tab-primary-horizontal-item-padding-y)
+		var(--tab-primary-horizontal-item-padding-x),
 );
 
-$nav-underline-vertical: (
+$nav-vertical: (
 	flex-direction: column,
-	width: fit-content,
 );
 
 $nav-underline-link-vertical: (
-	border-width: var(--tab-primary-vertical-item-border-width),
-	hover: (
+	active-class: (
 		after: (
-			background-color: var(--tab-primary-item-active-bar-color-hover),
+			background-color: var(--tab-primary-item-active-bar-color-active),
 			border-radius: var(--tab-primary-item-active-bar-border-radius),
 			top: 0,
 			height: var(--tab-primary-vertical-item-active-bar-height),
 			width: var(--tab-primary-item-active-bar-thickness),
 		),
 	),
-	active-class: (
+	border-width: var(--tab-primary-vertical-item-border-width),
+	hover: (
 		after: (
-			background-color: var(--tab-primary-item-active-bar-color-active),
+			background-color: var(--tab-primary-item-active-bar-color-hover),
 			border-radius: var(--tab-primary-item-active-bar-border-radius),
 			top: 0,
 			height: var(--tab-primary-vertical-item-active-bar-height),
@@ -102,15 +112,15 @@ $nav-underline-link-vertical: (
 $nav-underline-active-bar-top: ();
 
 $nav-underline-link-active-bar-top: (
-	border-width: 0.063rem 0 0,
-	hover: (
+	active-class: (
 		after: (
 			top: 0,
 			height: var(--tab-primary-item-active-bar-thickness),
 			width: var(--tab-primary-horizontal-item-active-bar-width),
 		),
 	),
-	active-class: (
+	border-width: 0.063rem 0 0,
+	hover: (
 		after: (
 			top: 0,
 			height: var(--tab-primary-item-active-bar-thickness),
@@ -125,82 +135,86 @@ $nav-secondary: (
 	border-radius: var(--tab-secondary-item-border-radius),
 );
 
-$nav-secondary-link: (
-	background-color: var(--tab-secondary-item-background-color),
-	border-color: var(--tab-secondary-item-border-color),
-	border-radius: var(--tab-secondary-item-border-radius),
-	border-style: solid,
-	border-width: var(--tab-secondary-horizontal-item-border-width),
-	box-shadow: none,
-	color: var(--tab-secondary-item-color),
-	font-size: var(--tab-secondary-item-font-size),
-	font-weight: var(--tab-secondary-item-font-weight),
-	line-height: var(--tab-secondary-item-line-height),
-	padding: var(--tab-secondary-horizontal-item-padding-y)
-		var(--tab-secondary-horizontal-item-padding-x),
-	after: (
-		content: none,
-	),
-	hover: (
-		background-color: var(--tab-secondary-item-background-color-hover),
-		border-color: var(--tab-secondary-item-border-color-hover),
-		color: var(--tab-secondary-item-color-hover),
-		box-shadow: var(--tab-secondary-item-box-shadow-hover),
-		font-weight: var(--tab-secondary-item-font-weight-active),
-		after: (
-			background-color: var(--tab-secondary-item-active-bar-color-hover),
-			border-radius: var(--tab-secondary-item-active-bar-border-radius),
-			content: '',
-			height: var(--tab-secondary-item-active-bar-thickness),
-			width: var(--tab-secondary-horizontal-item-active-bar-width),
+$nav-secondary-link: map-deep-merge(
+	(
+		active-class: (
+			background-color: var(--tab-secondary-item-background-color-active),
+			border-color: var(--tab-secondary-item-border-color-active),
+			box-shadow: var(--tab-secondary-item-box-shadow-active),
+			color: var(--tab-secondary-item-color-active),
+			font-weight: var(--tab-secondary-item-font-weight-active),
+			after: (
+				background-color:
+					var(--tab-secondary-item-active-bar-color-active),
+				border-radius:
+					var(--tab-secondary-item-active-bar-border-radius),
+				height: var(--tab-secondary-item-active-bar-thickness),
+				width: var(--tab-secondary-horizontal-item-active-bar-width),
+			),
 		),
-	),
-	active-class: (
-		background-color: var(--tab-secondary-item-background-color-active),
-		border-color: var(--tab-secondary-item-border-color-active),
-		box-shadow: var(--tab-secondary-item-box-shadow-active),
-		color: var(--tab-secondary-item-color-active),
-		font-weight: var(--tab-secondary-item-font-weight-active),
-		after: (
-			background-color: var(--tab-secondary-item-active-bar-color-active),
-			border-radius: var(--tab-secondary-item-active-bar-border-radius),
-			height: var(--tab-secondary-item-active-bar-thickness),
-			width: var(--tab-secondary-horizontal-item-active-bar-width),
+		background-color: var(--tab-secondary-item-background-color),
+		border-color: var(--tab-secondary-item-border-color),
+		border-radius: var(--tab-secondary-item-border-radius),
+		border-style: solid,
+		border-width: var(--tab-secondary-horizontal-item-border-width),
+		color: var(--tab-secondary-item-color),
+		disabled: (
+			background-color:
+				var(--tab-secondary-item-background-color-disabled),
+			color: var(--tab-secondary-item-color-disabled),
+			font-weight: var(--tab-secondary-item-font-weight),
+			after: (
+				content: none,
+			),
+			inline-item: (
+				color: var(--tab-secondary-item-icon-color-disabled),
+			),
 		),
-	),
-	disabled: (
-		background-color: var(--tab-secondary-item-background-color-disabled),
-		color: var(--tab-secondary-item-color-disabled),
+		font-size: var(--tab-secondary-item-font-size),
 		font-weight: var(--tab-secondary-item-font-weight),
-		after: (
-			content: none,
+		hover: (
+			background-color: var(--tab-secondary-item-background-color-hover),
+			border-color: var(--tab-secondary-item-border-color-hover),
+			color: var(--tab-secondary-item-color-hover),
+			box-shadow: var(--tab-secondary-item-box-shadow-hover),
+			after: (
+				background-color:
+					var(--tab-secondary-item-active-bar-color-hover),
+				border-radius:
+					var(--tab-secondary-item-active-bar-border-radius),
+				content: '',
+				height: var(--tab-secondary-item-active-bar-thickness),
+				width: var(--tab-secondary-horizontal-item-active-bar-width),
+			),
 		),
 		inline-item: (
-			color: var(--tab-secondary-item-icon-color-disabled),
+			color: var(--tab-secondary-item-icon-color),
+			font-size: var(--tab-secondary-item-icon-font-size),
+			margin-y: var(--tab-secondary-item-inline-item-spacer-y),
 		),
+		inline-item-after: (
+			margin-left: var(--tab-secondary-item-inline-item-spacer-x),
+		),
+		inline-item-before: (
+			margin-right: var(--tab-secondary-item-inline-item-spacer-x),
+		),
+		line-height: var(--tab-secondary-item-line-height),
+		padding: var(--tab-secondary-horizontal-item-padding-y)
+			var(--tab-secondary-horizontal-item-padding-x),
 	),
-	inline-item: (
-		color: var(--tab-secondary-item-icon-color),
-		font-size: var(--tab-secondary-item-icon-font-size),
-		margin-y: var(--tab-secondary-item-inline-item-spacer-y),
-	),
-	inline-item-after: (
-		margin-left: var(--tab-secondary-item-inline-item-spacer-x),
-	),
-	inline-item-before: (
-		margin-right: var(--tab-secondary-item-inline-item-spacer-x),
-	),
+	$nav-base-link
 );
 
 $nav-secondary-link-vertical: (
-	hover: (
+	active-class: (
 		after: (
 			top: 0,
 			height: var(--tab-secondary-vertical-item-active-bar-heigth),
 			width: var(--tab-secondary-item-active-bar-thickness),
 		),
 	),
-	active-class: (
+	border-width: var(--tab-secondary-vertical-item-border-width),
+	hover: (
 		after: (
 			top: 0,
 			height: var(--tab-secondary-vertical-item-active-bar-heigth),
@@ -212,23 +226,18 @@ $nav-secondary-link-vertical: (
 $nav-secondary-active-bar-top: ();
 
 $nav-secondary-link-active-bar-top: (
-	hover: (
-		after: (
-			top: 0,
-			width: var(--tab-secondary-horizontal-item-active-bar-width),
-		),
-	),
 	active-class: (
 		after: (
 			top: 0,
 			width: var(--tab-secondary-horizontal-item-active-bar-width),
 		),
 	),
-);
-
-$nav-secondary-vertical: (
-	flex-direction: column,
-	width: fit-content,
+	hover: (
+		after: (
+			top: 0,
+			width: var(--tab-secondary-horizontal-item-active-bar-width),
+		),
+	),
 );
 
 // Tertiary tab
@@ -237,80 +246,84 @@ $nav-tertiary: (
 	width: fit-content,
 );
 
-$nav-tertiary-link: (
-	background-color: var(--tab-tertiary-item-background-color),
-	border-color: var(--tab-tertiary-item-border-color),
-	border-radius: var(--tab-tertiary-item-border-radius),
-	border-style: solid,
-	border-width: var(--tab-tertiary-horizontal-item-border-width),
-	color: var(--tab-tertiary-item-color),
-	font-size: var(--tab-tertiary-item-font-size),
-	font-weight: var(--tab-tertiary-item-font-weight),
-	line-height: var(--tab-tertiary-item-line-height),
-	padding: var(--tab-tertiary-horizontal-item-padding-y)
-		var(--tab-tertiary-horizontal-item-padding-x),
-	hover: (
-		background-color: var(--tab-tertiary-item-background-color-hover),
-		border-color: var(--tab-tertiary-item-border-color-hover),
-		color: var(--tab-tertiary-item-color-hover),
-		box-shadow: var(--tab-tertiary-item-box-shadow-hover),
-		font-weight: var(--tab-tertiary-item-font-weight-active),
-		after: (
-			background-color: var(--tab-tertiary-item-active-bar-color-hover),
-			border-radius: var(--tab-tertiary-item-active-bar-border-radius),
-			content: '',
-			height: var(--tab-tertiary-item-active-bar-thickness),
-			width: var(--tab-tertiary-horizontal-item-active-bar-width),
+$nav-tertiary-link: map-deep-merge(
+	(
+		active-class: (
+			background-color: var(--tab-tertiary-item-background-color-active),
+			border-color: var(--tab-tertiary-item-border-color-active),
+			box-shadow: var(--tab-tertiary-item-box-shadow-active),
+			color: var(--tab-tertiary-item-color-active),
+			font-weight: var(--tab-tertiary-item-font-weight-active),
+			z-index: 2,
+			after: (
+				background-color:
+					var(--tab-tertiary-item-active-bar-color-active),
+				border-radius: var(--tab-tertiary-item-active-bar-border-radius),
+				height: var(--tab-tertiary-item-active-bar-thickness),
+				width: var(--tab-tertiary-horizontal-item-active-bar-width),
+			),
 		),
-	),
-	active-class: (
-		background-color: var(--tab-tertiary-item-background-color-active),
-		border-color: var(--tab-tertiary-item-border-color-active),
-		box-shadow: var(--tab-tertiary-item-box-shadow-active),
-		color: var(--tab-tertiary-item-color-active),
-		font-weight: var(--tab-tertiary-item-font-weight-active),
-		z-index: 2,
-		after: (
-			background-color: var(--tab-tertiary-item-active-bar-color-active),
-			border-radius: var(--tab-tertiary-item-active-bar-border-radius),
-			height: var(--tab-tertiary-item-active-bar-thickness),
-			width: var(--tab-tertiary-horizontal-item-active-bar-width),
+		background-color: var(--tab-tertiary-item-background-color),
+		border-color: var(--tab-tertiary-item-border-color),
+		border-radius: var(--tab-tertiary-item-border-radius),
+		border-style: solid,
+		border-width: var(--tab-tertiary-horizontal-item-border-width),
+		color: var(--tab-tertiary-item-color),
+		disabled: (
+			background-color: var(--tab-tertiary-item-background-color-disabled),
+			color: var(--tab-tertiary-item-color-disabled),
+			font-weight: var(--tab-tertiary-item-font-weight),
+			after: (
+				content: none,
+			),
+			inline-item: (
+				color: var(--tab-tertiary-item-icon-color-disabled),
+			),
 		),
-	),
-	disabled: (
-		background-color: var(--tab-tertiary-item-background-color-disabled),
-		color: var(--tab-tertiary-item-color-disabled),
+		font-size: var(--tab-tertiary-item-font-size),
 		font-weight: var(--tab-tertiary-item-font-weight),
-		after: (
-			content: none,
+		hover: (
+			after: (
+				background-color:
+					var(--tab-tertiary-item-active-bar-color-hover),
+				border-radius: var(--tab-tertiary-item-active-bar-border-radius),
+				content: '',
+				height: var(--tab-tertiary-item-active-bar-thickness),
+				width: var(--tab-tertiary-horizontal-item-active-bar-width),
+			),
+			background-color: var(--tab-tertiary-item-background-color-hover),
+			border-color: var(--tab-tertiary-item-border-color-hover),
+			color: var(--tab-tertiary-item-color-hover),
+			box-shadow: var(--tab-tertiary-item-box-shadow-hover),
+			font-weight: var(--tab-tertiary-item-font-weight-active),
+			inline-item: (
+				color: var(--tab-tertiary-item-icon-color-hover),
+			),
 		),
 		inline-item: (
-			color: var(--tab-tertiary-item-icon-color-disabled),
+			color: var(--tab-tertiary-item-icon-color),
+			font-size: var(--tab-tertiary-item-icon-font-size),
+			margin-y: var(--tab-tertiary-item-inline-item-spacer-y),
+			active-class: (
+				color: var(--tab-tertiary-item-icon-color-active),
+			),
 		),
+		inline-item-after: (
+			margin-left: var(--tab-tertiary-item-inline-item-spacer-x),
+		),
+		inline-item-before: (
+			margin-right: var(--tab-tertiary-item-inline-item-spacer-x),
+		),
+		margin-top: 0.0625rem,
+		padding: var(--tab-tertiary-horizontal-item-padding-y)
+			var(--tab-tertiary-horizontal-item-padding-x),
+		line-height: var(--tab-tertiary-item-line-height),
+		z-index: 1,
 	),
-	inline-item: (
-		color: var(--tab-tertiary-item-icon-color),
-		font-size: var(--tab-tertiary-item-icon-font-size),
-		margin-y: var(--tab-tertiary-item-inline-item-spacer-y),
-	),
-	inline-item-after: (
-		margin-left: var(--tab-tertiary-item-inline-item-spacer-x),
-	),
-	inline-item-before: (
-		margin-right: var(--tab-tertiary-item-inline-item-spacer-x),
-	),
+	$nav-base-link
 );
 
 $nav-tertiary-link-vertical: (
-	hover: (
-		after: (
-			background-color: var(--tab-tertiary-item-active-bar-color-active),
-			border-radius: var(--tab-tertiary-item-active-bar-border-radius),
-			height: var(--tab-tertiary-vertical-item-active-bar-height),
-			top: 0,
-			width: var(--tab-tertiary-item-active-bar-thickness),
-		),
-	),
 	active-class: (
 		border-width: 0,
 		after: (
@@ -321,23 +334,28 @@ $nav-tertiary-link-vertical: (
 			width: var(--tab-tertiary-item-active-bar-thickness),
 		),
 	),
-);
-
-$nav-tertiary-vertical: (
-	flex-direction: column,
-	width: fit-content,
+	border-width: var(--tab-tertiray-vertical-item-border-width),
+	hover: (
+		after: (
+			background-color: var(--tab-tertiary-item-active-bar-color-active),
+			border-radius: var(--tab-tertiary-item-active-bar-border-radius),
+			height: var(--tab-tertiary-vertical-item-active-bar-height),
+			top: 0,
+			width: var(--tab-tert iary-item-active-bar-thickness),
+		),
+	),
 );
 
 $nav-tertiary-active-bar-top: ();
 
 $nav-tertiary-link-active-bar-top: (
-	border-width: 0.063rem 0 0,
-	hover: (
+	active-class: (
 		after: (
 			top: 0,
 		),
 	),
-	active-class: (
+	border-width: 0.063rem 0 0,
+	hover: (
 		after: (
 			top: 0,
 		),
@@ -357,47 +375,34 @@ $nav-segment: (
 );
 
 $nav-segment-link: (
-	background-color: var(--tab-segment-item-background-color),
-	border-color: var(--tab-segment-item-border-color),
-	border-radius: var(--tab-segment-item-border-radius),
-	border-width: var(--tab-segment-item-border-width),
-	box-shadow: none,
-	color: var(--tab-segment-item-color),
-	font-size: var(--tab-segment-item-font-size),
-	font-weight: var(--tab-segment-item-font-weight),
-	line-height: var(--tab-segment-item-line-height),
-	after: (
-		content: none,
-	),
-	hover: (
-		background-color: var(--tab-segment-item-background-color-hover),
-		border-color: var(--tab-segment-item-border-color-hover),
-		box-shadow: var(--tab-segment-item-box-shadow-hover),
-		color: var(--tab-segment-item-color-hover),
-		after: (
-			content: none,
-		),
-	),
 	active-class: (
 		background-color: var(--tab-segment-item-background-color-active),
 		border-color: var(--tab-segment-item-border-color-active),
 		box-shadow: var(--tab-segment-item-box-shadow-active),
 		color: var(--tab-segment-item-color-active),
 		font-weight: var(--tab-segment-item-font-weight-active),
-		after: (
-			content: none,
-		),
 	),
+	background-color: var(--tab-segment-item-background-color),
+	border-color: var(--tab-segment-item-border-color),
+	border-radius: var(--tab-segment-item-border-radius),
+	border-width: var(--tab-segment-item-border-width),
+	color: var(--tab-segment-item-color),
 	disabled: (
 		background-color: var(--tab-segment-item-background-color-disabled),
 		border-color: var(--tab-segment-item-border-color-disabled),
 		color: var(--tab-segment-item-color-disabled),
-		after: (
-			content: none,
-		),
 		inline-item: (
 			color: var(--tab-segment-item-icon-color-disabled),
 		),
+	),
+	font-size: var(--tab-segment-item-font-size),
+	font-weight: var(--tab-segment-item-font-weight),
+	line-height: var(--tab-segment-item-line-height),
+	hover: (
+		background-color: var(--tab-segment-item-background-color-hover),
+		border-color: var(--tab-segment-item-border-color-hover),
+		box-shadow: var(--tab-segment-item-box-shadow-hover),
+		color: var(--tab-segment-item-color-hover),
 	),
 	inline-item: (
 		color: var(--tab-segment-item-icon-color),

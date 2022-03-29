@@ -19,7 +19,7 @@ import React, {useState} from 'react';
 import TokenGroup from '../components/TokenGroup';
 import TokenItem from '../components/TokenItem';
 
-const tertiaryTab = (
+const TERTIARY_TAB = (
 	<div className="align-items-center d-flex p-2">
 		<span className="inline-item inline-item-before">
 			<ClayIcon symbol="hashtag" />
@@ -45,7 +45,7 @@ const tertiaryTab = (
 
 const TABS_ACTIVE_BAR_COMPONENTS = [
 	{
-		className: 'nav-underline-active-bar-top',
+		className: 'nav-underline nav-underline-active-bar-top',
 		type: 'underline',
 	},
 	{
@@ -53,7 +53,7 @@ const TABS_ACTIVE_BAR_COMPONENTS = [
 		type: 'secondary',
 	},
 	{
-		child: tertiaryTab,
+		child: TERTIARY_TAB,
 		className: 'nav-tertiary nav-tertiary-active-bar-top',
 		type: 'tertiary',
 	},
@@ -71,7 +71,7 @@ const TABS_DISABLED_COMPONENTS = [
 		type: 'secondary',
 	},
 	{
-		child: tertiaryTab,
+		child: TERTIARY_TAB,
 		className: 'nav-tertiary',
 		disabled: true,
 		type: 'tertiary',
@@ -88,7 +88,7 @@ const TABS_COMPONENTS = [
 	{className: 'nav-underline', type: 'primary'},
 	{className: 'nav-secondary', type: 'secondary'},
 	{
-		child: tertiaryTab,
+		child: TERTIARY_TAB,
 		className: 'nav-tertiary',
 		type: 'tertiary',
 	},
@@ -96,17 +96,17 @@ const TABS_COMPONENTS = [
 ];
 
 const TABS_ICONS_COMPONENTS = [
-	{className: '', icon: 'after', type: 'primary'},
-	{className: '', icon: 'before', type: 'primary'},
+	{className: 'nav-underline', icon: 'after', type: 'primary'},
+	{className: 'nav-underline', icon: 'before', type: 'primary'},
 	{className: 'nav-secondary', icon: 'after', type: 'secondary'},
 	{className: 'nav-secondary', icon: 'before', type: 'secondary'},
 	{
-		child: tertiaryTab,
+		child: TERTIARY_TAB,
 		className: 'nav-tertiary',
 		type: 'tertiary',
 	},
 	{
-		child: tertiaryTab,
+		child: TERTIARY_TAB,
 		className: 'nav-tertiary',
 		type: 'tertiary',
 	},
@@ -115,11 +115,11 @@ const TABS_ICONS_COMPONENTS = [
 ];
 
 const TABS_VERTICAL_COMPONENTS = [
-	{className: 'nav-underline-vertical', type: 'primary'},
-	{className: 'nav-secondary nav-secondary-vertical', type: 'secondary'},
+	{className: 'nav-vertical nav-underline', type: 'primary'},
+	{className: 'nav-vertical nav-secondary', type: 'secondary'},
 	{
-		child: tertiaryTab,
-		className: 'nav-tertiary nav-tertiary-vertical',
+		child: TERTIARY_TAB,
+		className: 'nav-vertical nav-tertiary',
 		type: 'tertiary',
 	},
 ];
@@ -152,7 +152,7 @@ const TabsGuide = () => {
 
 		return (
 			<>
-				<ClayTabs className={tab.className} modern>
+				<ClayTabs className={tab.className} modern={false}>
 					{TABS_NAME.map((name, i) => (
 						<ClayTabs.Item
 							active={activeTabKeyValue === i}
@@ -160,7 +160,7 @@ const TabsGuide = () => {
 							innerProps={{
 								'aria-controls': 'tabpanel-1',
 							}}
-							key={`${i}`}
+							key={i}
 							onClick={() => setActiveTabKeyValue(i)}
 						>
 							{tab.icon === 'before' && (
@@ -209,13 +209,13 @@ const TabsGuide = () => {
 			{TABS_TYPES.map((tabType, tabTypeIndex) => (
 				<TokenGroup
 					group="tabs"
-					key={`${tabTypeIndex}`}
+					key={tabTypeIndex}
 					title={tabType.title}
 				>
 					{tabType.components.map((tab, i) => (
 						<TokenItem
 							className={`my-5 ${tabType.className}`}
-							key={`${i}`}
+							key={i}
 							label={tab.className}
 							size="large"
 						>
