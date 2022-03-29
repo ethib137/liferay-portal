@@ -4950,7 +4950,7 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "0.188rem",
+							"defaultValue": "0.1875rem",
 							"label": "tab-primary-item-active-bar-thickness",
 							"mappings": [
 								{
@@ -4958,7 +4958,7 @@
 									"value": "tab-primary-item-active-bar-thickness"
 								}
 							],
-							"name": "tabPrimaryItemActiveBarColorThickness",
+							"name": "tabPrimaryItemActiveBarThickness",
 							"type": "String"
 						},
 						{
@@ -5065,24 +5065,24 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "0",
+							"defaultValue": "none",
 							"label": "tab-primary-item-box-shadow-active",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-primary-box-shadow-active"
+									"value": "tab-primary-item-box-shadow-active"
 								}
 							],
 							"name": "tabPrimaryItemBoxShadowActive",
 							"type": "String"
 						},
 						{
-							"defaultValue": "0",
+							"defaultValue": "none",
 							"label": "tab-primary-item-box-shadow-hover",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-primary-box-shadow-hover"
+									"value": "tab-primary-item-box-shadow-hover"
 								}
 							],
 							"name": "tabPrimaryItemBoxShadowHover",
@@ -5265,7 +5265,7 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "var(--text-paragraph-xxs-line-height)",
+							"defaultValue": "var(--text-paragraph-line-height)",
 							"label": "tab-primary-item-line-height",
 							"mappings": [
 								{
@@ -5295,7 +5295,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0 0 0.031rem",
+							"defaultValue": "0 0 0.03125rem",
 							"label": "tab-primary-horizontal-item-border-width",
 							"mappings": [
 								{
@@ -5349,7 +5349,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0 0 0 0.063rem",
+							"defaultValue": "0 0 0 0.0625rem",
 							"label": "tab-primary-vertical-item-border-width",
 							"mappings": [
 								{
@@ -5391,7 +5391,7 @@
 				{
 					"frontendTokens": [
 						{
-							"defaultValue": "0.063rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-secondary-item-active-bar-border-radius",
 							"mappings": [
 								{
@@ -5429,7 +5429,7 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "0.188rem",
+							"defaultValue": "0.1875rem",
 							"label": "tab-secondary-item-active-bar-thickness",
 							"mappings": [
 								{
@@ -5437,7 +5437,7 @@
 									"value": "tab-secondary-item-active-bar-thickness"
 								}
 							],
-							"name": "tabSecondaryItemActiveBarColorThickness",
+							"name": "tabSecondaryItemActiveBarThickness",
 							"type": "String"
 						},
 						{
@@ -5544,24 +5544,24 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "0",
+							"defaultValue": "none",
 							"label": "tab-secondary-item-box-shadow-active",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-secondary-box-shadow-active"
+									"value": "tab-secondary-item-box-shadow-active"
 								}
 							],
 							"name": "tabSecondaryItemBoxShadowActive",
 							"type": "String"
 						},
 						{
-							"defaultValue": "0",
+							"defaultValue": "none",
 							"label": "tab-secondary-item-box-shadow-hover",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-secondary-box-shadow-hover"
+									"value": "tab-secondary-item-box-shadow-hover"
 								}
 							],
 							"name": "tabSecondaryItemBoxShadowHover",
@@ -5744,7 +5744,7 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "var(--text-paragraph-xxs-line-height)",
+							"defaultValue": "var(--text-paragraph-line-height)",
 							"label": "tab-secondary-item-line-height",
 							"mappings": [
 								{
@@ -5774,7 +5774,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.031rem",
+							"defaultValue": "0.03125rem",
 							"label": "tab-secondary-horizontal-item-border-width",
 							"mappings": [
 								{
@@ -5828,7 +5828,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.031rem",
+							"defaultValue": "0.03125rem",
 							"label": "tab-secondary-vertical-item-border-width",
 							"mappings": [
 								{
@@ -5908,7 +5908,7 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "0.188rem",
+							"defaultValue": "0.1875rem",
 							"label": "tab-tertiary-item-active-bar-thickness",
 							"mappings": [
 								{
@@ -5916,7 +5916,7 @@
 									"value": "tab-tertiary-item-active-bar-thickness"
 								}
 							],
-							"name": "tabTertiaryItemActiveBarColorThickness",
+							"name": "tabTertiaryItemActiveBarThickness",
 							"type": "String"
 						},
 						{
@@ -6035,7 +6035,7 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "0",
+							"defaultValue": "none",
 							"label": "tab-tertiary-item-box-shadow-hover",
 							"mappings": [
 								{
@@ -6223,7 +6223,7 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "var(--text-paragraph-xxs-line-height)",
+							"defaultValue": "var(--text-paragraph-line-height)",
 							"label": "tab-tertiary-item-line-height",
 							"mappings": [
 								{
@@ -6253,7 +6253,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0 0 0.031rem",
+							"defaultValue": "0 0 0.03125rem",
 							"label": "tab-tertiary-horizontal-item-border-width",
 							"mappings": [
 								{
@@ -6307,7 +6307,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0 0 0.031rem",
+							"defaultValue": "0 0 0.03125rem",
 							"label": "tab-tertiary-vertical-item-border-width",
 							"mappings": [
 								{
@@ -6387,7 +6387,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.061rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-segment-border-width",
 							"mappings": [
 								{
@@ -6411,7 +6411,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "var(--spacer-2)",
+							"defaultValue": "var(--spacer-1)",
 							"label": "tab-segment-padding-y",
 							"mappings": [
 								{
@@ -6532,7 +6532,7 @@
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-segment-item-border-witdh"
+									"value": "tab-segment-item-border-width"
 								}
 							],
 							"name": "tabSegmentItemBorderWidth",
@@ -6727,7 +6727,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "1rem",
+							"defaultValue": "var(--spacer-3)",
 							"label": "tab-segment-item-inline-item-spacer-x",
 							"mappings": [
 								{
@@ -6739,19 +6739,19 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "1rem",
-							"label": "tab-segment-item-inline-item-spacer-x",
+							"defaultValue": "var(--spacer-3)",
+							"label": "tab-segment-item-inline-item-spacer-y",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-segment-item-inline-item-spacer-x"
+									"value": "tab-segment-item-inline-item-spacer-yS"
 								}
 							],
 							"name": "tabSegmentItemInlineItemSpacerY",
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.5rem",
+							"defaultValue": "var(--text-paragraph-line-height)",
 							"label": "tab-segment-item-line-height",
 							"mappings": [
 								{
