@@ -100,16 +100,6 @@ const TABS_ICONS_COMPONENTS = [
 	{className: 'nav-underline', icon: 'before', type: 'primary'},
 	{className: 'nav-secondary', icon: 'after', type: 'secondary'},
 	{className: 'nav-secondary', icon: 'before', type: 'secondary'},
-	{
-		child: TERTIARY_TAB,
-		className: 'nav-tertiary',
-		type: 'tertiary',
-	},
-	{
-		child: TERTIARY_TAB,
-		className: 'nav-tertiary',
-		type: 'tertiary',
-	},
 	{className: 'nav-segment', icon: 'after', type: 'segment'},
 	{className: 'nav-segment', icon: 'before', type: 'segment'},
 ];
@@ -145,65 +135,67 @@ const TABS_TYPES = [
 	},
 ];
 
+const Tabs = (props) => {
+	const {child, className, disabled, icon} = props;
+
+	const [activeTabKeyValue, setActiveTabKeyValue] = useState(0);
+	const TABS_NAME = ['Tab 1', 'Tab 2', 'Tab 3'];
+
+	return (
+		<>
+			<ClayTabs className={className} modern={false}>
+				{TABS_NAME.map((name, i) => (
+					<ClayTabs.Item
+						active={activeTabKeyValue === i}
+						disabled={disabled}
+						innerProps={{
+							'aria-controls': 'tabpanel-1',
+						}}
+						key={i}
+						onClick={() => setActiveTabKeyValue(i)}
+					>
+						{icon === 'before' && (
+							<span className="inline-item inline-item-before">
+								<ClayIcon symbol="hashtag" />
+							</span>
+						)}
+
+						{child ? child : name}
+
+						{icon === 'after' && (
+							<span className="inline-item inline-item-after">
+								<ClayIcon symbol="hashtag" />
+							</span>
+						)}
+					</ClayTabs.Item>
+				))}
+			</ClayTabs>
+
+			<ClayTabs.Content
+				activeIndex={activeTabKeyValue}
+				className="m-3"
+				fade
+			>
+				<ClayTabs.TabPane aria-labelledby="tab-1">
+					1. Proin efficitur imperdiet dolor, a iaculis orci lacinia
+					eu.
+				</ClayTabs.TabPane>
+
+				<ClayTabs.TabPane aria-labelledby="tab-2">
+					2. Proin efficitur imperdiet dolor, a iaculis orci lacinia
+					eu.
+				</ClayTabs.TabPane>
+
+				<ClayTabs.TabPane aria-labelledby="tab-3">
+					3. Proin efficitur imperdiet dolor, a iaculis orci lacinia
+					eu.
+				</ClayTabs.TabPane>
+			</ClayTabs.Content>
+		</>
+	);
+};
+
 const TabsGuide = () => {
-	const TABS = (tab) => {
-		const [activeTabKeyValue, setActiveTabKeyValue] = useState(0);
-		const TABS_NAME = ['Tab 1', 'Tab 2', 'Tab 3'];
-
-		return (
-			<>
-				<ClayTabs className={tab.className} modern={false}>
-					{TABS_NAME.map((name, i) => (
-						<ClayTabs.Item
-							active={activeTabKeyValue === i}
-							disabled={tab.disabled}
-							innerProps={{
-								'aria-controls': 'tabpanel-1',
-							}}
-							key={i}
-							onClick={() => setActiveTabKeyValue(i)}
-						>
-							{tab.icon === 'before' && (
-								<span className="inline-item inline-item-before">
-									<ClayIcon symbol="hashtag" />
-								</span>
-							)}
-
-							{tab.child ? tab.child : name}
-
-							{tab.icon === 'after' && (
-								<span className="inline-item inline-item-after">
-									<ClayIcon symbol="hashtag" />
-								</span>
-							)}
-						</ClayTabs.Item>
-					))}
-				</ClayTabs>
-
-				<ClayTabs.Content
-					activeIndex={activeTabKeyValue}
-					className="m-3"
-					fade
-				>
-					<ClayTabs.TabPane aria-labelledby="tab-1">
-						1. Proin efficitur imperdiet dolor, a iaculis orci
-						lacinia eu.
-					</ClayTabs.TabPane>
-
-					<ClayTabs.TabPane aria-labelledby="tab-2">
-						2. Proin efficitur imperdiet dolor, a iaculis orci
-						lacinia eu.
-					</ClayTabs.TabPane>
-
-					<ClayTabs.TabPane aria-labelledby="tab-3">
-						3. Proin efficitur imperdiet dolor, a iaculis orci
-						lacinia eu.
-					</ClayTabs.TabPane>
-				</ClayTabs.Content>
-			</>
-		);
-	};
-
 	return (
 		<>
 			{TABS_TYPES.map((tabType, tabTypeIndex) => (
@@ -212,14 +204,14 @@ const TabsGuide = () => {
 					key={tabTypeIndex}
 					title={tabType.title}
 				>
-					{tabType.components.map((tab, i) => (
+					{tabType.components.map((tabProps, i) => (
 						<TokenItem
 							className={`my-5 ${tabType.className}`}
 							key={i}
-							label={tab.className}
+							label={tabProps.className}
 							size="large"
 						>
-							{TABS(tab)}
+							{Tabs(tabProps)}
 						</TokenItem>
 					))}
 				</TokenGroup>

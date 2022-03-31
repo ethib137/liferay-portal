@@ -3,7 +3,7 @@
 $nav-base-link: (
 	after: (
 		bottom: 0,
-		content: '',
+		content: none,
 		display: block,
 		position: absolute,
 		left: 0,
@@ -23,27 +23,35 @@ $nav-underline-link: (
 		font-weight: var(--tab-primary-item-font-weight-active),
 		after: (
 			background-color: var(--tab-primary-item-active-bar-color-active),
-			border-radius: var(--tab-primary-item-active-bar-border-radius),
 			height: var(--tab-primary-item-active-bar-thickness),
-			width: var(--tab-primary-horizontal-item-active-bar-width),
+			content: '',
 		),
 		inline-item: (
 			color: var(--tab-primary-item-icon-color-active),
 		),
 	),
+	after: (
+		border-radius: var(--tab-primary-item-active-bar-border-radius),
+		height: var(--tab-primary-item-active-bar-thickness),
+		width: var(--tab-primary-horizontal-item-active-bar-width),
+	),
 	background-color: var(--tab-primary-item-background-color),
 	border-color: var(--tab-primary-item-border-color),
 	border-radius: var(--tab-primary-item-border-radius),
 	border-style: solid,
-	border-width: var(--tab-primary-horizontal-item-border-width),
+	border-bottom-width: var(--tab-primary-horizontal-item-border-bottom-width),
+	border-left-width: var(--tab-primary-horizontal-item-border-left-width),
+	border-right-width: var(--tab-primary-horizontal-item-border-right-width),
+	border-top-width: var(--tab-primary-horizontal-item-border-top-width),
 	color: var(--tab-primary-item-color),
 	disabled: (
-		background-color: var(--tab-primary-item-background-color-disabled),
-		color: var(--tab-primary-item-color-disabled),
-		font-weight: var(--tab-secondary-item-font-weight),
+		border: 0,
 		after: (
 			content: none,
 		),
+		background-color: var(--tab-primary-item-background-color-disabled),
+		color: var(--tab-primary-item-color-disabled),
+		font-weight: var(--tab-secondary-item-font-weight),
 		inline-item: (
 			color: var(--tab-primary-item-icon-color-disabled),
 		),
@@ -58,10 +66,7 @@ $nav-underline-link: (
 		font-weight: var(--tab-primary-item-font-weight-active),
 		after: (
 			background-color: var(--tab-primary-item-active-bar-color-hover),
-			border-radius: var(--tab-primary-item-active-bar-border-radius),
 			content: '',
-			height: var(--tab-primary-item-active-bar-thickness),
-			width: var(--tab-primary-horizontal-item-active-bar-width),
 		),
 		inline-item: (
 			color: var(--tab-primary-item-icon-color-hover),
@@ -88,84 +93,73 @@ $nav-vertical: (
 );
 
 $nav-underline-link-vertical: (
-	active-class: (
-		after: (
-			background-color: var(--tab-primary-item-active-bar-color-active),
-			border-radius: var(--tab-primary-item-active-bar-border-radius),
-			top: 0,
-			height: var(--tab-primary-vertical-item-active-bar-height),
-			width: var(--tab-primary-item-active-bar-thickness),
-		),
+	after: (
+		top: 0,
+		height: var(--tab-primary-vertical-item-active-bar-height),
+		width: var(--tab-primary-item-active-bar-thickness),
 	),
-	border-width: var(--tab-primary-vertical-item-border-width),
-	hover: (
-		after: (
-			background-color: var(--tab-primary-item-active-bar-color-hover),
-			border-radius: var(--tab-primary-item-active-bar-border-radius),
-			top: 0,
-			height: var(--tab-primary-vertical-item-active-bar-height),
-			width: var(--tab-primary-item-active-bar-thickness),
-		),
-	),
+	border-bottom-width: var(--tab-primary-vertical-item-border-bottom-width),
+	border-left-width: var(--tab-primary-vertical-item-border-left-width),
+	border-right-width: var(--tab-primary-vertical-item-border-right-width),
+	border-top-width: var(--tab-primary-vertical-item-border-top-width),
 );
 
-$nav-underline-active-bar-top: ();
-
 $nav-underline-link-active-bar-top: (
-	active-class: (
-		after: (
-			top: 0,
-			height: var(--tab-primary-item-active-bar-thickness),
-			width: var(--tab-primary-horizontal-item-active-bar-width),
-		),
+	after: (
+		top: 0,
+		height: var(--tab-primary-item-active-bar-thickness),
+		width: var(--tab-primary-horizontal-item-active-bar-width),
 	),
-	border-width: 0.063rem 0 0,
-	hover: (
-		after: (
-			top: 0,
-			height: var(--tab-primary-item-active-bar-thickness),
-			width: var(--tab-primary-horizontal-item-active-bar-width),
-		),
-	),
+	border-bottom-width: var(--tab-primary-horizontal-item-border-top-width),
+	border-left-width: var(--tab-primary-horizontal-item-border-left-width),
+	border-right-width: var(--tab-primary-horizontal-item-border-right-width),
+	border-top-width: var(--tab-primary-horizontal-item-border-bottom-width),
 );
 
 // Secondary Tab
 
-$nav-secondary: (
-	border-radius: var(--tab-secondary-item-border-radius),
-);
-
 $nav-secondary-link: map-deep-merge(
 	(
 		active-class: (
+			after: (
+				content: '',
+			),
 			background-color: var(--tab-secondary-item-background-color-active),
 			border-color: var(--tab-secondary-item-border-color-active),
 			box-shadow: var(--tab-secondary-item-box-shadow-active),
 			color: var(--tab-secondary-item-color-active),
 			font-weight: var(--tab-secondary-item-font-weight-active),
-			after: (
-				background-color:
-					var(--tab-secondary-item-active-bar-color-active),
-				border-radius:
-					var(--tab-secondary-item-active-bar-border-radius),
-				height: var(--tab-secondary-item-active-bar-thickness),
-				width: var(--tab-secondary-horizontal-item-active-bar-width),
+			inline-item: (
+				color: var(--tab-secondary-item-icon-color-active),
 			),
+		),
+		after: (
+			background-color: var(--tab-secondary-item-active-bar-color-active),
+			border-radius: var(--tab-secondary-item-active-bar-border-radius),
+			height: var(--tab-secondary-item-active-bar-thickness),
+			width: var(--tab-secondary-horizontal-item-active-bar-width),
 		),
 		background-color: var(--tab-secondary-item-background-color),
 		border-color: var(--tab-secondary-item-border-color),
 		border-radius: var(--tab-secondary-item-border-radius),
 		border-style: solid,
-		border-width: var(--tab-secondary-horizontal-item-border-width),
+		border-bottom-width:
+			var(--tab-secondary-horizontal-item-border-bottom-width),
+		border-left-width:
+			var(--tab-secondary-horizontal-item-border-left-width),
+		border-right-width:
+			var(--tab-secondary-horizontal-item-border-right-width),
+		border-top-width: var(--tab-secondary-horizontal-item-border-top-width),
 		color: var(--tab-secondary-item-color),
 		disabled: (
+			border: 0,
+			after: (
+				content: none,
+			),
 			background-color:
 				var(--tab-secondary-item-background-color-disabled),
 			color: var(--tab-secondary-item-color-disabled),
 			font-weight: var(--tab-secondary-item-font-weight),
-			after: (
-				content: none,
-			),
 			inline-item: (
 				color: var(--tab-secondary-item-icon-color-disabled),
 			),
@@ -178,13 +172,10 @@ $nav-secondary-link: map-deep-merge(
 			color: var(--tab-secondary-item-color-hover),
 			box-shadow: var(--tab-secondary-item-box-shadow-hover),
 			after: (
-				background-color:
-					var(--tab-secondary-item-active-bar-color-hover),
-				border-radius:
-					var(--tab-secondary-item-active-bar-border-radius),
 				content: '',
-				height: var(--tab-secondary-item-active-bar-thickness),
-				width: var(--tab-secondary-horizontal-item-active-bar-width),
+			),
+			inline-item: (
+				color: var(--tab-secondary-item-icon-color-hover),
 			),
 		),
 		inline-item: (
@@ -206,45 +197,25 @@ $nav-secondary-link: map-deep-merge(
 );
 
 $nav-secondary-link-vertical: (
-	active-class: (
-		after: (
-			top: 0,
-			height: var(--tab-secondary-vertical-item-active-bar-heigth),
-			width: var(--tab-secondary-item-active-bar-thickness),
-		),
+	after: (
+		top: 0,
+		height: var(--tab-secondary-vertical-item-active-bar-heigth),
+		width: var(--tab-secondary-item-active-bar-thickness),
 	),
-	border-width: var(--tab-secondary-vertical-item-border-width),
-	hover: (
-		after: (
-			top: 0,
-			height: var(--tab-secondary-vertical-item-active-bar-heigth),
-			width: var(--tab-secondary-item-active-bar-thickness),
-		),
-	),
+	border-bottom-width: var(--tab-secondary-vertical-item-border-top-width),
+	border-left-width: var(--tab-secondary-vertical-item-border-left-width),
+	border-right-width: var(--tab-secondary-vertical-item-border-right-width),
+	border-top-width: var(--tab-secondary-vertical-item-border-bottom-width),
 );
 
-$nav-secondary-active-bar-top: ();
-
 $nav-secondary-link-active-bar-top: (
-	active-class: (
-		after: (
-			top: 0,
-			width: var(--tab-secondary-horizontal-item-active-bar-width),
-		),
-	),
-	hover: (
-		after: (
-			top: 0,
-			width: var(--tab-secondary-horizontal-item-active-bar-width),
-		),
+	after: (
+		top: 0,
+		width: var(--tab-secondary-horizontal-item-active-bar-width),
 	),
 );
 
 // Tertiary tab
-
-$nav-tertiary: (
-	width: fit-content,
-);
 
 $nav-tertiary-link: map-deep-merge(
 	(
@@ -256,26 +227,37 @@ $nav-tertiary-link: map-deep-merge(
 			font-weight: var(--tab-tertiary-item-font-weight-active),
 			z-index: 2,
 			after: (
-				background-color:
-					var(--tab-tertiary-item-active-bar-color-active),
-				border-radius: var(--tab-tertiary-item-active-bar-border-radius),
-				height: var(--tab-tertiary-item-active-bar-thickness),
-				width: var(--tab-tertiary-horizontal-item-active-bar-width),
+				content: '',
 			),
+			inline-item: (
+				color: var(--tab-tertiary-item-icon-color-disabled),
+			),
+		),
+		after: (
+			background-color: var(--tab-tertiary-item-active-bar-color-active),
+			border-radius: var(--tab-tertiary-item-active-bar-border-radius),
+			height: var(--tab-tertiary-item-active-bar-thickness),
+			width: var(--tab-tertiary-horizontal-item-active-bar-width),
 		),
 		background-color: var(--tab-tertiary-item-background-color),
 		border-color: var(--tab-tertiary-item-border-color),
 		border-radius: var(--tab-tertiary-item-border-radius),
 		border-style: solid,
-		border-width: var(--tab-tertiary-horizontal-item-border-width),
+		border-bottom-width:
+			var(--tab-tertiary-horizontal-item-border-bottom-width),
+		border-left-width: var(--tab-tertiary-horizontal-item-border-left-width),
+		border-right-width:
+			var(--tab-tertiary-horizontal-item-border-right-width),
+		border-top-width: var(--tab-tertiary-horizontal-item-border-top-width),
 		color: var(--tab-tertiary-item-color),
 		disabled: (
-			background-color: var(--tab-tertiary-item-background-color-disabled),
-			color: var(--tab-tertiary-item-color-disabled),
-			font-weight: var(--tab-tertiary-item-font-weight),
+			border: 0,
 			after: (
 				content: none,
 			),
+			background-color: var(--tab-tertiary-item-background-color-disabled),
+			color: var(--tab-tertiary-item-color-disabled),
+			font-weight: var(--tab-tertiary-item-font-weight),
 			inline-item: (
 				color: var(--tab-tertiary-item-icon-color-disabled),
 			),
@@ -284,12 +266,7 @@ $nav-tertiary-link: map-deep-merge(
 		font-weight: var(--tab-tertiary-item-font-weight),
 		hover: (
 			after: (
-				background-color:
-					var(--tab-tertiary-item-active-bar-color-hover),
-				border-radius: var(--tab-tertiary-item-active-bar-border-radius),
 				content: '',
-				height: var(--tab-tertiary-item-active-bar-thickness),
-				width: var(--tab-tertiary-horizontal-item-active-bar-width),
 			),
 			background-color: var(--tab-tertiary-item-background-color-hover),
 			border-color: var(--tab-tertiary-item-border-color-hover),
@@ -324,42 +301,28 @@ $nav-tertiary-link: map-deep-merge(
 );
 
 $nav-tertiary-link-vertical: (
+	after: (
+		height: var(--tab-tertiary-vertical-item-active-bar-height),
+		top: 0,
+		width: var(--tab-tertiary-item-active-bar-thickness),
+	),
 	active-class: (
 		border-width: 0,
-		after: (
-			background-color: var(--tab-tertiary-item-active-bar-color-active),
-			border-radius: var(--tab-tertiary-item-active-bar-border-radius),
-			height: var(--tab-tertiary-vertical-item-active-bar-height),
-			top: 0,
-			width: var(--tab-tertiary-item-active-bar-thickness),
-		),
 	),
-	border-width: var(--tab-tertiray-vertical-item-border-width),
-	hover: (
-		after: (
-			background-color: var(--tab-tertiary-item-active-bar-color-active),
-			border-radius: var(--tab-tertiary-item-active-bar-border-radius),
-			height: var(--tab-tertiary-vertical-item-active-bar-height),
-			top: 0,
-			width: var(--tab-tert iary-item-active-bar-thickness),
-		),
-	),
+	border-bottom-width: var(--tab-tertiary-vertical-item-border-bottom-width),
+	border-left-width: var(--tab-tertiary-vertical-item-border-left-width),
+	border-right-width: var(--tab-tertiary-vertical-item-border-right-width),
+	border-top-width: var(--tab-tertiary-vertical-item-border-top-width),
 );
 
-$nav-tertiary-active-bar-top: ();
-
 $nav-tertiary-link-active-bar-top: (
-	active-class: (
-		after: (
-			top: 0,
-		),
+	after: (
+		top: 0,
 	),
-	border-width: 0.063rem 0 0,
-	hover: (
-		after: (
-			top: 0,
-		),
-	),
+	border-bottom-width: var(--tab-tertiary-horizontal-item-border-top-width),
+	border-left-width: var(--tab-tertiary-horizontal-item-border-left-width),
+	border-right-width: var(--tab-tertiary-horizontal-item-border-right-width),
+	border-top-width: var(--tab-tertiary-horizontal-item-border-bottom-width),
 );
 
 // Segment tab
@@ -381,6 +344,9 @@ $nav-segment-link: (
 		box-shadow: var(--tab-segment-item-box-shadow-active),
 		color: var(--tab-segment-item-color-active),
 		font-weight: var(--tab-segment-item-font-weight-active),
+		inline-item: (
+			color: var(--tab-segment-item-icon-color-active),
+		),
 	),
 	background-color: var(--tab-segment-item-background-color),
 	border-color: var(--tab-segment-item-border-color),
@@ -403,6 +369,9 @@ $nav-segment-link: (
 		border-color: var(--tab-segment-item-border-color-hover),
 		box-shadow: var(--tab-segment-item-box-shadow-hover),
 		color: var(--tab-segment-item-color-hover),
+		inline-item: (
+			color: var(--tab-segment-item-icon-color-hover),
+		),
 	),
 	inline-item: (
 		color: var(--tab-segment-item-icon-color),

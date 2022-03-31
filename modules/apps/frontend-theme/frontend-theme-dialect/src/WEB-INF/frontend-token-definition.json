@@ -5295,15 +5295,51 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0 0 0.03125rem",
-							"label": "tab-primary-horizontal-item-border-width",
+							"defaultValue": "0.03125rem",
+							"label": "tab-primary-horizontal-item-border-bottom-width",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-primary-horizontal-item-border-width"
+									"value": "tab-primary-horizontal-item-border-bottom-width"
 								}
 							],
-							"name": "tabPrimaryHorizontalItemBorderWidth",
+							"name": "tabPrimaryHorizontalItemBorderBottomWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-primary-horizontal-item-border-left-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-primary-horizontal-item-border-left-width"
+								}
+							],
+							"name": "tabPrimaryHorizontalItemBorderLeftWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-primary-horizontal-item-border-right-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-primary-horizontal-item-border-right-width"
+								}
+							],
+							"name": "tabPrimaryHorizontalItemBorderRightWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-primary-horizontal-item-border-top-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-primary-horizontal-item-border-top-width"
+								}
+							],
+							"name": "tabPrimaryHorizontalItemBorderTopWidth",
 							"type": "String"							
 						},
 						{
@@ -5349,15 +5385,51 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0 0 0 0.0625rem",
-							"label": "tab-primary-vertical-item-border-width",
+							"defaultValue": "0",
+							"label": "tab-primary-vertical-item-border-bottom-width",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-primary-vertical-item-border-width"
+									"value": "tab-primary-vertical-item-border-bottom-width"
 								}
 							],
-							"name": "tabPrimaryVerticalItemBorderWidth",
+							"name": "tabPrimaryVerticalItemBorderBottomWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0.0625rem",
+							"label": "tab-primary-vertical-item-border-left-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-primary-vertical-item-border-left-width"
+								}
+							],
+							"name": "tabPrimaryVerticalItemBorderLeftWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-primary-vertical-item-border-right-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-primary-vertical-item-border-right-width"
+								}
+							],
+							"name": "tabPrimaryVerticalItemBorderRightWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-primary-vertical-item-border-top-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-primary-vertical-item-border-top-width"
+								}
+							],
+							"name": "tabPrimaryVerticalItemBorderTopWidth",
 							"type": "String"							
 						},
 						{
@@ -5775,14 +5847,50 @@
 						},
 						{
 							"defaultValue": "0.03125rem",
-							"label": "tab-secondary-horizontal-item-border-width",
+							"label": "tab-secondary-horizontal-item-border-bottom-width",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-secondary-horizontal-item-border-width"
+									"value": "tab-secondary-horizontal-item-border-bottom-width"
 								}
 							],
-							"name": "tabSecondaryHorizontalItemBorderWidth",
+							"name": "tabSecondaryHorizontalItemBorderBottomWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0.03125rem",
+							"label": "tab-secondary-horizontal-item-border-left-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-secondary-horizontal-item-border-left-width"
+								}
+							],
+							"name": "tabSecondaryHorizontalItemBorderLeftWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0.03125rem",
+							"label": "tab-secondary-horizontal-item-border-right-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-secondary-horizontal-item-border-right-width"
+								}
+							],
+							"name": "tabSecondaryHorizontalItemBorderRightWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0.03125rem",
+							"label": "tab-secondary-horizontal-item-border-top-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-secondary-horizontal-item-border-top-width"
+								}
+							],
+							"name": "tabSecondaryHorizontalItemBorderTopWidth",
 							"type": "String"							
 						},
 						{
@@ -5829,14 +5937,50 @@
 						},
 						{
 							"defaultValue": "0.03125rem",
-							"label": "tab-secondary-vertical-item-border-width",
+							"label": "tab-secondary-vertical-item-border-bottom-width",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-secondary-vertical-item-border-width"
+									"value": "tab-secondary-vertical-item-border-bottom-width"
 								}
 							],
-							"name": "tabSecondaryVerticalItemBorderWidth",
+							"name": "tabSecondaryVerticalItemBorderBottomWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0.03125rem",
+							"label": "tab-secondary-vertical-item-border-left-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-secondary-vertical-item-border-left-width"
+								}
+							],
+							"name": "tabSecondaryVerticalItemBorderLeftWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0.03125rem",
+							"label": "tab-secondary-vertical-item-border-right-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-secondary-vertical-item-border-right-width"
+								}
+							],
+							"name": "tabSecondaryVerticalItemBorderRightWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0.03125rem",
+							"label": "tab-secondary-vertical-item-border-top-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-secondary-vertical-item-border-top-width"
+								}
+							],
+							"name": "tabSecondaryVerticalItemBorderTopWidth",
 							"type": "String"							
 						},
 						{
@@ -6253,15 +6397,63 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0 0 0.03125rem",
-							"label": "tab-tertiary-horizontal-item-border-width",
+							"defaultValue": "0.03125rem",
+							"label": "tab-tertiary-horizontal-item-border-bottom-width",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-tertiary-horizontal-item-border-width"
+									"value": "tab-tertiary-horizontal-item-border-bottom-width"
 								}
 							],
-							"name": "tabTertiaryHorizontalItemBorderWidth",
+							"name": "tabTertiaryHorizontalItemBorderBottomWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-tertiary-horizontal-item-border-left-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-tertiary-horizontal-item-border-left-width"
+								}
+							],
+							"name": "tabTertiaryHorizontalItemBorderLeftWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-tertiary-horizontal-item-border-right-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-tertiary-horizontal-item-border-right-width"
+								}
+							],
+							"name": "tabTertiaryHorizontalItemBorderRightWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-tertiary-horizontal-item-border-top-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-tertiary-horizontal-item-border-top-width"
+								}
+							],
+							"name": "tabTertiaryHorizontalItemBorderTopWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "var(--spacer-3)",
+							"label": "tab-secondary-horizontal-item-padding-x",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-secondary-horizontal-item-padding-x"
+								}
+							],
+							"name": "tabSecondaryHorizontalItemPaddingX",
 							"type": "String"							
 						},
 						{
@@ -6307,15 +6499,51 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0 0 0.03125rem",
-							"label": "tab-tertiary-vertical-item-border-width",
+							"defaultValue": "0.03125rem",
+							"label": "tab-tertiary-vertical-item-border-bottom-width",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-tertiary-vertical-item-border-width"
+									"value": "tab-tertiary-vertical-item-border-bottom-width"
 								}
 							],
-							"name": "tabTertiaryVerticalItemBorderWidth",
+							"name": "tabTertiaryVerticalItemBorderBottomWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-tertiary-vertical-item-border-left-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-tertiary-vertical-item-border-left-width"
+								}
+							],
+							"name": "tabTertiaryVerticalItemBorderLeftWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-tertiary-vertical-item-border-right-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-tertiary-vertical-item-border-right-width"
+								}
+							],
+							"name": "tabTertiaryVerticalItemBorderRightWidth",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-tertiary-vertical-item-border-top-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-tertiary-vertical-item-border-top-width"
+								}
+							],
+							"name": "tabTertiaryVerticalItemBorderTopWidth",
 							"type": "String"							
 						},
 						{
