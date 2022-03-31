@@ -1,4 +1,4 @@
-.nav-underline > .nav-link {
+.nav-underline .nav-link {
 	@include clay-css($nav-underline-link);
 }
 
@@ -18,44 +18,24 @@
 	}
 }
 
-.nav-underline-active-bar-top {
-	@include clay-css($nav-underline-active-bar-top);
-
-	.nav-link {
-		@include clay-link($nav-underline-link-active-bar-top);
-	}
+.nav-underline-active-bar-top .nav-link {
+	@include clay-link($nav-underline-link-active-bar-top);
 }
 
-.nav-secondary {
-	@include clay-css($nav-secondary);
-
-	.nav-link {
-		@include clay-link($nav-secondary-link);
-	}
+.nav-secondary .nav-link {
+	@include clay-link($nav-secondary-link);
 }
 
-.nav-secondary-active-bar-top {
-	@include clay-css($nav-secondary-active-bar-top);
-
-	.nav-link {
-		@include clay-link($nav-secondary-link-active-bar-top);
-	}
+.nav-secondary-active-bar-top .nav-link {
+	@include clay-link($nav-secondary-link-active-bar-top);
 }
 
-.nav-tertiary {
-	@include clay-css($nav-tertiary);
-
-	.nav-link {
-		@include clay-link($nav-tertiary-link);
-	}
+.nav-tertiary .nav-link {
+	@include clay-link($nav-tertiary-link);
 }
 
-.nav-tertiary-active-bar-top {
-	@include clay-css($nav-tertiary-active-bar-top);
-
-	.nav-link {
-		@include clay-link($nav-tertiary-link-active-bar-top);
-	}
+.nav-tertiary-active-bar-top .nav-link {
+	@include clay-link($nav-tertiary-link-active-bar-top);
 }
 
 .nav-segment {
