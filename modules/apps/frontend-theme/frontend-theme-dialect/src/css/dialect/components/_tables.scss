@@ -1,109 +1,88 @@
-.table-list.table-lg {
-    --table-cell-padding-y: var(--table-lg-cell-padding-y);
-    --table-cell-padding-x: var(--table-lg-cell-padding-x);
-    --table-cell-min-height: var(--table-lg-cell-min-height);
-    --table-font-size: var(--table-lg-header-font-size);
-    --table-font-weight: var(--table-lg-font-weight);
-    --table-line-height: var(--table-lg-line-height);
+.table {
+	td,
+	th {
+		@include clay-css($c-table-base-cell);
+	}
 }
 
-.table-list.table-sm {
-    --table-cell-padding-y: var(--table-sm-cell-padding-y);
-    --table-cell-padding-x: var(--table-sm-cell-padding-x);
-    --table-cell-min-height: var(--table-sm-cell-min-height);
-    --table-font-size: var(--table-sm-header-font-size);
-    --table-font-weight: var(--table-sm-font-weight);
-    --table-line-height: var(--table-sm-line-height);
+.table-bordered thead td,
+.table-bordered thead th {
+	@include clay-css($table-bordered);
 }
 
-.table-list.table-lg th {
-    --table-header-cell-padding-y: var(--table-lg-header-cell-padding-y);
-    --table-header-cell-padding-x: var(--table-lg-header-cell-padding-x);
-    --table-header-cell-min-height: var(--table-lg-header-cell-min-height);
-    --table-header-font-size: var(--table-lg-header-header-font-size);
-    --table-header-font-weight: var(--table-lg-header-font-weight);
-    --table-header-line-height: var(--table-lg-header-line-height);
-}
+.table-lg {
+	--table-cell-min-height: var(--table-lg-cell-min-height);
+	--table-cell-padding-y: var(--table-lg-cell-padding-y);
+	--table-cell-padding-x: var(--table-lg-cell-padding-x);
+	--table-font-size: var(--table-lg-header-font-size);
+	--table-font-weight: var(--table-lg-font-weight);
+	--table-line-height: var(--table-lg-line-height);
 
-.table-list.table-sm th {
-    --table-header-cell-padding-y: var(--table-sm-header-cell-padding-y);
-    --table-header-cell-padding-x: var(--table-sm-header-cell-padding-x);
-    --table-header-cell-min-height: var(--table-sm-header-cell-min-height);
-    --table-header-font-size: var(--table-sm-header-header-font-size);
-    --table-header-font-weight: var(--table-sm-header-font-weight);
-    --table-header-line-height: var(--table-sm-header-line-height);
-}
-
-th {
-    --table-cell-padding-y: var(--table-header-cell-padding-y);
-    --table-cell-padding-x: var(--table-header-cell-padding-x);
-    --table-cell-min-height: var(--table-header-cell-min-height);
-    --table-font-size: var(--table-header-font-size); 
-    --table-font-weight: var(--table-header-font-weight);
-    --table-line-height: var(--table-header-line-height);
-}
-
-.table-spaced > tbody > tr > td.cell-spaced,
-.table-spaced > thead > tr > th.cell-spaced,
-.table-spaced tbody:last-child tr:last-child td:last-child.cell-spaced,
-.table-spaced tbody:last-child tr:last-child td:first-child.cell-spaced {
-	@include clay-css($table-bordeless-spaced);
-}
-
-.table-list.table-spaced thead:first-child tr:first-child th:first-child {
-    @include clay-css($table-header-first-cell-spaced)
-}
-
-.table-list.table-spaced thead:first-child tr:first-child th:last-child {
-    @include clay-css($table-header-last-cell-spaced)
-}
-
-.table-list.table-spaced tbody:last-child tr:last-child td:first-child.cell-spaced {
-    @include clay-css($table-left-cell-spaced)
-}
-.table-list.table-spaced tbody:last-child tr:last-child td:last-child.cell-spaced {
-    @include clay-css($table-right-cell-spaced)
-}
-
-.table-spaced {
-    @include clay-css($table-spaced)
-}
-
-.table-list.table-spaced thead:first-child tr:first-child .cell-spaced {
-    @include clay-css($table-head-cell-spaced);
-}
-
-.table-list { 
-
-    .table-active > td {
-        @include clay-css($table-active)
-    }
-
-    thead tr th {
-        @include clay-css($table-head-cell)
-    }
-
-    tbody tr td {
-        @include clay-css($table-cell)
-    }
-
-    thead:first-child tr:first-child th:first-child {
-        @include clay-css($table-header-first-cell)
-    }
-
-    thead:first-child tr:first-child th:last-child {
-        @include clay-css($table-header-last-cell)
-    }
-
-    tbody:last-child tr:last-child td:last-child {
-        @include clay-css($table-last-cell)
-    }
-
-    tbody:last-child tr:last-child td:first-child {
-        @include clay-css($table-first-cell)
-    }
+	th {
+		--table-header-cell-min-height: var(--table-lg-header-cell-min-height);
+		--table-header-cell-padding-y: var(--table-lg-header-cell-padding-y);
+		--table-header-cell-padding-x: var(--table-lg-header-cell-padding-x);
+		--table-header-font-size: var(--table-lg-header-header-font-size);
+		--table-header-font-weight: var(--table-lg-header-font-weight);
+		--table-header-line-height: var(--table-lg-header-line-height);
+	}
 }
 
 .table-list-title a {
-    @include clay-link($table-title-link);
+	@include clay-link($table-title-link);
+}
+
+.table-sm {
+	--table-cell-min-height: var(--table-sm-cell-min-height);
+	--table-cell-padding-y: var(--table-sm-cell-padding-y);
+	--table-cell-padding-x: var(--table-sm-cell-padding-x);
+	--table-font-size: var(--table-sm-header-font-size);
+	--table-font-weight: var(--table-sm-font-weight);
+	--table-line-height: var(--table-sm-line-height);
+
+	th {
+		--table-header-cell-min-height: var(--table-sm-header-cell-min-height);
+		--table-header-cell-padding-y: var(--table-sm-header-cell-padding-y);
+		--table-header-cell-padding-x: var(--table-sm-header-cell-padding-x);
+		--table-header-font-size: var(--table-sm-header-header-font-size);
+		--table-header-font-weight: var(--table-sm-header-font-weight);
+		--table-header-line-height: var(--table-sm-header-line-height);
+	}
+}
+
+th {
+	--table-cell-min-height: var(--table-header-cell-min-height);
+	--table-cell-padding-y: var(--table-header-cell-padding-y);
+	--table-cell-padding-x: var(--table-header-cell-padding-x);
+	--table-font-size: var(--table-header-font-size);
+	--table-font-weight: var(--table-header-font-weight);
+	--table-line-height: var(--table-header-line-height);
+}
+
+.table-spaced {
+	--table-row-border-radius: var(--table-spaced-sm-row-border-radius);
+	--table-row-border-width: 0;
+
+	@include clay-css($table-spaced);
+
+	thead tr th,
+	td {
+		@include clay-css($table-border-spaced);
+	}
+
+	tr {
+		@include clay-css(map-deep-get($table-spaced, table-row));
+	}
+
+	td:first-child,
+	th:first-child,
+	.table-cell-start {
+		@include clay-css(map-deep-get($table-spaced, table-cell-start));
+	}
+
+	td:last-child,
+	th:last-child,
+	.table-cell-end {
+		@include clay-css(map-deep-get($table-spaced, table-cell-end));
+	}
 }

@@ -7026,7 +7026,7 @@
 							],
 							"name": "tableBorderColor",
 							"type": "String"
-						},						
+						},
 						{
 							"defaultValue": "0.0625rem",
 							"label": "table-border-width",
@@ -7088,18 +7088,6 @@
 								}
 							],
 							"name": "tableHeaderColor",
-							"type": "String"
-						},
-						{
-							"defaultValue": "600",
-							"label": "table-header-font-weight",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "table-header-font-weight"
-								}
-							],
-							"name": "tableHeaderFontWeight",
 							"type": "String"
 						},
 						{

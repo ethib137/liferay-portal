@@ -1,115 +1,116 @@
-$table-spaced: (
-    border: 0,
-    border-spacing: 0 0.5rem,
-    border-collapse: separate,
-    box-shadow: var(--table-spaced-box-shadow)
-);
-    
-$table-head-cell-spaced: (
-    border-radius: 0,
-);
-        
-$table-bordeless-spaced: (
-    border-top: 0,
+// Table
+
+$table-bg: var(--table-row-background-color);
+$table-color: var(--table-color);
+$table-border-color: var(--table-border-color);
+$table-border-radius: var(--table-row-border-radius);
+$table-font-size: var(--table-font-size);
+
+$table-hover-bg: var(--table-row-background-color-hover);
+$table-hover-color: var(--table-row-color-hover);
+
+$table-accent-bg: var(--table-row-background-color-alternate);
+
+$table-list-active-bg: var(--table-row-background-color-active);
+
+$table-cell-padding: var(--table-cell-padding-y) var(--table-cell-padding-x);
+
+$c-table-base: (
+	border-radius: $table-border-radius,
+	font-weight: var(--table-font-weight),
 );
 
-$table-header-first-cell-spaced: (
-    border-top-left-radius: var(--table-spaced-sm-row-border-radius),
+$c-table-base-cell: (
+	height: var(--table-cell-min-height),
 );
 
-$table-header-last-cell-spaced: (
-    border-top-right-radius: var(--table-spaced-row-border-radius),
+$c-table-tbody: (
+	background-color: $table-bg,
 );
 
-$table-left-cell-spaced: ( 
-    border-bottom-left-radius: var(--table-spaced-row-border-radius),
-);
+// Table List
 
-$table-right-cell-spaced: ( 
-    border-bottom-right-radius: var(--table-spaced-row-border-radius),
+$table-list-border-color: $table-border-color;
+$table-list-border-radius: $table-border-radius;
+$table-list-border-x-width: var(--table-border-width);
+$table-list-border-y-width: var(--table-border-width);
+$table-list-color: $table-color;
+
+$c-table-list: (
+	box-shadow: var(--table-box-shadow),
 );
 
 $table-title: (
-    color: #f989,
+	color: var(--table-title-color),
+	font-weight: var(--table-title-font-weight),
+	font-size: var(--table-title-font-size),
+	line-height: var(--table-title-line-height),
 );
 
-$table-list-title: (
-    color: var(--table-title-color),
-    font-weight: var(--table-title-font-weight),
-    font-size: var(--table-title-font-size),
-    line-height: var(--table-title-line-height,)
+$table-list-title: $table-title;
+
+$table-title-link: (
+	color: var(--table-title-link-color),
+	text-decoration: var(--table-title-link-text-decoration),
+	hover: (
+		color: var(--table-title-link-color-hover),
+		text-decoration: var(--table-title-link-text-decoration-hover),
+	),
 );
 
-$table-list-border-radius: var(--table-row-border-radius);
+$table-list-title-link: $table-title-link;
 
-$c-table-list: (
-    color: var(--table-color),
-    border-color: var(--table-border-color),
-    border-radius: $table-list-border-radius,
-    border-width: var(--table-border-width),
-    box-shadow: var(--table-box-shadow),
-    font-size: var(--table-font-size),
-    font-weight: var(--table-font-weight),
-);
+//Table Head
 
-$table-list-head-bg: var(--table-header-background-color);
+$table-head-bg: var(--table-header-background-color);
+$table-list-head-bg: $table-head-bg;
+$table-head-color: var(--table-header-color);
 $table-list-head-font-size: var(--table-header-font-size);
 $table-list-head-font-weight: var(--table-header-font-weight);
 $table-list-head-height: var(--table-header-cell-min-height);
 $table-list-head-vertical-alignment: var(--table-header-vertical-align);
 
-$table-head-cell: (
-    color: var(--table-header-color),
-    line-height: var(--table-header-line-height),
-    padding: var(--table-header-cell-padding-y) var(--table-header-cell-padding-x),
+$table-bordered: (
+	border-bottom-width: 0,
 );
-
-$table-list-accent-bg: var(--table-row-background-color-alternate);
-
-
-$table-list-hover-bg: var(--table-row-background-color-hover);
-$table-hover-color: var(--table-row-color-hover);
 
 $c-table-list-cell: (
-    border-color: var(--table-row-border-color),
-    border-width: var(--table-row-border-width),
-    line-height: var(--table-line-height),
+	border-color: $table-border-color,
+	border-width: var(--table-row-border-width),
+	line-height: var(--table-line-height),
 );
 
-$table-header-first-cell: (
-    border-top-left-radius: calc(var(--table-row-border-radius) - var(--table-border-width)),
+// Table Spaced
+
+$table-spaced: (
+	background-color: var(--table-spaced-background-color),
+	border-spacing: 0 var(--table-spaced-row-border-spacing),
+	border-collapse: separate,
+	border-radius: 0,
+	box-shadow: none,
+	padding: 0 var(--table-spaced-padding),
+	table-row: (
+		box-shadow: var(--table-spaced-box-shadow),
+		border-radius:
+			clay-enable-rounded(var(--table-spaced-sm-row-border-radius)),
+	),
+	table-cell-start: (
+		border-bottom-left-radius:
+			clay-enable-rounded(var(--table-spaced-sm-row-border-radius)),
+		border-top-left-radius:
+			clay-enable-rounded(var(--table-spaced-sm-row-border-radius)),
+	),
+	table-cell-end: (
+		border-bottom-right-radius:
+			clay-enable-rounded(var(--table-spaced-sm-row-border-radius)),
+		border-top-right-radius:
+			clay-enable-rounded(var(--table-spaced-sm-row-border-radius)),
+	),
 );
 
-$table-header-last-cell: (
-    border-top-right-radius: calc(var(--table-row-border-radius) - var(--table-border-width)),
+$table-border-spaced: (
+	border-bottom-width: var(--table-spaced-border-width),
+	border-top-width: var(--table-spaced-border-width),
 );
 
-$table-first-cell: (
-    border-bottom-left-radius: calc(var(--table-row-border-radius) - var(--table-border-width)),
-);
-
-$table-last-cell: (
-    border-bottom-right-radius: calc(var(--table-row-border-radius) - var(--table-border-width)),
-);
-
-$table-cell: (
-    background-color: var(--table-row-background-color),
-    padding: var(--table-cell-padding-y) var(--table-cell-padding-x),
-);
-
-$table-title-link: (
-    color: var(--table-title-link-color),
-    cursor: pointer,
-    text-decoration: var(--table-title-link-text-decoration),
-
-    hover: (
-        color: var(--table-title-link-color-hover),
-        text-decoration: var(--table-title-link-text-decoration-hover), 
-    ),
-);
-
-$table-active:  (
-    background-color: var(--table-row-background-color-active),
-);
-
-$table-img-max-height:  var(--table-image-height);
+$table-img-max-height: var(--table-image-height);
