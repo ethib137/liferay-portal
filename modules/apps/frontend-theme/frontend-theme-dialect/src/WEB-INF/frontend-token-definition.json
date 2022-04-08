@@ -7028,6 +7028,18 @@
 							"type": "String"
 						},
 						{
+							"defaultValue": "var(--border-radius)",
+							"label": "table-border-radius",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "table-border-radius"
+								}
+							],
+							"name": "tableBorderRadius",
+							"type": "String"
+						},
+						{
 							"defaultValue": "0.0625rem",
 							"label": "table-border-width",
 							"mappings": [
@@ -7741,10 +7753,10 @@
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "table-spaced-sm-row-border-radius"
+									"value": "table-spaced-row-border-radius"
 								}
 							],
-							"name": "tableSpacedSmRowBorderRadius",
+							"name": "tableSpacedRowBorderRadius",
 							"type": "String"
 						},
 						{

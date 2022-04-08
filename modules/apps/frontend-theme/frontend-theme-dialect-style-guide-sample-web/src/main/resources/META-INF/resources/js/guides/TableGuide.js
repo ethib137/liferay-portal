@@ -67,15 +67,6 @@ const TABLE_UTILITY_CLASSES = [
 	{
 		className: 'table-valign-top',
 	},
-	{
-		className: 'table-column-text-start',
-	},
-	{
-		className: 'table-column-text-center',
-	},
-	{
-		className: 'table-column-text-end',
-	},
 ];
 
 const BIG_TEXT =
@@ -236,21 +227,34 @@ const TableGuide = () => {
 							</ClayTable.Cell>
 						</ClayTable.Row>
 
-						<ClayTable.Row>
-							<ClayTable.Cell
-								className="table-column-text-end"
-								headingTitle
-							>
-								White and Purple
+						<ClayTable.Row className="table-column-text-start">
+							<ClayTable.Cell headingTitle>
+								.table-column-text-start
 							</ClayTable.Cell>
 
-							<ClayTable.Cell className="table-column-text-center">
-								Europe
+							<ClayTable.Cell>Start</ClayTable.Cell>
+
+							<ClayTable.Cell>Start</ClayTable.Cell>
+						</ClayTable.Row>
+
+						<ClayTable.Row className="table-column-text-center">
+							<ClayTable.Cell headingTitle>
+								.table-column-text-center
 							</ClayTable.Cell>
 
-							<ClayTable.Cell className="table-column-text-start">
-								Asia
+							<ClayTable.Cell>Center</ClayTable.Cell>
+
+							<ClayTable.Cell>Center</ClayTable.Cell>
+						</ClayTable.Row>
+
+						<ClayTable.Row className="table-column-text-end">
+							<ClayTable.Cell headingTitle>
+								.table-column-text-end
 							</ClayTable.Cell>
+
+							<ClayTable.Cell>End</ClayTable.Cell>
+
+							<ClayTable.Cell>End</ClayTable.Cell>
 						</ClayTable.Row>
 
 						<ClayTable.Row>

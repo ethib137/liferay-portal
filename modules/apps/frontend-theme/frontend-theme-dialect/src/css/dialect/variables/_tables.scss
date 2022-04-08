@@ -3,7 +3,7 @@
 $table-bg: var(--table-row-background-color);
 $table-color: var(--table-color);
 $table-border-color: var(--table-border-color);
-$table-border-radius: var(--table-row-border-radius);
+$table-border-radius: var(--table-border-radius);
 $table-font-size: var(--table-font-size);
 
 $table-hover-bg: var(--table-row-background-color-hover);
@@ -14,6 +14,7 @@ $table-accent-bg: var(--table-row-background-color-alternate);
 $table-list-active-bg: var(--table-row-background-color-active);
 
 $table-cell-padding: var(--table-cell-padding-y) var(--table-cell-padding-x);
+$table-cell-padding-sm: var(--table-sm-cell-padding-y) var(--table-sm-cell-padding-x);
 
 $c-table-base: (
 	border-radius: $table-border-radius,
@@ -76,7 +77,7 @@ $table-bordered: (
 
 $c-table-list-cell: (
 	border-color: $table-border-color,
-	border-width: var(--table-row-border-width),
+	border-top-width: var(--table-border-width),
 	line-height: var(--table-line-height),
 );
 
@@ -90,7 +91,7 @@ $table-spaced: (
 	box-shadow: none,
 	padding: 0 var(--table-spaced-padding),
 	table-row: (
-		box-shadow: var(--table-spaced-box-shadow),
+		box-shadow: var(--table-spaced-row-box-shadow),
 		border-radius:
 			clay-enable-rounded(var(--table-spaced-sm-row-border-radius)),
 	),

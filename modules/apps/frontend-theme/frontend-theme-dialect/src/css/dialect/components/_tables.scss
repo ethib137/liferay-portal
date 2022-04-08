@@ -34,8 +34,6 @@
 
 .table-sm {
 	--table-cell-min-height: var(--table-sm-cell-min-height);
-	--table-cell-padding-y: var(--table-sm-cell-padding-y);
-	--table-cell-padding-x: var(--table-sm-cell-padding-x);
 	--table-font-size: var(--table-sm-header-font-size);
 	--table-font-weight: var(--table-sm-font-weight);
 	--table-line-height: var(--table-sm-line-height);
@@ -60,8 +58,8 @@ th {
 }
 
 .table-spaced {
-	--table-row-border-radius: var(--table-spaced-sm-row-border-radius);
-	--table-row-border-width: 0;
+	--table-border-radius: var(--table-spaced-sm-row-border-radius);
+	--table-border-width: 0;
 
 	@include clay-css($table-spaced);
 
