@@ -46,9 +46,6 @@ $nav-underline-link: (
 	color: var(--tab-primary-item-color),
 	disabled: (
 		border: 0,
-		after: (
-			content: none,
-		),
 		background-color: var(--tab-primary-item-background-color-disabled),
 		color: var(--tab-primary-item-color-disabled),
 		font-weight: var(--tab-secondary-item-font-weight),

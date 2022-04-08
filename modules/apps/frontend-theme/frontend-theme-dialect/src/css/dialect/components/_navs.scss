@@ -1,5 +1,11 @@
-.nav-underline .nav-link {
-	@include clay-css($nav-underline-link);
+.nav-underline {
+	&.nav-active-bar-top .nav-link {
+		@include clay-link($nav-underline-link-active-bar-top);
+	}
+
+	.nav-link {
+		@include clay-css($nav-underline-link);
+	}
 }
 
 .nav-vertical {
@@ -18,24 +24,24 @@
 	}
 }
 
-.nav-underline-active-bar-top .nav-link {
-	@include clay-link($nav-underline-link-active-bar-top);
+.nav-secondary {
+	&.nav-active-bar-top .nav-link {
+		@include clay-link($nav-secondary-link-active-bar-top);
+	}
+
+	.nav-link {
+		@include clay-link($nav-secondary-link);
+	}
 }
 
-.nav-secondary .nav-link {
-	@include clay-link($nav-secondary-link);
-}
+.nav-tertiary {
+	&.nav-active-bar-top .nav-link {
+		@include clay-link($nav-tertiary-link-active-bar-top);
+	}
 
-.nav-secondary-active-bar-top .nav-link {
-	@include clay-link($nav-secondary-link-active-bar-top);
-}
-
-.nav-tertiary .nav-link {
-	@include clay-link($nav-tertiary-link);
-}
-
-.nav-tertiary-active-bar-top .nav-link {
-	@include clay-link($nav-tertiary-link-active-bar-top);
+	.nav-link {
+		@include clay-link($nav-tertiary-link);
+	}
 }
 
 .nav-segment {
