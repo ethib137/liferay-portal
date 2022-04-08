@@ -45,16 +45,16 @@ const TERTIARY_TAB = (
 
 const TABS_ACTIVE_BAR_COMPONENTS = [
 	{
-		className: 'nav-underline nav-underline-active-bar-top',
+		className: 'nav-underline nav-active-bar-top',
 		type: 'underline',
 	},
 	{
-		className: 'nav-secondary nav-secondary-active-bar-top',
+		className: 'nav-secondary nav-active-bar-top',
 		type: 'secondary',
 	},
 	{
 		child: TERTIARY_TAB,
-		className: 'nav-tertiary nav-tertiary-active-bar-top',
+		className: 'nav-tertiary nav-active-bar-top',
 		type: 'tertiary',
 	},
 ];
