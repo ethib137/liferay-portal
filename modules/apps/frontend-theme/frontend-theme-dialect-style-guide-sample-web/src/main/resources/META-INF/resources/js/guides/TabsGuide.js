@@ -63,54 +63,48 @@ const TABS_DISABLED_COMPONENTS = [
 	{
 		className: 'nav-underline',
 		disabled: true,
-		type: 'underline',
 	},
 	{
 		className: 'nav-secondary',
 		disabled: true,
-		type: 'secondary',
 	},
 	{
 		child: TERTIARY_TAB,
 		className: 'nav-tertiary',
 		disabled: true,
-		type: 'tertiary',
 	},
 	{
 		child: 'segment',
 		className: 'nav-segment ',
 		disabled: true,
-		type: 'segment',
 	},
 ];
 
 const TABS_COMPONENTS = [
-	{className: 'nav-underline', type: 'primary'},
-	{className: 'nav-secondary', type: 'secondary'},
+	{className: 'nav-underline'},
+	{className: 'nav-secondary'},
 	{
 		child: TERTIARY_TAB,
 		className: 'nav-tertiary',
-		type: 'tertiary',
 	},
-	{className: 'nav-segment', type: 'segment'},
+	{className: 'nav-segment'},
 ];
 
 const TABS_ICONS_COMPONENTS = [
-	{className: 'nav-underline', icon: 'after', type: 'primary'},
-	{className: 'nav-underline', icon: 'before', type: 'primary'},
-	{className: 'nav-secondary', icon: 'after', type: 'secondary'},
-	{className: 'nav-secondary', icon: 'before', type: 'secondary'},
-	{className: 'nav-segment', icon: 'after', type: 'segment'},
-	{className: 'nav-segment', icon: 'before', type: 'segment'},
+	{className: 'nav-underline', icon: 'after'},
+	{className: 'nav-underline', icon: 'before'},
+	{className: 'nav-secondary', icon: 'after'},
+	{className: 'nav-secondary', icon: 'before'},
+	{className: 'nav-segment', icon: 'after'},
+	{className: 'nav-segment', icon: 'before'},
 ];
 
 const TABS_VERTICAL_COMPONENTS = [
-	{className: 'nav-vertical nav-underline', type: 'primary'},
-	{className: 'nav-vertical nav-secondary', type: 'secondary'},
+	{className: 'nav-vertical nav-underline'},
+	{className: 'nav-vertical nav-secondary'},
 	{
 		child: TERTIARY_TAB,
 		className: 'nav-vertical nav-tertiary',
-		type: 'tertiary',
 	},
 ];
 
