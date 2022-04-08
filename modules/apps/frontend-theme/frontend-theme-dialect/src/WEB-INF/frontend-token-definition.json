@@ -4912,7 +4912,7 @@
 				{
 					"frontendTokens": [
 						{
-							"defaultValue": "0.063rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-primary-item-active-bar-border-radius",
 							"mappings": [
 								{
@@ -5846,7 +5846,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-secondary-horizontal-item-border-bottom-width",
 							"mappings": [
 								{
@@ -5858,7 +5858,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-secondary-horizontal-item-border-left-width",
 							"mappings": [
 								{
@@ -5870,7 +5870,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-secondary-horizontal-item-border-right-width",
 							"mappings": [
 								{
@@ -5882,7 +5882,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-secondary-horizontal-item-border-top-width",
 							"mappings": [
 								{
@@ -5936,7 +5936,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-secondary-vertical-item-border-bottom-width",
 							"mappings": [
 								{
@@ -5948,7 +5948,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-secondary-vertical-item-border-left-width",
 							"mappings": [
 								{
@@ -5960,7 +5960,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-secondary-vertical-item-border-right-width",
 							"mappings": [
 								{
@@ -5972,7 +5972,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-secondary-vertical-item-border-top-width",
 							"mappings": [
 								{
@@ -6014,7 +6014,7 @@
 				{
 					"frontendTokens": [
 						{
-							"defaultValue": "0.063rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-tertiary-item-active-bar-border-radius",
 							"mappings": [
 								{
@@ -6397,7 +6397,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-tertiary-horizontal-item-border-bottom-width",
 							"mappings": [
 								{
@@ -6499,7 +6499,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0.03125rem",
+							"defaultValue": "0.0625rem",
 							"label": "tab-tertiary-vertical-item-border-bottom-width",
 							"mappings": [
 								{
@@ -6603,7 +6603,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "2rem",
+							"defaultValue": "var(--border-radius-pill)",
 							"label": "tab-segment-border-radius",
 							"mappings": [
 								{
@@ -6767,7 +6767,7 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "1.5rem",
+							"defaultValue": "var(--border-radius-pill)",
 							"label": "tab-segment-item-border-radius",
 							"mappings": [
 								{
@@ -6926,7 +6926,7 @@
 									"value": "tab-segment-item-icon-color-disabled"
 								}
 							],
-							"name": "tabSegmentItemiconColorDisabled",
+							"name": "tabSegmentItemIconColorDisabled",
 							"type": "String"							
 						},
 						{
@@ -6972,7 +6972,7 @@
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "tab-segment-item-inline-item-spacer-yS"
+									"value": "tab-segment-item-inline-item-spacer-y"
 								}
 							],
 							"name": "tabSegmentItemInlineItemSpacerY",
