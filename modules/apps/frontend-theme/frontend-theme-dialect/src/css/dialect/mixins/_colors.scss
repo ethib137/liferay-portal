@@ -6,4 +6,8 @@
 	.text-#{$class-suffix} {
 		color: $color !important;
 	}
+
+	.border-#{$class-suffix} {
+		border-color: $color !important;
+	}
 }
