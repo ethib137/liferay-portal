@@ -226,6 +226,118 @@ const ColorGuide = () => {
 			</TokenGroup>
 
 			<TokenGroup
+				group="borders"
+				title={Liferay.Language.get('border-primary-colors')}
+			>
+				{BRAND_PRIMARY_COLORS.map((item) => (
+					<TokenItem
+						border={true}
+						className={`rounded-sm border-${item}`}
+						key={item}
+						label={item}
+					/>
+				))}
+			</TokenGroup>
+
+			<TokenGroup
+				group="borders"
+				title={Liferay.Language.get('border-secondary-colors')}
+			>
+				{BRAND_SECONDARY_COLORS.map((item) => (
+					<TokenItem
+						border={true}
+						className={`rounded-sm border-${item}`}
+						key={item}
+						label={item}
+					/>
+				))}
+			</TokenGroup>
+
+			<TokenGroup
+				group="borders"
+				title={Liferay.Language.get('border-neutral-colors')}
+			>
+				{NEUTRAL_COLORS.map((item) => (
+					<TokenItem
+						border={true}
+						className={`rounded-sm border-${item}`}
+						key={item}
+						label={item}
+					/>
+				))}
+			</TokenGroup>
+
+			<TokenGroup
+				group="borders"
+				title={Liferay.Language.get('border-accent-colors')}
+			>
+				{ACCENT_COLORS.map((item) => (
+					<TokenItem
+						border={true}
+						className={`rounded-sm border-${item}`}
+						key={item}
+						label={item}
+					/>
+				))}
+			</TokenGroup>
+
+			<TokenGroup
+				group="borders"
+				title={Liferay.Language.get('border-success-colors')}
+			>
+				{STATE_COLORS_SUCCESS.map((item) => (
+					<TokenItem
+						border={true}
+						className={`rounded-sm border-${item}`}
+						key={item}
+						label={item}
+					/>
+				))}
+			</TokenGroup>
+
+			<TokenGroup
+				group="borders"
+				title={Liferay.Language.get('border-info-colors')}
+			>
+				{STATE_COLORS_INFO.map((item) => (
+					<TokenItem
+						border={true}
+						className={`rounded-sm border-${item}`}
+						key={item}
+						label={item}
+					/>
+				))}
+			</TokenGroup>
+
+			<TokenGroup
+				group="borders"
+				title={Liferay.Language.get('border-warning-colors')}
+			>
+				{STATE_COLORS_WARNING.map((item) => (
+					<TokenItem
+						border={true}
+						className={`rounded-sm border-${item}`}
+						key={item}
+						label={item}
+					/>
+				))}
+			</TokenGroup>
+
+			<TokenGroup
+				group="borders"
+				title={Liferay.Language.get('border-danger-colors')}
+			>
+				{STATE_COLORS_DANGER.map((item) => (
+					<TokenItem
+						border={true}
+						className={`rounded-sm border-${item}`}
+						key={item}
+						label={item}
+					/>
+				))}
+			</TokenGroup>
+
+			<TokenGroup
 				group="texts"
 				title={Liferay.Language.get('text-primary')}
 			>
