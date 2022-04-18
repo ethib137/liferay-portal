@@ -94,18 +94,6 @@ $nav-underline-link: (
 	),
 );
 
-$nav-underline-link-vertical: (
-	border-bottom-width: var(--tab-primary-vertical-item-border-bottom-width),
-	border-left-width: var(--tab-primary-vertical-item-border-left-width),
-	border-right-width: var(--tab-primary-vertical-item-border-right-width),
-	border-top-width: var(--tab-primary-vertical-item-border-top-width),
-	after: (
-		top: 0,
-		height: var(--tab-primary-vertical-item-active-bar-height),
-		width: var(--tab-primary-item-active-bar-thickness),
-	),
-);
-
 $nav-underline-link-active-bar-top: (
 	border-bottom-width: var(--tab-primary-horizontal-item-border-top-width),
 	border-left-width: var(--tab-primary-horizontal-item-border-left-width),
@@ -115,6 +103,20 @@ $nav-underline-link-active-bar-top: (
 		top: 0,
 		height: var(--tab-primary-item-active-bar-thickness),
 		width: var(--tab-primary-horizontal-item-active-bar-width),
+	),
+);
+
+$nav-underline-link-vertical: (
+	border-bottom-width: var(--tab-primary-vertical-item-border-bottom-width),
+	border-left-width: var(--tab-primary-vertical-item-border-left-width),
+	border-right-width: var(--tab-primary-vertical-item-border-right-width),
+	border-top-width: var(--tab-primary-vertical-item-border-top-width),
+	padding: var(--tab-primary-vertical-item-padding-y)
+		var(--tab-primary-vertical-item-padding-x),
+	after: (
+		top: 0,
+		height: var(--tab-primary-vertical-item-active-bar-height),
+		width: var(--tab-primary-item-active-bar-thickness),
 	),
 );
 
@@ -177,6 +179,8 @@ $nav-secondary-link: map-deep-merge(
 			color: var(--tab-secondary-item-color-hover),
 			box-shadow: var(--tab-secondary-item-box-shadow-hover),
 			after: (
+				background-color:
+					var(--tab-secondary-item-active-bar-color-hover),
 				content: '',
 			),
 			inline-item: (
@@ -198,22 +202,24 @@ $nav-secondary-link: map-deep-merge(
 	$nav-base-link
 );
 
+$nav-secondary-link-active-bar-top: (
+	after: (
+		top: 0,
+		width: var(--tab-secondary-horizontal-item-active-bar-width),
+	),
+);
+
 $nav-secondary-link-vertical: (
 	border-bottom-width: var(--tab-secondary-vertical-item-border-top-width),
 	border-left-width: var(--tab-secondary-vertical-item-border-left-width),
 	border-right-width: var(--tab-secondary-vertical-item-border-right-width),
 	border-top-width: var(--tab-secondary-vertical-item-border-bottom-width),
+	padding: var(--tab-secondary-vertical-item-padding-y)
+		var(--tab-secondary-vertical-item-padding-x),
 	after: (
 		top: 0,
-		height: var(--tab-secondary-vertical-item-active-bar-heigth),
+		height: var(--tab-secondary-vertical-item-active-bar-height),
 		width: var(--tab-secondary-item-active-bar-thickness),
-	),
-);
-
-$nav-secondary-link-active-bar-top: (
-	after: (
-		top: 0,
-		width: var(--tab-secondary-horizontal-item-active-bar-width),
 	),
 );
 
@@ -278,6 +284,8 @@ $nav-tertiary-link: map-deep-merge(
 			box-shadow: var(--tab-tertiary-item-box-shadow-hover),
 			font-weight: var(--tab-tertiary-item-font-weight-active),
 			after: (
+				background-color:
+					var(--tab-tertiary-item-active-bar-color-hover),
 				content: '',
 			),
 			inline-item: (
@@ -302,21 +310,6 @@ $nav-tertiary-link: map-deep-merge(
 	$nav-base-link
 );
 
-$nav-tertiary-link-vertical: (
-	border-bottom-width: var(--tab-tertiary-vertical-item-border-bottom-width),
-	border-left-width: var(--tab-tertiary-vertical-item-border-left-width),
-	border-right-width: var(--tab-tertiary-vertical-item-border-right-width),
-	border-top-width: var(--tab-tertiary-vertical-item-border-top-width),
-	after: (
-		height: var(--tab-tertiary-vertical-item-active-bar-height),
-		top: 0,
-		width: var(--tab-tertiary-item-active-bar-thickness),
-	),
-	active-class: (
-		border-color: transparent,
-	),
-);
-
 $nav-tertiary-link-active-bar-top: (
 	border-bottom-width: var(--tab-tertiary-horizontal-item-border-top-width),
 	border-left-width: var(--tab-tertiary-horizontal-item-border-left-width),
@@ -324,6 +317,23 @@ $nav-tertiary-link-active-bar-top: (
 	border-top-width: var(--tab-tertiary-horizontal-item-border-bottom-width),
 	after: (
 		top: 0,
+	),
+);
+
+$nav-tertiary-link-vertical: (
+	border-bottom-width: var(--tab-tertiary-vertical-item-border-bottom-width),
+	border-left-width: var(--tab-tertiary-vertical-item-border-left-width),
+	border-right-width: var(--tab-tertiary-vertical-item-border-right-width),
+	border-top-width: var(--tab-tertiary-vertical-item-border-top-width),
+	padding: var(--tab-tertiary-vertical-item-padding-y)
+		var(--tab-tertiary-vertical-item-padding-x),
+	after: (
+		height: var(--tab-tertiary-vertical-item-active-bar-height),
+		top: 0,
+		width: var(--tab-tertiary-item-active-bar-thickness),
+	),
+	active-class: (
+		border-color: transparent,
 	),
 );
 

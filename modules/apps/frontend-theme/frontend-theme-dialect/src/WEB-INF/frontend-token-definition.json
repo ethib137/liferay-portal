@@ -6446,18 +6446,6 @@
 						},
 						{
 							"defaultValue": "var(--spacer-3)",
-							"label": "tab-secondary-horizontal-item-padding-x",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "tab-secondary-horizontal-item-padding-x"
-								}
-							],
-							"name": "tabSecondaryHorizontalItemPaddingX",
-							"type": "String"							
-						},
-						{
-							"defaultValue": "var(--spacer-3)",
 							"label": "tab-tertiary-horizontal-item-padding-x",
 							"mappings": [
 								{
@@ -6627,30 +6615,6 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "var(--spacer-1)",
-							"label": "tab-segment-padding-x",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "tab-segment-padding-x"
-								}
-							],
-							"name": "tabSegmentPaddingX",
-							"type": "String"							
-						},
-						{
-							"defaultValue": "var(--spacer-1)",
-							"label": "tab-segment-padding-y",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "tab-segment-padding-y"
-								}
-							],
-							"name": "tabSegmentPaddingY",
-							"type": "String"							
-						},
-						{
 							"defaultValue": "transparent",
 							"editorType": "ColorPicker",
 							"label": "tab-segment-item-background-color",
@@ -6755,18 +6719,6 @@
 							"type": "String"							
 						},
 						{
-							"defaultValue": "0",
-							"label": "tab-segment-item-border-width",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "tab-segment-item-border-width"
-								}
-							],
-							"name": "tabSegmentItemBorderWidth",
-							"type": "String"							
-						},
-						{
 							"defaultValue": "var(--border-radius-pill)",
 							"label": "tab-segment-item-border-radius",
 							"mappings": [
@@ -6776,6 +6728,18 @@
 								}
 							],
 							"name": "tabSegmentItemBorderRadius",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "0",
+							"label": "tab-segment-item-border-width",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-segment-item-border-width"
+								}
+							],
+							"name": "tabSegmentItemBorderWidth",
 							"type": "String"							
 						},
 						{
@@ -6988,6 +6952,30 @@
 								}
 							],
 							"name": "tabSegmentItemLineHeight",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "var(--spacer-1)",
+							"label": "tab-segment-padding-x",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-segment-padding-x"
+								}
+							],
+							"name": "tabSegmentPaddingX",
+							"type": "String"							
+						},
+						{
+							"defaultValue": "var(--spacer-1)",
+							"label": "tab-segment-padding-y",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "tab-segment-padding-y"
+								}
+							],
+							"name": "tabSegmentPaddingY",
 							"type": "String"							
 						}
 					],
