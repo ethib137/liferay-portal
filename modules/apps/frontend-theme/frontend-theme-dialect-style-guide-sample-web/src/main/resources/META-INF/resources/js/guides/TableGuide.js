@@ -27,7 +27,8 @@ const TABLE_VARIANTS = [
 		label: 'table-divided',
 	},
 	{
-		className: 'table-spaced',
+		className: 'bg-neutral-3 px-2 table-spaced',
+		label: 'table-spaced',
 	},
 	{
 		className: 'table-bordered',
