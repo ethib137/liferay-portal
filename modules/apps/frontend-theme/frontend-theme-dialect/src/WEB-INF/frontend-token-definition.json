@@ -3810,32 +3810,6 @@
 				{
 					"frontendTokens": [
 						{
-							"defaultValue": "var(--color-neutral-8)",
-							"editorType": "ColorPicker",
-							"label": "form-input-label-color",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "form-input-label-color"
-								}
-							],
-							"name": "formInputLabelColor",
-							"type": "String"
-						},
-						{
-							"defaultValue": "var(--color-neutral-8)",
-							"editorType": "ColorPicker",
-							"label": "form-input-label-color-disabled",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "form-input-label-color-disabled"
-								}
-							],
-							"name": "formInputLabelColorDisabled",
-							"type": "String"
-						},
-						{
 							"defaultValue": "var(--text-paragraph-font-size)",
 							"label": "form-input-label-font-size",
 							"mappings": [
@@ -3929,6 +3903,32 @@
 								}
 							],
 							"name": "formInputLabelReferenceMarkColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "var(--color-neutral-8)",
+							"editorType": "ColorPicker",
+							"label": "form-input-label-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "form-input-label-color"
+								}
+							],
+							"name": "formInputLabelColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "var(--color-neutral-8)",
+							"editorType": "ColorPicker",
+							"label": "form-input-label-color-disabled",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "form-input-label-color-disabled"
+								}
+							],
+							"name": "formInputLabelColorDisabled",
 							"type": "String"
 						}
 					],
@@ -4332,19 +4332,6 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "var(--color-action-primary-default)",
-							"editorType": "ColorPicker",
-							"label": "custom-control-border-color",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "custom-control-border-color"
-								}
-							],
-							"name": "customControlBorderColor",
-							"type": "String"
-						},
-						{
 							"defaultValue": "var(--form-input-label-color)",
 							"editorType": "ColorPicker",
 							"label": "custom-control-label-color",
@@ -4406,6 +4393,19 @@
 							"type": "String"
 						},
 						{
+							"defaultValue": "var(--color-action-primary-default)",
+							"editorType": "ColorPicker",
+							"label": "custom-control-border-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "custom-control-border-color"
+								}
+							],
+							"name": "customControlBorderColor",
+							"type": "String"
+						},
+						{
 							"defaultValue": "var(--color-action-primary-disabled)",
 							"editorType": "ColorPicker",
 							"label": "custom-control-border-color-disabled",
@@ -4437,19 +4437,6 @@
 				},
 				{
 					"frontendTokens": [
-						{
-							"defaultValue": "var(--color-neutral-5)",
-							"editorType": "ColorPicker",
-							"label": "condensed-form-input-label-color",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "condensed-form-input-label-color"
-								}
-							],
-							"name": "condensedFormInputLabelColor",
-							"type": "String"
-						},
 						{
 							"defaultValue": "var(--text-paragraph-font-size)",
 							"label": "condensed-form-input-label-font-size",
@@ -4496,19 +4483,6 @@
 								}
 							],
 							"name": "condensedFormInputLabelPaddingX",
-							"type": "String"
-						},
-						{
-							"defaultValue": "var(--color-neutral-2)",
-							"editorType": "ColorPicker",
-							"label": "condensed-form-input-background-color",
-							"mappings": [
-								{
-									"type": "cssVariable",
-									"value": "condensed-form-input-background-color"
-								}
-							],
-							"name": "condensedFormInputBackgroundColor",
 							"type": "String"
 						},
 						{
@@ -4598,16 +4572,16 @@
 							"type": "String"
 						},
 						{
-							"defaultValue": "var(--color-neutral-4)",
+							"defaultValue": "var(--color-neutral-2)",
 							"editorType": "ColorPicker",
-							"label": "condensed-form-input-label-color-disabled",
+							"label": "condensed-form-input-background-color",
 							"mappings": [
 								{
 									"type": "cssVariable",
-									"value": "condensed-form-input-label-color-disabled"
+									"value": "condensed-form-input-background-color"
 								}
 							],
-							"name": "condensedFormInputLabelColorDisabled",
+							"name": "condensedFormInputBackgroundColor",
 							"type": "String"
 						},
 						{
@@ -4621,6 +4595,32 @@
 								}
 							],
 							"name": "condensedFormInputBackgroundColorDisabled",
+							"type": "String"
+						},
+						{
+							"defaultValue": "var(--color-neutral-5)",
+							"editorType": "ColorPicker",
+							"label": "condensed-form-input-label-color",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "condensed-form-input-label-color"
+								}
+							],
+							"name": "condensedFormInputLabelColor",
+							"type": "String"
+						},
+						{
+							"defaultValue": "var(--color-neutral-4)",
+							"editorType": "ColorPicker",
+							"label": "condensed-form-input-label-color-disabled",
+							"mappings": [
+								{
+									"type": "cssVariable",
+									"value": "condensed-form-input-label-color-disabled"
+								}
+							],
+							"name": "condensedFormInputLabelColorDisabled",
 							"type": "String"
 						}
 					],
