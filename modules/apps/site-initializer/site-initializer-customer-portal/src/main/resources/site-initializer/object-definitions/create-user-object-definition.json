@@ -1,0 +1,91 @@
+{
+	"actions": {
+		"delete": {
+		},
+		"get": {
+		},
+		"permissions": {
+		},
+		"update": {
+		}
+	},
+	"active": true,
+	"label": {
+		"en_US": "Create User 2"
+	},
+	"name": "CreateUser2",
+	"objectFields": [
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "Email Address"
+			},
+			"name": "emailAddress",
+			"required": true,
+			"system": false,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "First Name"
+			},
+			"name": "firstName",
+			"required": true,
+			"system": false,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "Last Name"
+			},
+			"name": "lastName",
+			"required": true,
+			"system": false,
+			"type": "String"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "Password"
+			},
+			"name": "password",
+			"required": true,
+			"system": false,
+			"type": "String"
+		}
+	],
+	"objectLayouts": [
+	],
+	"objectViews": [
+	],
+	"panelCategoryKey": "control_panel.users",
+	"pluralLabel": {
+		"en_US": "Create Users"
+	},
+	"portlet": false,
+	"scope": "company",
+	"status": {
+		"code": 0,
+		"label": "approved",
+		"label_i18n": "Approved"
+	},
+	"system": false
+}

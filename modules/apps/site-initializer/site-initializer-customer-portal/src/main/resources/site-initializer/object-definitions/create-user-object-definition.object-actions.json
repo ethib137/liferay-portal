@@ -1,0 +1,28 @@
+[
+	{
+		"active": true,
+		"name": "Test Object Action 1",
+		"objectActionExecutorKey": "webhook",
+		"objectActionTriggerKey": "onAfterAdd",
+		"parameters": {
+			"secret": "test",
+			"url": "http://localhost:8080"
+		}
+	},
+	{
+		"active": true,
+		"conditionExpression": "",
+		"description": "",
+		"name": "On Create User",
+		"objectActionExecutorKey": "groovy",
+		"objectActionTriggerKey": "onAfterAdd",
+		"parameters": {
+			"script": "System.out.println(\"firstName: \" + firstName);\nSystem.out.println(\"lastName: \" + lastName);\nSystem.out.println(\"emailAddress: \" + emailAddress);\nSystem.out.println(\"password: \" + password);\nSystem.out.println(\"companyId: \" + companyId);\nSystem.out.println(\"userId: \" + userId);\n\nimport com.liferay.portal.kernel.util.LocaleThreadLocal;\nimport com.liferay.portal.kernel.model.User;\nimport com.liferay.portal.kernel.service.UserLocalServiceUtil;\nimport com.liferay.portal.kernel.service.ServiceContext;\nimport com.liferay.portal.kernel.service.ServiceContextThreadLocal;\nimport com.liferay.portal.kernel.util.WebKeys;\n\nimport javax.servlet.http.HttpServletRequest;\n\nimport java.util.Calendar;\n\nUser user = UserLocalServiceUtil.fetchUserByEmailAddress(companyId, emailAddress);\n\nif (user != null) {\n\tSystem.out.println(\"User \" + emailAddress + \" already exists.\");\n\n\treturn;\n}\n\nLocale locale = LocaleThreadLocal.getThemeDisplayLocale();\n\nlong creatorUserId = userId;\n\nString password1 = password;\nString password2 = password;\n\nboolean autoPassword = false;\n\nString screenName = null;\n\nboolean autoScreenName = true;\n\nString middleName = null;\nlong prefixId = 0;\nlong suffixId = 0;\n\nboolean male = true;\n\nCalendar birthdayCalendar = Calendar.getInstance();\n\nint birthdayMonth = birthdayCalendar.get(Calendar.MONTH);\nint birthdayDay = birthdayCalendar.get(Calendar.DAY_OF_MONTH);\nint birthdayYear = birthdayCalendar.get(Calendar.YEAR);\n\nString jobTitle = \"\";\nlong[] groupIds = null;\nlong[] organizationIds = null;\nlong[] roleIds = null;\nlong[] userGroupIds = null;\nboolean sendEmail = true;\n\nServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();\n\nUserLocalServiceUtil.addUserWithWorkflow(\n  creatorUserId, companyId, autoPassword, password1,\n  password2, autoScreenName, screenName, emailAddress,\n  locale, firstName, middleName, lastName, prefixId,\n  suffixId, male, birthdayMonth, birthdayDay,\n  birthdayYear, jobTitle, groupIds, organizationIds,\n  roleIds, userGroupIds, sendEmail, serviceContext);",
+			"test": [
+				"this",
+				"that",
+				"those"
+			]
+		}
+	}
+]

@@ -1,0 +1,53 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragmentStyle": {
+						"minHeight": "100vh",
+						"paddingBottom": "3",
+						"paddingLeft": "3",
+						"paddingRight": "3",
+						"paddingTop": "3"
+					},
+					"indexed": true,
+					"layout": {
+						"align": "Center",
+						"borderWidth": 0,
+						"contentDisplay": "FlexRow",
+						"justify": "Center",
+						"marginBottom": 0,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"paddingBottom": 1,
+						"paddingLeft": 1,
+						"paddingRight": 1,
+						"paddingTop": 1,
+						"widthType": "Fluid"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"widgetInstance": {
+								"widgetConfig": {
+								},
+								"widgetName": "com_liferay_login_web_portlet_LoginPortlet"
+							}
+						},
+						"type": "Widget"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "clarity-public"
+		},
+		"themeName": "Dialect"
+	}
+}
