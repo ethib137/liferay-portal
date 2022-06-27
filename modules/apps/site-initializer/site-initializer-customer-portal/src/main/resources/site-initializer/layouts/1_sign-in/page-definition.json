@@ -1,0 +1,126 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragmentStyle": {
+						"minHeight": "100vh",
+						"paddingBottom": "3",
+						"paddingLeft": "3",
+						"paddingRight": "3",
+						"paddingTop": "3"
+					},
+					"indexed": true,
+					"layout": {
+						"align": "Center",
+						"borderWidth": 0,
+						"contentDisplay": "FlexColumn",
+						"justify": "Center",
+						"marginBottom": 0,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"paddingBottom": 1,
+						"paddingLeft": 1,
+						"paddingRight": 1,
+						"paddingTop": 1,
+						"widthType": "Fluid"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"indexed": true,
+							"layout": {
+								"borderWidth": 0,
+								"marginBottom": 0,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
+								"paddingBottom": 0,
+								"paddingLeft": 0,
+								"paddingRight": 0,
+								"paddingTop": 0,
+								"widthType": "Fluid"
+							}
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"fragment": {"key": "clarity-text"},
+									"fragmentConfig": {
+										"textType": "text-small-caps"
+									},
+									"fragmentFields": [
+										{
+											"id": "element-text",
+											"value": {
+												"fragmentLink": {},
+												"text": {
+													"value_i18n": {
+														"en_US": "Welcome"
+													}
+												}
+											}
+										}
+									],
+									"fragmentStyle": {
+										"fontWeight": "fontWeightBolder",
+										"marginBottom": "1",
+										"textColor": "colorBrandPrimary"
+									},
+									"indexed": true
+								},
+								"type": "Fragment"
+							},
+							{
+								"definition": {
+									"fragment": {"key": "clarity-text"},
+									"fragmentConfig": {"textType": "h1"},
+									"fragmentFields": [
+										{
+											"id": "element-text",
+											"value": {
+												"fragmentLink": {},
+												"text": {
+													"value_i18n": {
+														"en_US": "Sign In"
+													}
+												}
+											}
+										}
+									],
+									"fragmentStyle": {
+										"marginBottom": "4",
+										"paddingBottom": "3"
+									},
+									"indexed": true
+								},
+								"type": "Fragment"
+							},
+							{
+								"definition": {
+									"fragmentStyle": {"width": "400px"},
+									"widgetInstance": {
+										"widgetConfig": {},
+										"widgetName": "com_liferay_login_web_portlet_LoginPortlet"
+									}
+								},
+								"type": "Widget"
+							}
+						],
+						"type": "Section"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "clarity-public"
+		},
+		"themeName": "Dialect"
+	}
+}

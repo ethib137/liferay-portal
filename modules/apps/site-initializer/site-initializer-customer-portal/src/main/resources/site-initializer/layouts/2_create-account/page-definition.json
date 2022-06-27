@@ -235,7 +235,9 @@
 		"type": "Root"
 	},
 	"settings": {
-		"colorSchemeName": "01",
+		"masterPage": {
+			"key": "clarity-public"
+		},
 		"themeName": "Dialect"
 	},
 	"version": 1.1
