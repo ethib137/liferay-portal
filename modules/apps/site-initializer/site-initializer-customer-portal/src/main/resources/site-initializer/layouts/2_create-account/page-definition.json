@@ -5,14 +5,15 @@
 				"definition": {
 					"fragmentStyle": {
 						"borderWidth": "0",
-						"minHeight": "100vh"
+						"minHeight": "100vh",
+						"textAlign": ""
 					},
 					"indexed": true,
 					"layout": {
 						"align": "Center",
 						"borderWidth": 0,
 						"contentDisplay": "FlexColumn",
-						"justify": "Center",
+						"justify": "SpaceBetween",
 						"marginBottom": 0,
 						"marginLeft": 0,
 						"marginRight": 0,
@@ -27,6 +28,27 @@
 				"pageElements": [
 					{
 						"definition": {
+							"indexed": true,
+							"layout": {
+								"borderWidth": 0,
+								"marginBottom": 0,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
+								"paddingBottom": 0,
+								"paddingLeft": 0,
+								"paddingRight": 0,
+								"paddingTop": 0,
+								"widthType": "Fluid"
+							}
+						},
+						"type": "Section"
+					},
+					{
+						"definition": {
+							"fragmentStyle": {
+								"borderWidth": "0"
+							},
 							"indexed": true,
 							"layout": {
 								"borderWidth": 0,
@@ -66,6 +88,7 @@
 									],
 									"fragmentStyle": {
 										"marginBottom": "1",
+										"textAlign": "",
 										"textColor": "colorBrandPrimary"
 									},
 									"indexed": true
@@ -96,6 +119,7 @@
 									],
 									"fragmentStyle": {
 										"marginBottom": "5",
+										"textAlign": "",
 										"textColor": "colorNeutral10"
 									},
 									"indexed": true
@@ -111,7 +135,8 @@
 										}
 									},
 									"fragmentStyle": {
-										"maxWidth": "400px"
+										"maxWidth": "400px",
+										"textAlign": ""
 									},
 									"indexed": true
 								},
@@ -271,19 +296,6 @@
 									{
 										"definition": {
 											"fragment": {
-												"key": "INPUTS-captcha"
-											},
-											"fragmentConfig": {
-											},
-											"fragmentFields": [
-											],
-											"indexed": true
-										},
-										"type": "Fragment"
-									},
-									{
-										"definition": {
-											"fragment": {
 												"key": "INPUTS-submit-button"
 											},
 											"fragmentConfig": {
@@ -305,7 +317,8 @@
 												}
 											],
 											"fragmentStyle": {
-												"marginTop": "3"
+												"marginTop": "3",
+												"textAlign": ""
 											},
 											"indexed": true
 										},
@@ -313,6 +326,115 @@
 									}
 								],
 								"type": "Form"
+							}
+						],
+						"type": "Section"
+					},
+					{
+						"definition": {
+							"fragmentStyle": {
+								"borderWidth": "0",
+								"marginBottom": "4",
+								"maxWidth": "400px",
+								"textAlign": "",
+								"width": "400px"
+							},
+							"indexed": true,
+							"layout": {
+								"align": "Center",
+								"borderWidth": 0,
+								"contentDisplay": "FlexRow",
+								"marginBottom": 2,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
+								"paddingBottom": 0,
+								"paddingLeft": 0,
+								"paddingRight": 0,
+								"paddingTop": 0,
+								"widthType": "Fluid"
+							}
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"fragment": {
+										"key": "clarity-text"
+									},
+									"fragmentConfig": {
+										"textType": "text-paragraph"
+									},
+									"fragmentFields": [
+										{
+											"id": "element-text",
+											"value": {
+												"fragmentLink": {
+												},
+												"text": {
+													"value_i18n": {
+														"en_US": "Already have an acccount?"
+													}
+												}
+											}
+										}
+									],
+									"fragmentStyle": {
+										"fontWeight": "fontWeightBolder",
+										"textAlign": ""
+									},
+									"indexed": true
+								},
+								"type": "Fragment"
+							},
+							{
+								"definition": {
+									"fragment": {
+										"key": "clarity-text"
+									},
+									"fragmentConfig": {
+										"textType": "text-paragraph"
+									},
+									"fragmentFields": [
+										{
+											"id": "element-text",
+											"value": {
+												"fragmentLink": {
+													"value": {
+														"href": {
+															"mapping": {
+																"itemReference": {
+																	"className": "com.liferay.portal.kernel.model.Layout",
+																	"fields": [
+																		{
+																			"fieldName": "friendlyURL",
+																			"fieldValue": "/sign-in"
+																		},
+																		{
+																			"fieldName": "privatePage",
+																			"fieldValue": "false"
+																		}
+																	]
+																}
+															}
+														}
+													}
+												},
+												"text": {
+													"value_i18n": {
+														"en_US": "Sign In"
+													}
+												}
+											}
+										}
+									],
+									"fragmentStyle": {
+										"marginLeft": "2",
+										"textAlign": "",
+										"textColor": "colorActionPrimaryDefault"
+									},
+									"indexed": true
+								},
+								"type": "Fragment"
 							}
 						],
 						"type": "Section"
