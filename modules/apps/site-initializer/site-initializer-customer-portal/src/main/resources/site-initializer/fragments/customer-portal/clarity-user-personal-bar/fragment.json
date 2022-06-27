@@ -2,8 +2,8 @@
 	"configurationPath": "index.json",
 	"cssPath": "index.css",
 	"htmlPath": "index.html",
-	"icon": "text-editor",
+	"icon": "code",
 	"jsPath": "index.js",
-	"name": "Dialect Text",
+	"name": "clarity-user-personal-bar",
 	"type": "component"
 }

@@ -2,19 +2,19 @@
 	"object-entries": [
 		{
 			"emailAddress": "evan@liferay.com",
+			"externalReferenceCode": "evan",
 			"firstName": "Evan",
 			"lastName": "Thibodeau",
-			"password": "test",
 			"objectEntrySiteInitializerKey": "evan",
-			"externalReferenceCode": "evan"
+			"password": "test"
 		},
 		{
 			"emailAddress": "joella@liferay.com",
+			"externalReferenceCode": "joella",
 			"firstName": "joella",
 			"lastName": "Thibodeau",
-			"password": "test",
 			"objectEntrySiteInitializerKey": "joella",
-			"externalReferenceCode": "joella"
+			"password": "test"
 		}
 	],
 	"objectDefinitionName": "CreateUser2"

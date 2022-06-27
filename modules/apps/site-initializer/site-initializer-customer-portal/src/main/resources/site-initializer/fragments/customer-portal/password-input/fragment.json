@@ -2,9 +2,13 @@
 	"configurationPath": "index.json",
 	"cssPath": "index.css",
 	"htmlPath": "index.html",
-	"jsPath": "index.js",
 	"icon": "custom-field",
+	"jsPath": "index.js",
 	"name": "passwordInput",
-	"typeOptions": {"fieldTypes": ["text"]},
-	"type": "input"
+	"type": "input",
+	"typeOptions": {
+		"fieldTypes": [
+			"text"
+		]
+	}
 }

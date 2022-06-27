@@ -34,11 +34,13 @@
 									"id": "landscapeMobile"
 								},
 								{
-									"collectionViewportDefinition": {},
+									"collectionViewportDefinition": {
+									},
 									"id": "portraitMobile"
 								},
 								{
-									"collectionViewportDefinition": {},
+									"collectionViewportDefinition": {
+									},
 									"id": "tablet"
 								}
 							],
@@ -56,7 +58,10 @@
 						},
 						"pageElements": [
 							{
-								"definition": {"collectionItemConfig": {}},
+								"definition": {
+									"collectionItemConfig": {
+									}
+								},
 								"pageElements": [
 									{
 										"definition": {
@@ -74,11 +79,13 @@
 												},
 												{
 													"id": "portraitMobile",
-													"rowViewportDefinition": {}
+													"rowViewportDefinition": {
+													}
 												},
 												{
 													"id": "tablet",
-													"rowViewportDefinition": {}
+													"rowViewportDefinition": {
+													}
 												}
 											],
 											"verticalAlignment": "top"
@@ -94,11 +101,13 @@
 															"id": "landscapeMobile"
 														},
 														{
-															"columnViewportDefinition": {},
+															"columnViewportDefinition": {
+															},
 															"id": "portraitMobile"
 														},
 														{
-															"columnViewportDefinition": {},
+															"columnViewportDefinition": {
+															},
 															"id": "tablet"
 														}
 													],
@@ -117,7 +126,8 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_firstName",
@@ -146,11 +156,13 @@
 															"id": "landscapeMobile"
 														},
 														{
-															"columnViewportDefinition": {},
+															"columnViewportDefinition": {
+															},
 															"id": "portraitMobile"
 														},
 														{
-															"columnViewportDefinition": {},
+															"columnViewportDefinition": {
+															},
 															"id": "tablet"
 														}
 													],
@@ -169,7 +181,8 @@
 																{
 																	"id": "element-text",
 																	"value": {
-																		"fragmentLink": {},
+																		"fragmentLink": {
+																		},
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_lastName",
@@ -198,11 +211,13 @@
 															"id": "landscapeMobile"
 														},
 														{
-															"columnViewportDefinition": {},
+															"columnViewportDefinition": {
+															},
 															"id": "portraitMobile"
 														},
 														{
-															"columnViewportDefinition": {},
+															"columnViewportDefinition": {
+															},
 															"id": "tablet"
 														}
 													],
@@ -224,13 +239,18 @@
 			},
 			{
 				"definition": {
-					"fragment": {"key": "BASIC_COMPONENT-heading"},
-					"fragmentConfig": {"headingLevel": "h1"},
+					"fragment": {
+						"key": "BASIC_COMPONENT-heading"
+					},
+					"fragmentConfig": {
+						"headingLevel": "h1"
+					},
 					"fragmentFields": [
 						{
 							"id": "element-text",
 							"value": {
-								"fragmentLink": {},
+								"fragmentLink": {
+								},
 								"text": {
 									"mapping": {
 										"fieldKey": "ObjectField_emailAddress",
@@ -250,5 +270,10 @@
 		],
 		"type": "Root"
 	},
-	"settings": {"colorSchemeName": "01", "themeName": "Dialect"}
+	"settings": {
+		"masterPage": {
+			"key": "clarity-private"
+		},
+		"themeName": "Dialect"
+	}
 }

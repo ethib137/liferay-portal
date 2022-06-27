@@ -47,7 +47,9 @@
 						"pageElements": [
 							{
 								"definition": {
-									"fragment": {"key": "clarity-text"},
+									"fragment": {
+										"key": "clarity-text"
+									},
 									"fragmentConfig": {
 										"textType": "text-small-caps"
 									},
@@ -55,7 +57,8 @@
 										{
 											"id": "element-text",
 											"value": {
-												"fragmentLink": {},
+												"fragmentLink": {
+												},
 												"text": {
 													"value_i18n": {
 														"en_US": "Welcome"
@@ -75,13 +78,18 @@
 							},
 							{
 								"definition": {
-									"fragment": {"key": "clarity-text"},
-									"fragmentConfig": {"textType": "h1"},
+									"fragment": {
+										"key": "clarity-text"
+									},
+									"fragmentConfig": {
+										"textType": "h1"
+									},
 									"fragmentFields": [
 										{
 											"id": "element-text",
 											"value": {
-												"fragmentLink": {},
+												"fragmentLink": {
+												},
 												"text": {
 													"value_i18n": {
 														"en_US": "Sign In"
@@ -100,9 +108,12 @@
 							},
 							{
 								"definition": {
-									"fragmentStyle": {"width": "400px"},
+									"fragmentStyle": {
+										"width": "400px"
+									},
 									"widgetInstance": {
-										"widgetConfig": {},
+										"widgetConfig": {
+										},
 										"widgetName": "com_liferay_login_web_portlet_LoginPortlet"
 									}
 								},
