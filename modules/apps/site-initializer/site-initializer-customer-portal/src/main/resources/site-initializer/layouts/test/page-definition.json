@@ -3,6 +3,9 @@
 		"pageElements": [
 			{
 				"definition": {
+					"fragmentStyle": {
+						"borderWidth": "0"
+					},
 					"indexed": true,
 					"layout": {
 						"borderWidth": 0,
@@ -235,6 +238,35 @@
 						"type": "Collection"
 					}
 				],
+				"type": "Section"
+			},
+			{
+				"definition": {
+					"fragmentStyle": {
+						"backgroundFragmentImage": {
+							"title": {
+								"value": "bg graphics.png"
+							},
+							"url": {
+								"value": "[$DOCUMENT_URL:/site-initializer/documents/group/login-bg.png$]"
+							}
+						},
+						"minHeight": "100px"
+					},
+					"indexed": true,
+					"layout": {
+						"borderWidth": 0,
+						"marginBottom": 0,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"paddingBottom": 0,
+						"paddingLeft": 0,
+						"paddingRight": 0,
+						"paddingTop": 0,
+						"widthType": "Fluid"
+					}
+				},
 				"type": "Section"
 			},
 			{
