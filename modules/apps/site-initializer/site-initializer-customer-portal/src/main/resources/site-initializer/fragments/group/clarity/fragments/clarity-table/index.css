@@ -1,0 +1,19 @@
+.fragment_453 {
+}
+
+.fragment_453 .clarity-table {
+	 width: 100%;
+	 display: flex;
+	 flex-direction: column;
+	 flex-wrap: wrap;
+}
+
+.clarity-table, .clarity-table div:not(.clarity-table-cell,.clarity-table-row)
+{
+	/*display:contents !important;*/
+}
+
+.page-editor__fragment-content .clarity-table-cell{
+	display:inline-block;
+	flex:1;
+}

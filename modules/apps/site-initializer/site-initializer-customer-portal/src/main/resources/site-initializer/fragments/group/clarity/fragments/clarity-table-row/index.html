@@ -1,0 +1,7 @@
+<div class="clarity-table-row ${configuration.rowCSSClasses}">
+	[#list 0..configuration.numberOfColumns-1 as i]
+	<div class="clarity-table-cell" style="width : ${(100 / configuration.numberOfColumns)}%">
+		<lfr-drop-zone data-lfr-drop-zone-id="${i+1}" data-lfr-priority="${i+1}" />
+	</div>
+[/#list]
+</div>

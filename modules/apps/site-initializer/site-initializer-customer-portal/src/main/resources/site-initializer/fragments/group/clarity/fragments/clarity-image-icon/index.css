@@ -1,0 +1,30 @@
+.fragment_444 {
+	position:relative;
+	margin:10px;
+	width:80px;
+	height:80px;
+}
+
+.fragment_444 .icon-container{
+	width:80px;
+	height:80px;
+	border-radius:100px;
+	position:relative;
+}
+
+.fragment_444 .icon-background{
+	width:68px;
+	height:68px;
+	border-radius:100px;
+	position:absolute;
+	top:6px;
+	left:6px;
+}
+
+.fragment_444 img{
+	width:36px;
+	height:36px;
+	position:absolute;
+	top:16.5px;
+	left:16.5px;
+}

@@ -1,9 +1,0 @@
-{
-	"configurationPath": "index.json",
-	"cssPath": "index.css",
-	"htmlPath": "index.html",
-	"icon": "sites",
-	"jsPath": "index.js",
-	"name": "clarity-nav",
-	"type": "component"
-}

@@ -1,9 +1,0 @@
-{
-	"configurationPath": "index.json",
-	"cssPath": "index.css",
-	"htmlPath": "index.html",
-	"icon": "text-editor",
-	"jsPath": "index.js",
-	"name": "Dialect Text",
-	"type": "component"
-}

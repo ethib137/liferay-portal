@@ -1,0 +1,14 @@
+{
+	"configurationPath": "index.json",
+	"cssPath": "index.css",
+	"htmlPath": "index.html",
+	"icon": "custom-field",
+	"jsPath": "index.js",
+	"name": "Clarity Password Input",
+	"type": "input",
+	"typeOptions": {
+		"fieldTypes": [
+			"text"
+		]
+	}
+}

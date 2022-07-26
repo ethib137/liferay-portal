@@ -1,0 +1,20 @@
+{
+    "fieldSets": [
+        {
+            "fields": [
+                {
+                    "name": "containerBackgroundColor",
+                    "label": "Container Background color",
+                    "type": "colorPicker",
+                    "defaultValue": "var(--color-brand-primary)",
+                },
+                {
+                    "name": "iconBackgroundColor",
+                    "label": "Icon Background color",
+                    "type": "colorPicker",
+                    "defaultValue": "var(--color-brand-primary)",
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,454 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragmentStyle": {
+						"borderWidth": "0",
+						"minHeight": "100vh",
+						"textAlign": ""
+					},
+					"indexed": true,
+					"layout": {
+						"align": "Center",
+						"borderWidth": 0,
+						"contentDisplay": "FlexColumn",
+						"justify": "SpaceBetween",
+						"marginBottom": 0,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
+						"paddingBottom": 0,
+						"paddingLeft": 0,
+						"paddingRight": 0,
+						"paddingTop": 0,
+						"widthType": "Fixed"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"indexed": true,
+							"layout": {
+								"borderWidth": 0,
+								"marginBottom": 0,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
+								"paddingBottom": 0,
+								"paddingLeft": 0,
+								"paddingRight": 0,
+								"paddingTop": 0,
+								"widthType": "Fluid"
+							}
+						},
+						"type": "Section"
+					},
+					{
+						"definition": {
+							"fragmentStyle": {
+								"borderWidth": "0"
+							},
+							"indexed": true,
+							"layout": {
+								"borderWidth": 0,
+								"marginBottom": 0,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
+								"paddingBottom": 0,
+								"paddingLeft": 0,
+								"paddingRight": 0,
+								"paddingTop": 0,
+								"widthType": "Fluid"
+							}
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"fragment": {
+										"key": "DIALECT-dialect-text"
+									},
+									"fragmentConfig": {
+										"textType": "text-small-caps"
+									},
+									"fragmentFields": [
+										{
+											"id": "element-text",
+											"value": {
+												"fragmentLink": {
+												},
+												"text": {
+													"value_i18n": {
+														"en_US": "welcome"
+													}
+												}
+											}
+										}
+									],
+									"fragmentStyle": {
+										"marginBottom": "1",
+										"textAlign": "",
+										"textColor": "colorBrandPrimary"
+									},
+									"indexed": true
+								},
+								"type": "Fragment"
+							},
+							{
+								"definition": {
+									"fragment": {
+										"key": "DIALECT-dialect-text"
+									},
+									"fragmentConfig": {
+										"textType": "h1"
+									},
+									"fragmentFields": [
+										{
+											"id": "element-text",
+											"value": {
+												"fragmentLink": {
+												},
+												"text": {
+													"value_i18n": {
+														"en_US": "Create an Account"
+													}
+												}
+											}
+										}
+									],
+									"fragmentStyle": {
+										"marginBottom": "5",
+										"textAlign": "",
+										"textColor": "colorNeutral10"
+									},
+									"indexed": true
+								},
+								"type": "Fragment"
+							},
+							{
+								"definition": {
+									"formConfig": {
+										"formReference": {
+											"className": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:CreateUser2$]",
+											"subtypeId": 0
+										}
+									},
+									"fragmentStyle": {
+										"maxWidth": "400px",
+										"textAlign": ""
+									},
+									"indexed": true
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"gutters": true,
+											"indexed": true,
+											"modulesPerRow": 2,
+											"numberOfColumns": 2,
+											"reverseOrder": false,
+											"rowViewports": [
+												{
+													"id": "landscapeMobile",
+													"rowViewportDefinition": {
+														"modulesPerRow": 1
+													}
+												},
+												{
+													"id": "portraitMobile",
+													"rowViewportDefinition": {
+													}
+												},
+												{
+													"id": "tablet",
+													"rowViewportDefinition": {
+													}
+												}
+											],
+											"verticalAlignment": "top"
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"columnViewports": [
+														{
+															"columnViewportDefinition": {
+																"size": 12
+															},
+															"id": "landscapeMobile"
+														},
+														{
+															"columnViewportDefinition": {
+															},
+															"id": "portraitMobile"
+														},
+														{
+															"columnViewportDefinition": {
+															},
+															"id": "tablet"
+														}
+													],
+													"size": 6
+												},
+												"pageElements": [
+													{
+														"definition": {
+															"fragment": {
+																"key": "INPUTS-text-input"
+															},
+															"fragmentConfig": {
+																"inputFieldId": "ObjectField_firstName",
+																"inputLabel": "First Name",
+																"inputRequired": true,
+																"placeholder": ""
+															},
+															"fragmentFields": [
+															],
+															"indexed": true
+														},
+														"type": "Fragment"
+													}
+												],
+												"type": "Column"
+											},
+											{
+												"definition": {
+													"columnViewports": [
+														{
+															"columnViewportDefinition": {
+																"size": 12
+															},
+															"id": "landscapeMobile"
+														},
+														{
+															"columnViewportDefinition": {
+															},
+															"id": "portraitMobile"
+														},
+														{
+															"columnViewportDefinition": {
+															},
+															"id": "tablet"
+														}
+													],
+													"size": 6
+												},
+												"pageElements": [
+													{
+														"definition": {
+															"fragment": {
+																"key": "INPUTS-text-input"
+															},
+															"fragmentConfig": {
+																"inputFieldId": "ObjectField_lastName",
+																"inputLabel": "Last Name",
+																"inputRequired": true,
+																"placeholder": ""
+															},
+															"fragmentFields": [
+															],
+															"indexed": true
+														},
+														"type": "Fragment"
+													}
+												],
+												"type": "Column"
+											}
+										],
+										"type": "Row"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "INPUTS-text-input"
+											},
+											"fragmentConfig": {
+												"inputFieldId": "ObjectField_emailAddress",
+												"inputLabel": "Email Address",
+												"inputRequired": true,
+												"placeholder": ""
+											},
+											"fragmentFields": [
+											],
+											"indexed": true
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "clarity-password-input"
+											},
+											"fragmentConfig": {
+												"inputFieldId": "ObjectField_password",
+												"inputLabel": "Password",
+												"inputRequired": true,
+												"password": true,
+												"placeholder": ""
+											},
+											"fragmentFields": [
+											],
+											"indexed": true
+										},
+										"type": "Fragment"
+									},
+									{
+										"definition": {
+											"fragment": {
+												"key": "INPUTS-submit-button"
+											},
+											"fragmentConfig": {
+												"buttonSize": "nm",
+												"buttonType": "primary"
+											},
+											"fragmentFields": [
+												{
+													"id": "submit-button-text",
+													"value": {
+														"fragmentLink": {
+														},
+														"text": {
+															"value_i18n": {
+																"en_US": "Create an Account"
+															}
+														}
+													}
+												}
+											],
+											"fragmentStyle": {
+												"marginTop": "3",
+												"textAlign": ""
+											},
+											"indexed": true
+										},
+										"type": "Fragment"
+									}
+								],
+								"type": "Form"
+							}
+						],
+						"type": "Section"
+					},
+					{
+						"definition": {
+							"fragmentStyle": {
+								"borderWidth": "0",
+								"marginBottom": "4",
+								"maxWidth": "400px",
+								"textAlign": "",
+								"width": "400px"
+							},
+							"indexed": true,
+							"layout": {
+								"align": "Center",
+								"borderWidth": 0,
+								"contentDisplay": "FlexRow",
+								"marginBottom": 2,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
+								"paddingBottom": 0,
+								"paddingLeft": 0,
+								"paddingRight": 0,
+								"paddingTop": 0,
+								"widthType": "Fluid"
+							}
+						},
+						"pageElements": [
+							{
+								"definition": {
+									"fragment": {
+										"key": "clarity-text"
+									},
+									"fragmentConfig": {
+										"textType": "text-paragraph"
+									},
+									"fragmentFields": [
+										{
+											"id": "element-text",
+											"value": {
+												"fragmentLink": {
+												},
+												"text": {
+													"value_i18n": {
+														"en_US": "Already have an acccount?"
+													}
+												}
+											}
+										}
+									],
+									"fragmentStyle": {
+										"fontWeight": "fontWeightBolder",
+										"textAlign": ""
+									},
+									"indexed": true
+								},
+								"type": "Fragment"
+							},
+							{
+								"definition": {
+									"fragment": {
+										"key": "clarity-text"
+									},
+									"fragmentConfig": {
+										"textType": "text-paragraph"
+									},
+									"fragmentFields": [
+										{
+											"id": "element-text",
+											"value": {
+												"fragmentLink": {
+													"value": {
+														"href": {
+															"mapping": {
+																"itemReference": {
+																	"className": "com.liferay.portal.kernel.model.Layout",
+																	"fields": [
+																		{
+																			"fieldName": "friendlyURL",
+																			"fieldValue": "/sign-in"
+																		},
+																		{
+																			"fieldName": "privatePage",
+																			"fieldValue": "false"
+																		}
+																	]
+																}
+															}
+														}
+													}
+												},
+												"text": {
+													"value_i18n": {
+														"en_US": "Sign In"
+													}
+												}
+											}
+										}
+									],
+									"fragmentStyle": {
+										"marginLeft": "2",
+										"textAlign": "",
+										"textColor": "colorActionPrimaryDefault"
+									},
+									"indexed": true
+								},
+								"type": "Fragment"
+							}
+						],
+						"type": "Section"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "clarity-public"
+		},
+		"themeName": "Dialect"
+	}
+}

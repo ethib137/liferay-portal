@@ -1,0 +1,22 @@
+{
+	"fieldSets": [
+		{
+			"configurationRole": "style",
+			"fields": [
+				{
+					"defaultValue": "var(--color-brand-primary)",
+					"label": "Separator Color",
+					"name": "separatorColor",
+					"type": "colorPicker"
+				},
+				{
+					"defaultValue": "120px",
+					"label": "Height",
+					"name": "height",
+					"type": "text"
+				}
+			],
+			"label": "separator-options"
+		}
+	]
+}

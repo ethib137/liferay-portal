@@ -118,11 +118,10 @@
 							{
 								"definition": {
 									"fragmentStyle": {
-										"paddingTop": "1"
 									},
 									"indexed": true,
 									"layout": {
-										"align": "Start",
+										"align": "Center",
 										"borderWidth": 0,
 										"contentDisplay": "FlexRow",
 										"flexWrap": "Wrap",

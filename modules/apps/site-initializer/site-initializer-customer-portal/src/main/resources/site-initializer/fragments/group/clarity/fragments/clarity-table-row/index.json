@@ -1,0 +1,28 @@
+{
+    "fieldSets": [
+        {
+            "fields": [
+                {
+                    "dataType": "int",
+                    "defaultValue": "4",
+                    "label": "number-of-columns",
+                    "name": "numberOfColumns",
+                    "type": "text",
+                    "typeOptions": {
+                        "validation": {
+                            "min": 1,
+                            "type": "number"
+                        }
+                    }
+                },
+							  {
+                    "dataType": "string",
+                    "defaultValue": "",
+                    "label": "row CSS Classes",
+                    "name": "rowCSSClasses",
+                    "type": "text"
+                }
+            ]
+        }
+    ]
+}

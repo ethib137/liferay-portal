@@ -1764,7 +1764,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return layouts;
 	}
 
-	private void _addLayoutsContent(
+		private void _addLayoutsContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> clientExtensionEntryIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
