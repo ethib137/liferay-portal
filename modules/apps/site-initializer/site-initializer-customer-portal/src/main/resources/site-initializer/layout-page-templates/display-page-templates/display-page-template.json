@@ -1,0 +1,7 @@
+{
+	"contentType" : {
+		"className" : "com.liferay.portal.kernel.repository.model.FileEntry"
+	},
+	"defaultTemplate": true,
+	"name" : "Video Display Page"
+  }

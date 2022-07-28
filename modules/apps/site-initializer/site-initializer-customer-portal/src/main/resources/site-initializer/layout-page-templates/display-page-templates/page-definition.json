@@ -1,0 +1,57 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"collectionViewports": [
+						{
+							"collectionViewportDefinition": {
+								"numberOfColumns": 1
+							},
+							"id": "landscapeMobile"
+						},
+						{
+							"collectionViewportDefinition": {},
+							"id": "portraitMobile"
+						},
+						{
+							"collectionViewportDefinition": {},
+							"id": "tablet"
+						}
+					],
+					"displayAllItems": false,
+					"displayAllPages": true,
+					"numberOfColumns": 1,
+					"numberOfItems": 5,
+					"numberOfItemsPerPage": 20,
+					"numberOfPages": 5,
+					"paginationType": "Numeric",
+					"showAllItems": false
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"collectionItemConfig": {}
+						},
+						"type": "CollectionItem"
+					}
+				],
+				"type": "Collection"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"colorSchemeName": "01",
+		"masterPage": {
+			"key": "clarity-private"
+		},
+		"themeName": "Dialect",
+		"themeSettings": {
+			"lfr-theme:regular:show-header": "false",
+			"lfr-theme:regular:wrap-widget-page-content": "false",
+			"lfr-theme:regular:show-header-search": "false",
+			"lfr-theme:regular:show-footer": "false"
+		}
+	}
+}
