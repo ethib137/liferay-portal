@@ -24,10 +24,13 @@ import com.liferay.portal.kernel.theme.NavItem;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
+import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalServiceUtil;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemService;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
@@ -35,6 +38,7 @@ import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -78,6 +82,63 @@ public class NavItemUtil {
 		}
 
 		navItems.add(new NavItem(httpServletRequest, themeDisplay, layout));
+
+		return navItems;
+	}
+
+	private List<NavItem> _getBranchNavItems() throws PortalException {
+		HttpServletRequest httpServletRequest = getRequest();
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		long siteNavigationMenuItemId = _getRelativeSiteNavigationMenuItemId(
+			themeDisplay.getLayout());
+
+		SiteNavigationMenuItem siteNavigationMenuItem =
+			SiteNavigationMenuItemLocalServiceUtil.fetchSiteNavigationMenuItem(
+				siteNavigationMenuItemId);
+
+		if (siteNavigationMenuItem == null) {
+			return new ArrayList<>();
+		}
+
+		SiteNavigationMenuItem originalSiteNavigationMenuItem =
+			siteNavigationMenuItem;
+
+		List<SiteNavigationMenuItem> ancestorSiteNavigationMenuItems =
+			new ArrayList<>();
+
+		while (siteNavigationMenuItem.getParentSiteNavigationMenuItemId() !=
+					0) {
+
+			siteNavigationMenuItem =
+				SiteNavigationMenuItemLocalServiceUtil.
+					getSiteNavigationMenuItem(
+						siteNavigationMenuItem.
+							getParentSiteNavigationMenuItemId());
+
+			ancestorSiteNavigationMenuItems.add(siteNavigationMenuItem);
+		}
+
+		List<NavItem> navItems = new ArrayList<>(
+			ancestorSiteNavigationMenuItems.size() + 1);
+
+		for (int i = ancestorSiteNavigationMenuItems.size() - 1; i >= 0; i--) {
+			SiteNavigationMenuItem ancestorSiteNavigationMenuItem =
+				ancestorSiteNavigationMenuItems.get(i);
+
+			navItems.add(
+				new SiteNavigationMenuNavItem(
+					httpServletRequest, themeDisplay,
+					ancestorSiteNavigationMenuItem));
+		}
+
+		navItems.add(
+			new SiteNavigationMenuNavItem(
+				httpServletRequest, themeDisplay,
+				originalSiteNavigationMenuItem));
 
 		return navItems;
 	}
@@ -317,6 +378,29 @@ public class NavItemUtil {
 				themeDisplay.getScopeGroupId(), privateLayout,
 				LayoutConstants.DEFAULT_PARENT_LAYOUT_ID),
 			themeDisplay);
+	}
+
+	private long _getRelativeSiteNavigationMenuItemId(Layout layout) {
+		List<SiteNavigationMenuItem> siteNavigationMenuItems =
+			SiteNavigationMenuItemLocalServiceUtil.getSiteNavigationMenuItems(
+				_siteNavigationMenuId);
+
+		for (SiteNavigationMenuItem siteNavigationMenuItem :
+				siteNavigationMenuItems) {
+
+			UnicodeProperties unicodeProperties =
+				UnicodePropertiesBuilder.fastLoad(
+					siteNavigationMenuItem.getTypeSettings()
+				).build();
+
+			String itemLayoutUuid = unicodeProperties.getProperty("layoutUuid");
+
+			if (Objects.equals(layout.getUuid(), itemLayoutUuid)) {
+				return siteNavigationMenuItem.getSiteNavigationMenuItemId();
+			}
+		}
+
+		return 0;
 	}
 
 	private static List<SiteNavigationMenuItem> _getSiteNavigationMenuItems(
