@@ -144,29 +144,31 @@ public class NavItemUtil {
 		return navItems;
 	}
 
-	public List<NavItem> getMenuNavItems(
-			HttpServletRequest httpServletRequest, List<NavItem> branchNavItems)
+	public static List<NavItem> getMenuNavItems(
+			HttpServletRequest httpServletRequest, List<NavItem> branchNavItems,
+			String rootItemType, int rootItemLevel, long siteNavigationMenuId,
+			String rootItemId)
 		throws Exception {
 
-		if (_rootItemType.equals("absolute")) {
-			if (_rootItemLevel == 0) {
-				return NavItemUtil.getChildNavItems(
-					httpServletRequest, _siteNavigationMenuId, 0);
+		if (rootItemType.equals("absolute")) {
+			if (rootItemLevel == 0) {
+				return getChildNavItems(
+					httpServletRequest, siteNavigationMenuId, 0);
 			}
-			else if (branchNavItems.size() >= _rootItemLevel) {
-				NavItem rootNavItem = branchNavItems.get(_rootItemLevel - 1);
+			else if (branchNavItems.size() >= rootItemLevel) {
+				NavItem rootNavItem = branchNavItems.get(rootItemLevel - 1);
 
 				return rootNavItem.getChildren();
 			}
 		}
-		else if (_rootItemType.equals("relative") && (_rootItemLevel >= 0) &&
-				 (_rootItemLevel < (branchNavItems.size() + 1))) {
+		else if (rootItemType.equals("relative") && (rootItemLevel >= 0) &&
+				 (rootItemLevel < (branchNavItems.size() + 1))) {
 
-			int absoluteLevel = branchNavItems.size() - 1 - _rootItemLevel;
+			int absoluteLevel = branchNavItems.size() - 1 - rootItemLevel;
 
 			if (absoluteLevel == -1) {
-				return NavItemUtil.getChildNavItems(
-					httpServletRequest, _siteNavigationMenuId, 0);
+				return getChildNavItems(
+					httpServletRequest, siteNavigationMenuId, 0);
 			}
 			else if ((absoluteLevel >= 0) &&
 					 (absoluteLevel < branchNavItems.size())) {
@@ -176,10 +178,10 @@ public class NavItemUtil {
 				return rootNavItem.getChildren();
 			}
 		}
-		else if (_rootItemType.equals("select")) {
-			return NavItemUtil.getChildNavItems(
-				httpServletRequest, _siteNavigationMenuId,
-				GetterUtil.getLong(_rootItemId));
+		else if (rootItemType.equals("select")) {
+			return getChildNavItems(
+				httpServletRequest, siteNavigationMenuId,
+				GetterUtil.getLong(rootItemId));
 		}
 
 		return new ArrayList<>();

@@ -23,7 +23,6 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portletdisplaytemplate.PortletDisplayTemplateManagerUtil;
 import com.liferay.portal.kernel.theme.NavItem;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -119,7 +118,9 @@ public class NavigationMenuTag extends IncludeTag {
 			if (_siteNavigationMenuId > 0) {
 				branchNavItems = _getBranchNavItems();
 
-				navItems = _getMenuNavItems(httpServletRequest, branchNavItems);
+				navItems = NavItemUtil.getMenuNavItems(
+					httpServletRequest, branchNavItems, _rootItemType,
+					_rootItemLevel, _siteNavigationMenuId, _rootItemId);
 			}
 			else {
 				branchNavItems = getBranchNavItems(httpServletRequest);
