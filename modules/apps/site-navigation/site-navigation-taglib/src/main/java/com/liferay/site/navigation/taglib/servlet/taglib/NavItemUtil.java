@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
-import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalServiceUtil;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemService;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
@@ -86,18 +85,19 @@ public class NavItemUtil {
 		return navItems;
 	}
 
-	private List<NavItem> _getBranchNavItems() throws PortalException {
-		HttpServletRequest httpServletRequest = getRequest();
+	public static List<NavItem> getBranchNavItems(
+			HttpServletRequest httpServletRequest, long siteNavigationMenuId)
+		throws PortalException {
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
 		long siteNavigationMenuItemId = _getRelativeSiteNavigationMenuItemId(
-			themeDisplay.getLayout());
+			themeDisplay.getLayout(), siteNavigationMenuId);
 
 		SiteNavigationMenuItem siteNavigationMenuItem =
-			SiteNavigationMenuItemLocalServiceUtil.fetchSiteNavigationMenuItem(
+			_siteNavigationMenuItemLocalService.fetchSiteNavigationMenuItem(
 				siteNavigationMenuItemId);
 
 		if (siteNavigationMenuItem == null) {
@@ -114,10 +114,8 @@ public class NavItemUtil {
 					0) {
 
 			siteNavigationMenuItem =
-				SiteNavigationMenuItemLocalServiceUtil.
-					getSiteNavigationMenuItem(
-						siteNavigationMenuItem.
-							getParentSiteNavigationMenuItemId());
+				_siteNavigationMenuItemLocalService.getSiteNavigationMenuItem(
+					siteNavigationMenuItem.getParentSiteNavigationMenuItemId());
 
 			ancestorSiteNavigationMenuItems.add(siteNavigationMenuItem);
 		}
@@ -380,10 +378,12 @@ public class NavItemUtil {
 			themeDisplay);
 	}
 
-	private long _getRelativeSiteNavigationMenuItemId(Layout layout) {
+	private static long _getRelativeSiteNavigationMenuItemId(
+		Layout layout, long siteNavigationMenuId) {
+
 		List<SiteNavigationMenuItem> siteNavigationMenuItems =
-			SiteNavigationMenuItemLocalServiceUtil.getSiteNavigationMenuItems(
-				_siteNavigationMenuId);
+			_siteNavigationMenuItemLocalService.getSiteNavigationMenuItems(
+				siteNavigationMenuId);
 
 		for (SiteNavigationMenuItem siteNavigationMenuItem :
 				siteNavigationMenuItems) {

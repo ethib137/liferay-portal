@@ -109,7 +109,8 @@ public class NavigationMenuTag extends IncludeTag {
 
 		try {
 			if (_siteNavigationMenuId > 0) {
-				branchNavItems = _getBranchNavItems();
+				branchNavItems = NavItemUtil.getBranchNavItems(
+					httpServletRequest, _siteNavigationMenuId);
 
 				navItems = NavItemUtil.getMenuNavItems(
 					httpServletRequest, branchNavItems, _rootItemType,
