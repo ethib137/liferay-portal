@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.site.navigation.taglib.internal.util;
+package com.liferay.site.navigation.taglib.servlet.taglib;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.exception.PortalException;

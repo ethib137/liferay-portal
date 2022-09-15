@@ -29,7 +29,6 @@ import com.liferay.portlet.display.template.PortletDisplayTemplate;
 import com.liferay.site.navigation.taglib.internal.portlet.display.template.PortletDisplayTemplateUtil;
 import com.liferay.site.navigation.taglib.internal.servlet.NavItemClassNameIdUtil;
 import com.liferay.site.navigation.taglib.internal.servlet.ServletContextUtil;
-import com.liferay.site.navigation.taglib.internal.util.NavItemUtil;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.List;

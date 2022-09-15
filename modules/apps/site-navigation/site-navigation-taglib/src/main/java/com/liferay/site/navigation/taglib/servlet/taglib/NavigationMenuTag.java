@@ -35,8 +35,6 @@ import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalServiceUti
 import com.liferay.site.navigation.taglib.internal.portlet.display.template.PortletDisplayTemplateUtil;
 import com.liferay.site.navigation.taglib.internal.servlet.NavItemClassNameIdUtil;
 import com.liferay.site.navigation.taglib.internal.servlet.ServletContextUtil;
-import com.liferay.site.navigation.taglib.internal.util.NavItemUtil;
-import com.liferay.site.navigation.taglib.internal.util.SiteNavigationMenuNavItem;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.ArrayList;

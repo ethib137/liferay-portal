@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.site.navigation.taglib.internal.util;
+package com.liferay.site.navigation.taglib.servlet.taglib;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.navigation.model.SiteNavigationMenuItem;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemService;
-import com.liferay.site.navigation.taglib.servlet.taglib.NavigationMenuMode;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 
