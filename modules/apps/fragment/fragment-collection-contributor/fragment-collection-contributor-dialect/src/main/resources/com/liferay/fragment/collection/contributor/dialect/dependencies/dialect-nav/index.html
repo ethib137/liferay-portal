@@ -1,3 +1,48 @@
-<div class="solution-nav ${configuration.navType} ${configuration.orientation} [#if configuration.inverted]nav-inverted[/#if]">
-	<lfr-widget-nav></lfr-widget-nav>
-</div>
+[#assign
+	navItems = sourceObject.navItems
+/]
+
+[#if !navItems?has_content]
+	[#if themeDisplay.isSignedIn()]
+		<div class="alert alert-info">
+			[@liferay.language key="there-are-no-menu-items-to-display" /]
+		</div>
+	[/#if]
+[#else]
+	[#assign
+		portletDisplay = themeDisplay.getPortletDisplay()
+
+		navbarId = "navbar_" + fragmentEntryLinkNamespace
+	/]
+
+	<div id="${navbarId}">
+		<ul aria-label="[@liferay.language key="site-pages" /]" class="nav ${configuration.navType} ${configuration.orientation}" role="menubar">
+			[#list navItems as navItem]
+				[#if navItem.isBrowsable()]
+					[#assign
+						nav_item_css_class = "nav-item"
+						nav_item_href_link = ""
+						nav_item_link_css_class = "nav-link text-truncate"
+					/]
+
+					[#if navItem.isBrowsable()]
+						[#assign nav_item_href_link = "href='${navItem.getURL()}'" /]
+					[/#if]
+
+					[#if !navItem.isChildSelected() && navItem.isSelected()]
+						[#assign
+							nav_item_css_class = "${nav_item_css_class} selected active"
+							nav_item_link_css_class = "${nav_item_link_css_class} + active"
+						/]
+					[/#if]
+
+					<li class="${nav_item_css_class}" id="layout_${portletDisplay.getId()}_${navItem.getLayoutId()}" role="presentation">
+						<a class="${nav_item_link_css_class}" ${nav_item_href_link} ${navItem.getTarget()} role="menuitem">
+							<span class="text-truncate">[@liferay_theme["layout-icon"] layout=navItem.getLayout() /] ${navItem.getName()}</span>
+						</a>
+					</li>
+				[/#if]
+			[/#list]
+		</ul>
+	</div>
+[/#if]

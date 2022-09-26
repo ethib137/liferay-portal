@@ -3,8 +3,13 @@
 		{
 			"fields": [
 				{
+					"label": "source",
+					"name": "source",
+					"type": "navigationMenuSelector"
+				},
+				{
 					"dataType": "string",
-					"defaultValue": "nav-primary",
+					"defaultValue": "nav-underline",
 					"label": "style",
 					"name": "navType",
 					"type": "select",
@@ -12,7 +17,7 @@
 						"validValues": [
 							{
 								"label": "primary",
-								"value": "nav-primary"
+								"value": "nav-underline"
 							},
 							{
 								"label": "secondary",
@@ -21,6 +26,10 @@
 							{
 								"label": "tertiary",
 								"value": "nav-tertiary"
+							},
+							{
+								"label": "segment",
+								"value": "nav-segment"
 							}
 						]
 					}
@@ -43,13 +52,6 @@
 							}
 						]
 					}
-				},
-				{
-					"dataType": "string",
-					"defaultValue": false,
-					"label": "inverted",
-					"name": "inverted",
-					"type": "checkbox"
 				}
 			]
 		}
