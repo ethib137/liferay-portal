@@ -280,15 +280,15 @@ PortletURL embeddedPlayerURL = PortletURLBuilder.createRenderURL(
 		zIndex: ++Liferay.zIndex.WINDOW,
 	});
 
-	imageViewer.TPL_CLOSE = imageViewer.TPL_CLOSE.replace(
-		/<\s*span[^>]*>(.*?)<\s*\/\s*span>/,
-		Liferay.Util.getLexiconIconTpl('times', 'icon-monospaced')
-	);
+	var TPL_CLOSE = '<button class="btn btn-monospaced image-viewer-base-control image-viewer-close text-white">' +
+            Liferay.Util.getLexiconIconTpl('times', 'icon-monospaced') + '<span class="sr-only">Close Image Viewer</span></button>';
+
+	imageViewer.TPL_CLOSE = TPL_CLOSE;
 
 	var TPL_PLAYER_PAUSE =
-		'<span>' + Liferay.Util.getLexiconIconTpl('pause', 'glyphicon') + '</span>';
+		'<button class="btn btn-unstyled btn-sm">' + Liferay.Util.getLexiconIconTpl('pause', 'glyphicon') + '<span class="sr-only">pause</span></button>';
 	var TPL_PLAYER_PLAY =
-		'<span>' + Liferay.Util.getLexiconIconTpl('play', 'glyphicon') + '</span>';
+		'<button class="btn btn-unstyled btn-sm">' + Liferay.Util.getLexiconIconTpl('play', 'glyphicon') + '<span class="sr-only">play</span></button>';
 
 	imageViewer.TPL_PLAYER = TPL_PLAYER_PLAY;
 
