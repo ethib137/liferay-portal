@@ -66,7 +66,7 @@ public class DeprecationFeatureFlagsCompanyModelListener
 				_disableCompanyFeatureFlags(
 					company.getCompanyId(),
 					Arrays.asList(
-						(String[])properties.get("disabledFeatureFlags")));
+						(String[])properties.get("disabledFeatureFlagKeys")));
 			}
 		}
 		catch (InvalidSyntaxException | IOException exception) {
@@ -107,22 +107,22 @@ public class DeprecationFeatureFlagsCompanyModelListener
 			systemFeatureFlags.getFeatureFlags(
 				FeatureFlagType.DEPRECATION.getPredicate());
 
-		String[] disabledFeatureFlags =
+		String[] disabledFeatureFlagKeys =
 			new String[deprecationFeatureFlags.size()];
 
 		for (int i = 0; i < deprecationFeatureFlags.size(); i++) {
 			FeatureFlag featureFlag = deprecationFeatureFlags.get(i);
 
-			disabledFeatureFlags[i] = featureFlag.getKey();
+			disabledFeatureFlagKeys[i] = featureFlag.getKey();
 		}
 
-		properties.put("disabledFeatureFlags", disabledFeatureFlags);
+		properties.put("disabledFeatureFlagKeys", disabledFeatureFlagKeys);
 
 		configuration.update(properties);
 	}
 
 	private void _disableCompanyFeatureFlags(
-		long companyId, List<String> disabledFeatureFlags) {
+		long companyId, List<String> disabledFeatureFlagKeys) {
 
 		CompanyFeatureFlags systemFeatureFlags =
 			_companyFeatureFlagsProvider.getOrCreateCompanyFeatureFlags(
@@ -136,7 +136,7 @@ public class DeprecationFeatureFlagsCompanyModelListener
 
 					return featureFlagType.equals(
 						FeatureFlagType.DEPRECATION) &&
-						   disabledFeatureFlags.contains(featureFlag.getKey());
+						   disabledFeatureFlagKeys.contains(featureFlag.getKey());
 				});
 
 		for (FeatureFlag featureFlag : deprecationFeatureFlags) {
