@@ -8,37 +8,9 @@ import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import ClaySticker from '@clayui/sticker';
-import {fetch, sub} from 'frontend-js-web';
+import {fetch, getRenderer, sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useEffect, useRef, useState} from 'react';
-
-function getModuleAndFunctionNames(url) {
-	const parts = url.split(' from ');
-
-	const moduleName = parts[1].trim();
-	let functionName = parts[0].trim();
-
-	if (
-		functionName !== 'default' &&
-		(!functionName.startsWith('{') || !functionName.endsWith('}'))
-	) {
-		throw new Error(`Invalid data renderer URL: ${url}`);
-	}
-
-	if (functionName.startsWith('{')) {
-		functionName = functionName
-			.substring(1, functionName.length - 1)
-			.trim();
-	}
-
-	return [functionName, moduleName];
-}
-
-const callModuleFunction = (functionName, jsOnClickConfig, module) => {
-	if (module[functionName] && typeof module[functionName] === 'function') {
-		module[functionName](jsOnClickConfig);
-	}
-};
 
 function mapItemsOnClick(items) {
 	return items.map((item) => {
@@ -56,27 +28,14 @@ function mapItemsOnClick(items) {
 		}
 
 		if (onClickJSModuleURL) {
-			if (onClickJSModuleURL.includes(' from ')) {
-				newVal.onClick = async () => {
-					const [
-						functionName,
-						moduleName,
-					] = getModuleAndFunctionNames(onClickJSModuleURL);
+			newVal.onClick = async () => {
+				const {component} = await getRenderer({
+					type: 'internal',
+					url: onClickJSModuleURL,
+				});
 
-					const module = await import(
-						/* webpackIgnore: true */ moduleName
-					);
-
-					callModuleFunction(functionName, jsOnClickConfig, module);
-				};
-			}
-			else {
-				newVal.onClick = () => {
-					Liferay.Loader.require(onClickJSModuleURL, (module) =>
-						callModuleFunction('default', jsOnClickConfig, module)
-					);
-				};
-			}
+				component(jsOnClickConfig);
+			};
 		}
 
 		return newVal;
