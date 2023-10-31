@@ -86,11 +86,12 @@ export function UniqueCompositeKey({
 	>();
 
 	const allowedObjectFieldBusinessTypes = [
+		'AutoIncrement',
 		'Integer',
 		'Picklist',
 		'Relationship',
 		'Text',
-	];
+	] as ObjectFieldBusinessType[];
 
 	const filteredCustomObjectFields = customObjectFields.filter(
 		(customObjectField) =>
@@ -105,7 +106,9 @@ export function UniqueCompositeKey({
 		parentWindow.Liferay.fire('openModalSelectObjectFields', {
 			alert: {
 				content: sub(
-					Liferay.Language.get('x-is-already-published.-as-a-result,-you-can-only-add-fields-to-unique-composite-keys-with-no-data'),
+					Liferay.Language.get(
+						'x-is-already-published.-as-a-result,-you-can-only-add-fields-to-unique-composite-keys-with-no-data'
+					),
 					(objectDefinition as ObjectDefinition).name
 				),
 				otherProps: {

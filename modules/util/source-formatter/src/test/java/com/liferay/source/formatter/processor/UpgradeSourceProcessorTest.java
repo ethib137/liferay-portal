@@ -54,24 +54,14 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 			"upgrade/UpgradeCatchAllCheck.testjava",
 			UpgradeCatchAllCheck.getExpectedMessages());
 		test("upgrade/UpgradeCatchAllCheck.testjsp");
+		test("upgrade/UpgradeCatchAllCheck.testjspf");
+		test("upgrade/UpgradeCatchAllCheck.testscss");
 	}
 
 	@Test
 	public void testUpgradeDLUtilCheck() throws Exception {
 		test("upgrade/UpgradeJavaDLUtilCheck.testjava");
 		test("upgrade/UpgradeJSPDLUtilCheck.testjsp");
-	}
-
-	@Test
-	public void testUpgradeGetClassNamesMethodCheck() throws Exception {
-		test("upgrade/UpgradeJavaGetClassNamesMethodCheck.testjava");
-		test("upgrade/UpgradeJSPFGetClassNamesMethodCheck.testjspf");
-	}
-
-	@Test
-	public void testUpgradeGetImagePreviewURLMethodCheck() throws Exception {
-		test("upgrade/UpgradeJavaGetImagePreviewURLMethodCheck.testjava");
-		test("upgrade/UpgradeJSPGetImagePreviewURLMethodCheck.testjsp");
 	}
 
 	@Test
@@ -116,23 +106,8 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
-	public void testUpgradeJavaCaptchaUtilCheck() throws Exception {
-		test("upgrade/UpgradeJavaCaptchaUtilCheck.testjava");
-	}
-
-	@Test
 	public void testUpgradeJavaCheck() throws Exception {
 		test("upgrade/UpgradeJavaCheck.testjava");
-	}
-
-	@Test
-	public void testUpgradeJavaCommerceCountryCheck() throws Exception {
-		test("upgrade/UpgradeJavaCommerceCountryCheck.testjava");
-	}
-
-	@Test
-	public void testUpgradeJavaCommerceCountryServiceCheck() throws Exception {
-		test("upgrade/UpgradeJavaCommerceCountryServiceCheck.testjava");
 	}
 
 	@Test
@@ -232,24 +207,8 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
-	public void testUpgradeJavaIndexerCheck() throws Exception {
-		test("upgrade/UpgradeJavaIndexerCheck.testjava");
-	}
-
-	@Test
 	public void testUpgradeJavaLanguageUtilCheck() throws Exception {
 		test("upgrade/UpgradeJavaLanguageUtilCheck.testjava");
-	}
-
-	@Test
-	public void testUpgradeJavaLayoutServicesCheck() throws Exception {
-		test(
-			"upgrade/UpgradeJavaLayoutServicesCheck.testjava",
-			StringBundler.concat(
-				"Unable to format methods addLayout and updateLayout from ",
-				"LayoutService, LayoutLocalService, LayoutServiceUtil and ",
-				"LayoutLocalServiceUtil. Fill the new parameters manually, ",
-				"see LPS-188828 and LPS-190401"));
 	}
 
 	@Test
@@ -294,6 +253,11 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	@Test
 	public void testUpgradeJavaServiceTrackerListCheck() throws Exception {
 		test("upgrade/UpgradeJavaServiceTrackerListCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaStorageTypeAwareCheck() throws Exception {
+		test("upgrade/UpgradeJavaStorageTypeAwareCheck.testjava");
 	}
 
 	@Test
@@ -350,11 +314,6 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	@Test
 	public void testUpgradeRejectedExecutionHandlerCheck() throws Exception {
 		test("upgrade/UpgradeRejectedExecutionHandlerCheck.testjava");
-	}
-
-	@Test
-	public void testUpgradeSCSSImportsCheck() throws Exception {
-		test("upgrade/UpgradeSCSSImportsCheck.testscss");
 	}
 
 	@Test

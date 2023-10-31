@@ -7,6 +7,7 @@ package com.liferay.company.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.asset.link.model.adapter.StagedAssetLink;
+import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.model.DLFileEntryTypeConstants;
@@ -970,7 +971,14 @@ public class CompanyLocalServiceTest {
 	}
 
 	protected Company addCompany() throws Exception {
-		return addCompany(RandomTestUtil.randomString() + "test.com");
+		long counterCompanyId = _counterLocalService.increment() + 1;
+
+		Company company = addCompany(
+			RandomTestUtil.randomString() + "test.com");
+
+		_verifyRandomCompanyId(company.getCompanyId(), counterCompanyId);
+
+		return company;
 	}
 
 	protected Company addCompany(String webId) throws Exception {
@@ -1194,6 +1202,12 @@ public class CompanyLocalServiceTest {
 		return list;
 	}
 
+	private void _verifyRandomCompanyId(long companyId, long counterCompanyId) {
+		Assert.assertNotEquals(counterCompanyId, companyId);
+
+		Assert.assertTrue(companyId > 0);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		CompanyLocalServiceTest.class);
 
@@ -1216,6 +1230,9 @@ public class CompanyLocalServiceTest {
 
 	@Inject
 	private CompanyLocalService _companyLocalService;
+
+	@Inject
+	private CounterLocalService _counterLocalService;
 
 	@Inject
 	private DDMStructureLocalService _ddmStructureLocalService;

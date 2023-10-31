@@ -70,6 +70,8 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 
 			String oldContent = content;
 
+			_newMessage = false;
+
 			if (fileName.endsWith(".java")) {
 				content = _formatJava(content, fileName, jsonObject);
 			}
@@ -78,6 +80,12 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 			}
 
 			if (_testMode && oldContent.equals(content)) {
+				String to = jsonObject.getString("to");
+
+				if (to.isEmpty() && _newMessage) {
+					continue;
+				}
+
 				throw new UpgradeCatchAllException(
 					"Unable to process pattern " +
 						jsonObject.getString("from") +
@@ -123,20 +131,40 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 	private static Pattern _getPattern(JSONObject jsonObject) {
 		String from = jsonObject.getString("from");
 
-		if (from.contains(StringPool.OPEN_PARENTHESIS)) {
-			from = from.substring(0, from.indexOf(CharPool.OPEN_PARENTHESIS));
+		String regex = StringBundler.concat("\\b", from, "\\b");
+
+		if (from.contains("::")) {
+			return Pattern.compile(regex);
+		}
+		else if (regex.contains(StringPool.SLASH)) {
+			return Pattern.compile(
+				StringUtil.replace(regex, CharPool.SLASH, "\\/"));
 		}
 
-		String regex = "\\w+\\.[\\w\\(\\)\\s\\.]*\\b" + from;
-
-		if (from.contains(StringPool.PERIOD)) {
-			regex = StringUtil.replace(from, CharPool.PERIOD, "\\.\\s*");
-		}
-		else if (from.contains("::")) {
-			regex = from;
+		if (regex.contains(StringPool.OPEN_PARENTHESIS)) {
+			regex =
+				from.substring(0, from.indexOf(CharPool.OPEN_PARENTHESIS)) +
+					"\\b\\(";
 		}
 
-		return Pattern.compile(regex + "[\\(;]");
+		if (regex.contains(StringPool.PERIOD)) {
+			regex = StringUtil.replace(regex, CharPool.PERIOD, "\\.\\s*");
+		}
+
+		if (Character.isUpperCase(from.charAt(0))) {
+			if (!regex.contains(StringPool.OPEN_PARENTHESIS)) {
+				regex = regex + "[,;> (]";
+			}
+
+			String[] classNames = JSONUtil.toStringArray(
+				jsonObject.getJSONArray("classNames"));
+
+			if (classNames.length == 0) {
+				return Pattern.compile(regex);
+			}
+		}
+
+		return Pattern.compile("\\w+\\.[\\w\\(\\)\\s\\.]*" + regex);
 	}
 
 	private static JSONArray _getReplacementsJSONArray(String fileName)
@@ -328,13 +356,16 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 			return newContent;
 		}
 
-		if (fileName.endsWith(".java") &&
-			!hasParameterTypes(
-				javaMethodContent, javaMethodContent,
-				ArrayUtil.toStringArray(parameterNames),
-				ArrayUtil.toStringArray(parameterTypes))) {
+		if ((fileName.endsWith(".java") &&
+			 !hasParameterTypes(
+				 javaMethodContent, javaMethodContent,
+				 ArrayUtil.toStringArray(parameterNames),
+				 ArrayUtil.toStringArray(parameterTypes))) ||
+			to.isEmpty()) {
 
 			addMessage(fileName, _getMessage(jsonObject));
+
+			_newMessage = true;
 
 			return newContent;
 		}
@@ -393,5 +424,7 @@ public class UpgradeCatchAllCheck extends BaseFileCheck {
 	}
 
 	private static boolean _testMode;
+
+	private boolean _newMessage;
 
 }

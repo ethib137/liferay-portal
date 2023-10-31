@@ -146,6 +146,21 @@
 	<td>//tr//th[contains(.,'${key_type}')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>NEW_FIELD_OPTION</td>
+	<td>//span[@class="custom-control-label-text" and contains(text(),'${key_columnName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ACCOUNT_ORDER_NAME</td>
+	<td>xpath=(//div[contains(@class,'dnd-td') and contains(text(),'${accountName}')])[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_COLUMN_NAME</td>
+	<td>//div[contains(@class,'dnd-th')]//*[contains(text(),'${key_column}')]</td>
+	<td></td>
+</tr>
 
 <!-- DATA SET PAGINATION -->
 
@@ -340,6 +355,21 @@
 	<td>//div[@class="form-group"]//input[contains(@aria-label,'${key_label}')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>SPECIFIC_CHECKBOX_CHECKED</td>
+	<td>//button[contains(@class,'dropdown-item') and contains(.,'${key_name}')]//input[@type='checkbox' and @checked]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRESELECT_VALUE_INPUT</td>
+	<td>//div[contains(@class,'form-group')]//input[contains(@placeholder,'${key_fieldName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SELECT_SORT_OPTION</td>
+	<td>//button[contains(@class,'dropdown-item') and contains(.,'${key_sortOption}')]</td>
+	<td></td>
+</tr>
 
 <!-- DATA SET PAGINATION -->
 
@@ -417,6 +447,11 @@
 <tr>
 	<td>ACTION_ICON_IN_FRAGMENT</td>
 	<td>//div[contains(@class,'item-actions')]//*[@title="${key_actionIcon}"]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ICON_IN_DATA_SET_FRAGMENT</td>
+	<td>xpath=(//div[(@class="dnd-tr")]/div[contains(@class,"dnd-td") and contains(string(), "${key_entryName}")]/..//*[contains(@class,'${key_icon}')])[${key_rowNumber}]</td>
 	<td></td>
 </tr>
 
