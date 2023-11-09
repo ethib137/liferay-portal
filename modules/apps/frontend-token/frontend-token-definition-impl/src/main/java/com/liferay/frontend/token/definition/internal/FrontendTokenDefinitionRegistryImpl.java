@@ -5,6 +5,12 @@
 
 package com.liferay.frontend.token.definition.internal;
 
+import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
+import com.liferay.client.extension.model.ClientExtensionEntryRel;
+import com.liferay.client.extension.service.ClientExtensionEntryRelLocalServiceUtil;
+import com.liferay.client.extension.type.CET;
+import com.liferay.client.extension.type.ThemeCSSCET;
+import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
 import com.liferay.petra.concurrent.DCLSingleton;
@@ -13,10 +19,13 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.PortletConstants;
 import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoader;
 import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.URLUtil;
 
 import java.io.IOException;
@@ -47,7 +56,42 @@ public class FrontendTokenDefinitionRegistryImpl
 	implements FrontendTokenDefinitionRegistry {
 
 	@Override
-	public FrontendTokenDefinition getFrontendTokenDefinition(String themeId) {
+	public FrontendTokenDefinition getFrontendTokenDefinition(
+		long companyId, String externalReferenceCode, String themeId) {
+
+		if (externalReferenceCode != null) {
+			CET cet = _cetManager.getCET(companyId, externalReferenceCode);
+
+			if (cet != null) {
+				ThemeCSSCET themeCSSCET = (ThemeCSSCET) cet;
+
+				String frontendTokenDefinitionString =
+					themeCSSCET.getFrontendTokenDefinition();
+
+				if (!frontendTokenDefinitionString.isEmpty()) {
+					try {
+						long startTime = System.currentTimeMillis();
+
+						FrontendTokenDefinitionImpl frontendTokenDefinition =
+							new FrontendTokenDefinitionImpl(
+								jsonFactory.createJSONObject(
+									frontendTokenDefinitionString),
+								jsonFactory,
+								ResourceBundleLoaderUtil.getPortalResourceBundleLoader(),
+								themeId
+							);
+
+						System.out.println("CET theme loading time: " + (System.currentTimeMillis() - startTime));
+						return frontendTokenDefinition;
+					} catch (Exception e) {
+
+					}
+				}
+			}
+		}
+
+		long startTime = System.currentTimeMillis();
+
 		Map<String, FrontendTokenDefinitionImpl>
 			themeIdFrontendTokenDefinitionImpls =
 				_themeIdFrontendTokenDefinitionImplsDCLSingleton.getSingleton(
@@ -57,7 +101,24 @@ public class FrontendTokenDefinitionRegistryImpl
 						return _themeIdFrontendTokenDefinitionImpls;
 					});
 
+		System.out.println(
+			"Default theme loading time: " + (System.currentTimeMillis() - startTime));
+
 		return themeIdFrontendTokenDefinitionImpls.get(themeId);
+	}
+
+	@Override
+	public String getThemeCSSCETExternalReferenceCode(LayoutSet layoutSet) {
+		ClientExtensionEntryRel clientExtensionEntryRel =
+			ClientExtensionEntryRelLocalServiceUtil.fetchClientExtensionEntryRel(
+				PortalUtil.getClassNameId(LayoutSet.class), layoutSet.getLayoutSetId(),
+				ClientExtensionEntryConstants.TYPE_THEME_CSS);
+
+		if (clientExtensionEntryRel != null) {
+			return clientExtensionEntryRel.getCETExternalReferenceCode();
+		}
+
+		return null;
 	}
 
 	@Activate
@@ -237,5 +298,8 @@ public class FrontendTokenDefinitionRegistryImpl
 		_themeIdFrontendTokenDefinitionImpls = new ConcurrentHashMap<>();
 	private final DCLSingleton<Map<String, FrontendTokenDefinitionImpl>>
 		_themeIdFrontendTokenDefinitionImplsDCLSingleton = new DCLSingleton<>();
+
+	@Reference
+	private CETManager _cetManager;
 
 }
