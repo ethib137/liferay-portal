@@ -199,6 +199,28 @@ public class ClientExtensionProjectConfigurator
 					}
 
 					try {
+						JsonNode clientExtensionNode =
+							fieldJsonNode.get("frontendTokenDefinition");
+
+						if (clientExtensionNode != null) {
+							String filePath = clientExtensionNode.asText();
+
+							if(filePath.startsWith("./")) {
+								filePath = filePath.substring(2);
+							}
+
+							File clientExtensionFile =
+								project.file(filePath);
+
+							ObjectMapper mapper = new ObjectMapper();
+
+							JsonNode rootJsonNode = mapper.readTree(clientExtensionFile);
+
+							((ObjectNode)fieldJsonNode).put(
+								"frontendTokenDefinition",
+								mapper.writeValueAsString(rootJsonNode));
+						}
+
 						ClientExtension clientExtension =
 							_yamlObjectMapper.treeToValue(
 								(ObjectNode)fieldJsonNode,
@@ -285,6 +307,10 @@ public class ClientExtensionProjectConfigurator
 						throw new GradleException(
 							"Unable to parse client extension " + fieldName,
 							jsonProcessingException);
+					}
+					catch (IOException e) {
+						throw new GradleException(
+							"Token definition file not found.", e);
 					}
 				});
 		}
