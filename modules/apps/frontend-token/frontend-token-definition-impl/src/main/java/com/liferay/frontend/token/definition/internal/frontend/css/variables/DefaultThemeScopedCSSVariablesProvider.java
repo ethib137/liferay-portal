@@ -5,12 +5,12 @@
 
 package com.liferay.frontend.token.definition.internal.frontend.css.variables;
 
+import com.liferay.client.extension.type.frontend.token.definition.FrontendToken;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenMapping;
 import com.liferay.frontend.css.variables.ScopedCSSVariables;
 import com.liferay.frontend.css.variables.ScopedCSSVariablesProvider;
-import com.liferay.frontend.token.definition.FrontendToken;
-import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
-import com.liferay.frontend.token.definition.FrontendTokenMapping;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
@@ -53,7 +53,8 @@ public class DefaultThemeScopedCSSVariablesProvider
 		FrontendTokenDefinition frontendTokenDefinition =
 			_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
 				layoutSet.getCompanyId(),
-				_frontendTokenDefinitionRegistry.getThemeCSSCETExternalReferenceCode(layoutSet),
+				_frontendTokenDefinitionRegistry.
+					getThemeCSSCETExternalReferenceCode(layoutSet),
 				layoutSet.getThemeId());
 
 		if (frontendTokenDefinition == null) {

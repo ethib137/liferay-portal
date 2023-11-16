@@ -5,11 +5,11 @@
 
 package com.liferay.frontend.token.definition.internal;
 
-import com.liferay.frontend.token.definition.FrontendToken;
-import com.liferay.frontend.token.definition.FrontendTokenCategory;
-import com.liferay.frontend.token.definition.FrontendTokenDefinition;
-import com.liferay.frontend.token.definition.FrontendTokenMapping;
-import com.liferay.frontend.token.definition.FrontendTokenSet;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendToken;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenCategory;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenMapping;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenSet;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;

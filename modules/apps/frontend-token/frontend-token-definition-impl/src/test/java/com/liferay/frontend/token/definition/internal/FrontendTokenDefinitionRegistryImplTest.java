@@ -5,7 +5,7 @@
 
 package com.liferay.frontend.token.definition.internal;
 
-import com.liferay.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactory;
