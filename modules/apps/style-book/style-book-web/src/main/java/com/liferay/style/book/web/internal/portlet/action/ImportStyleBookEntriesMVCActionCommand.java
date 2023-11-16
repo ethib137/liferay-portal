@@ -5,8 +5,8 @@
 
 package com.liferay.style.book.web.internal.portlet.action;
 
-import com.liferay.frontend.token.definition.FrontendToken;
-import com.liferay.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendToken;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -108,7 +108,8 @@ public class ImportStyleBookEntriesMVCActionCommand
 			FrontendTokenDefinition frontendTokenDefinition =
 				_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
 					layoutSet.getCompanyId(),
-					_frontendTokenDefinitionRegistry.getThemeCSSCETExternalReferenceCode(layoutSet),
+					_frontendTokenDefinitionRegistry.
+						getThemeCSSCETExternalReferenceCode(layoutSet),
 					layoutSet.getThemeId());
 
 			if (frontendTokenDefinition != null) {
