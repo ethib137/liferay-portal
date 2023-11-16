@@ -15,17 +15,17 @@ import java.util.Locale;
 /**
  * @author Iván Zaera
  */
-public class FrontendTokenMappingImpl implements FrontendTokenMapping {
+public class CXFrontendTokenMappingImpl implements FrontendTokenMapping {
 
-	public FrontendTokenMappingImpl(
-		FrontendTokenImpl frontendTokenImpl, JSONObject jsonObject) {
+	public CXFrontendTokenMappingImpl(
+			CXFrontendTokenImpl cxFrontendTokenImpl, JSONObject jsonObject) {
 
-		_frontendTokenImpl = frontendTokenImpl;
+		_cxFrontendTokenImpl = cxFrontendTokenImpl;
 
-		FrontendTokenDefinitionImpl frontendTokenDefinitionImpl =
-			frontendTokenImpl.getFrontendTokenDefinition();
+		CXFrontendTokenDefinitionImpl cxFrontendTokenDefinitionImpl =
+			cxFrontendTokenImpl.getFrontendTokenDefinition();
 
-		_jsonLocalizer = frontendTokenDefinitionImpl.createJSONLocalizer(
+		_jsonLocalizer = cxFrontendTokenDefinitionImpl.createJSONLocalizer(
 			jsonObject);
 
 		_type = jsonObject.getString("type");
@@ -34,7 +34,7 @@ public class FrontendTokenMappingImpl implements FrontendTokenMapping {
 
 	@Override
 	public FrontendToken getFrontendToken() {
-		return _frontendTokenImpl;
+		return _cxFrontendTokenImpl;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class FrontendTokenMappingImpl implements FrontendTokenMapping {
 		return _value;
 	}
 
-	private final FrontendTokenImpl _frontendTokenImpl;
+	private final CXFrontendTokenImpl _cxFrontendTokenImpl;
 	private final JSONLocalizer _jsonLocalizer;
 	private final String _type;
 	private final String _value;

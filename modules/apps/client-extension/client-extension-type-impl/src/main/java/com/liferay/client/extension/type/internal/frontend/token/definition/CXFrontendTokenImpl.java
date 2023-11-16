@@ -22,17 +22,17 @@ import java.util.Map;
 /**
  * @author Iván Zaera
  */
-public class FrontendTokenImpl implements FrontendToken {
+public class CXFrontendTokenImpl implements FrontendToken {
 
-	public FrontendTokenImpl(
-		FrontendTokenSetImpl frontendTokenSetImpl, JSONObject jsonObject) {
+	public CXFrontendTokenImpl(
+			CXFrontendTokenSetImpl cxFrontendTokenSetImpl, JSONObject jsonObject) {
 
-		_frontendTokenSetImpl = frontendTokenSetImpl;
+		_cxFrontendTokenSetImpl = cxFrontendTokenSetImpl;
 
-		FrontendTokenDefinitionImpl frontendTokenDefinitionImpl =
-			frontendTokenSetImpl.getFrontendTokenDefinition();
+		CXFrontendTokenDefinitionImpl cxFrontendTokenDefinitionImpl =
+			cxFrontendTokenSetImpl.getFrontendTokenDefinition();
 
-		_jsonLocalizer = frontendTokenDefinitionImpl.createJSONLocalizer(
+		_jsonLocalizer = cxFrontendTokenDefinitionImpl.createJSONLocalizer(
 			jsonObject);
 
 		_name = jsonObject.getString("name");
@@ -64,7 +64,7 @@ public class FrontendTokenImpl implements FrontendToken {
 
 		for (int i = 0; i < mappingsJSONArray.length(); i++) {
 			FrontendTokenMapping frontendTokenMapping =
-				new FrontendTokenMappingImpl(
+				new CXFrontendTokenMappingImpl(
 					this, mappingsJSONArray.getJSONObject(i));
 
 			_frontendTokenMappings.add(frontendTokenMapping);
@@ -96,7 +96,7 @@ public class FrontendTokenImpl implements FrontendToken {
 
 	@Override
 	public FrontendTokenSet getFrontendTokenSet() {
-		return _frontendTokenSetImpl;
+		return _cxFrontendTokenSetImpl;
 	}
 
 	@Override
@@ -114,8 +114,8 @@ public class FrontendTokenImpl implements FrontendToken {
 		return _type;
 	}
 
-	protected FrontendTokenDefinitionImpl getFrontendTokenDefinition() {
-		return _frontendTokenSetImpl.getFrontendTokenDefinition();
+	protected CXFrontendTokenDefinitionImpl getFrontendTokenDefinition() {
+		return _cxFrontendTokenSetImpl.getFrontendTokenDefinition();
 	}
 
 	private final Object _defaultValue;
@@ -123,7 +123,7 @@ public class FrontendTokenImpl implements FrontendToken {
 		new ArrayList<>();
 	private final Map<String, List<FrontendTokenMapping>>
 		_frontendTokenMappingsMap = new HashMap<>();
-	private final FrontendTokenSetImpl _frontendTokenSetImpl;
+	private final CXFrontendTokenSetImpl _cxFrontendTokenSetImpl;
 	private final JSONLocalizer _jsonLocalizer;
 	private final String _name;
 	private final Type _type;

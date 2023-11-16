@@ -23,9 +23,9 @@ import java.util.Locale;
 /**
  * @author Iván Zaera
  */
-public class FrontendTokenDefinitionImpl implements FrontendTokenDefinition {
+public class CXFrontendTokenDefinitionImpl implements FrontendTokenDefinition {
 
-	public FrontendTokenDefinitionImpl(
+	public CXFrontendTokenDefinitionImpl(
 		JSONObject jsonObject, JSONFactory jsonFactory,
 		ResourceBundleLoader resourceBundleLoader, String themeId) {
 

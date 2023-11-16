@@ -23,12 +23,12 @@ import java.util.Locale;
 public class CXFrontendTokenCategoryImpl implements FrontendTokenCategory {
 
 	public CXFrontendTokenCategoryImpl(
-		FrontendTokenDefinitionImpl frontendTokenDefinitionImpl,
+		CXFrontendTokenDefinitionImpl cxFrontendTokenDefinitionImpl,
 		JSONObject jsonObject) {
 
-		_frontendTokenDefinitionImpl = frontendTokenDefinitionImpl;
+		_cxFrontendTokenDefinitionImpl = cxFrontendTokenDefinitionImpl;
 
-		_jsonLocalizer = frontendTokenDefinitionImpl.createJSONLocalizer(
+		_jsonLocalizer = cxFrontendTokenDefinitionImpl.createJSONLocalizer(
 			jsonObject);
 
 		JSONArray frontendTokenSetsJSONArray = jsonObject.getJSONArray(
@@ -39,7 +39,7 @@ public class CXFrontendTokenCategoryImpl implements FrontendTokenCategory {
 		}
 
 		for (int i = 0; i < frontendTokenSetsJSONArray.length(); i++) {
-			FrontendTokenSet frontendTokenSet = new FrontendTokenSetImpl(
+			FrontendTokenSet frontendTokenSet = new CXFrontendTokenSetImpl(
 				this, frontendTokenSetsJSONArray.getJSONObject(i));
 
 			_frontendTokenMappings.addAll(
@@ -52,8 +52,8 @@ public class CXFrontendTokenCategoryImpl implements FrontendTokenCategory {
 	}
 
 	@Override
-	public FrontendTokenDefinitionImpl getFrontendTokenDefinition() {
-		return _frontendTokenDefinitionImpl;
+	public CXFrontendTokenDefinitionImpl getFrontendTokenDefinition() {
+		return _cxFrontendTokenDefinitionImpl;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class CXFrontendTokenCategoryImpl implements FrontendTokenCategory {
 		return _jsonLocalizer.getJSONObject(locale);
 	}
 
-	private final FrontendTokenDefinitionImpl _frontendTokenDefinitionImpl;
+	private final CXFrontendTokenDefinitionImpl _cxFrontendTokenDefinitionImpl;
 	private final Collection<FrontendTokenMapping> _frontendTokenMappings =
 		new ArrayList<>();
 	private final Collection<FrontendToken> _frontendTokens = new ArrayList<>();
