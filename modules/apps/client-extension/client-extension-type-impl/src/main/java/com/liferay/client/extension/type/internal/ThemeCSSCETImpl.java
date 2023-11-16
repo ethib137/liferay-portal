@@ -35,10 +35,10 @@ public class ThemeCSSCETImpl extends BaseCETImpl implements ThemeCSSCET {
 			).put(
 				"clayURL", ParamUtil.getString(portletRequest, "clayURL")
 			).put(
-				"mainURL", ParamUtil.getString(portletRequest, "mainURL")
-			).put(
 				"frontendTokenDefinition",
 				ParamUtil.getString(portletRequest, "frontendTokenDefinition")
+			).put(
+				"mainURL", ParamUtil.getString(portletRequest, "mainURL")
 			).build());
 	}
 
@@ -69,13 +69,13 @@ public class ThemeCSSCETImpl extends BaseCETImpl implements ThemeCSSCET {
 	}
 
 	@Override
-	public String getMainURL() {
-		return getString("mainURL");
+	public String getFrontendTokenDefinition() {
+		return getString("frontendTokenDefinition");
 	}
 
 	@Override
-	public String getFrontendTokenDefinition() {
-		return getString("frontendTokenDefinition");
+	public String getMainURL() {
+		return getString("mainURL");
 	}
 
 	@Override
