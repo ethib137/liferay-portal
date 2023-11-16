@@ -5,15 +5,15 @@
 
 package com.liferay.fragment.internal.util.configuration;
 
+import com.liferay.client.extension.type.frontend.token.definition.FrontendToken;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenMapping;
 import com.liferay.fragment.constants.FragmentConfigurationFieldDataType;
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.util.configuration.FragmentConfigurationField;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
 import com.liferay.fragment.util.configuration.FragmentEntryMenuDisplayConfiguration;
-import com.liferay.frontend.token.definition.FrontendToken;
-import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
-import com.liferay.frontend.token.definition.FrontendTokenMapping;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemObjectProvider;
