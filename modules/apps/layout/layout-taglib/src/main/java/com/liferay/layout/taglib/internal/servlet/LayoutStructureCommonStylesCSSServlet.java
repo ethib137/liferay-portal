@@ -5,10 +5,10 @@
 
 package com.liferay.layout.taglib.internal.servlet;
 
-import com.liferay.frontend.token.definition.FrontendToken;
-import com.liferay.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendToken;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenMapping;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
-import com.liferay.frontend.token.definition.FrontendTokenMapping;
 import com.liferay.layout.provider.LayoutStructureProvider;
 import com.liferay.layout.responsive.ViewportSize;
 import com.liferay.layout.taglib.internal.util.SegmentsExperienceUtil;
