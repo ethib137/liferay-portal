@@ -9,11 +9,18 @@ import com.liferay.client.extension.exception.ClientExtensionEntryTypeSettingsEx
 import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.type.ThemeCSSCET;
 import com.liferay.client.extension.type.factory.CETImplFactory;
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.client.extension.type.internal.ThemeCSSCETImpl;
+import com.liferay.client.extension.type.internal.frontend.token.definition.CXFrontendTokenDefinitionImpl;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoaderUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
+import org.osgi.service.component.annotations.Reference;
 
 import java.util.Properties;
 
@@ -25,9 +32,11 @@ import javax.portlet.PortletRequest;
 public class ThemeCSSCETImplFactoryImpl implements CETImplFactory<ThemeCSSCET> {
 
 	@Override
-	public ThemeCSSCET create(ClientExtensionEntry clientExtensionEntry)
+	public ThemeCSSCET create(
+			ClientExtensionEntry clientExtensionEntry)
 		throws PortalException {
 
+		// TODO what about this?
 		return new ThemeCSSCETImpl(clientExtensionEntry);
 	}
 
@@ -35,7 +44,17 @@ public class ThemeCSSCETImplFactoryImpl implements CETImplFactory<ThemeCSSCET> {
 	public ThemeCSSCET create(PortletRequest portletRequest)
 		throws PortalException {
 
-		return new ThemeCSSCETImpl(portletRequest);
+		String frontendTokenDefinitionString = ParamUtil.getString(
+				portletRequest, "frontendTokenDefinition");
+
+		FrontendTokenDefinition frontendTokenDefinition = null;
+
+		if (frontendTokenDefinitionString != null) {
+			frontendTokenDefinition = _getFrontendTokenDefinition(
+					null, frontendTokenDefinitionString);
+		}
+
+		return new ThemeCSSCETImpl(frontendTokenDefinition, portletRequest);
 	}
 
 	@Override
@@ -45,9 +64,36 @@ public class ThemeCSSCETImplFactoryImpl implements CETImplFactory<ThemeCSSCET> {
 			String sourceCodeURL, UnicodeProperties unicodeProperties)
 		throws PortalException {
 
+		String frontendTokenDefinitionString = unicodeProperties.get(
+				"frontendTokenDefinition");
+
+		FrontendTokenDefinition frontendTokenDefinition = null;
+
+		if (frontendTokenDefinitionString != null) {
+			frontendTokenDefinition = _getFrontendTokenDefinition(
+					name, frontendTokenDefinitionString);
+		}
+
 		return new ThemeCSSCETImpl(
-			baseURL, companyId, description, externalReferenceCode, name,
-			properties, sourceCodeURL, unicodeProperties);
+			baseURL, companyId, description, externalReferenceCode,
+			frontendTokenDefinition, name, properties, sourceCodeURL,
+			unicodeProperties);
+	}
+
+	private FrontendTokenDefinition _getFrontendTokenDefinition(
+			String name, String frontendTokenDefinitionString) {
+		try {
+			return new CXFrontendTokenDefinitionImpl(
+					JSONFactoryUtil.createJSONObject(
+									frontendTokenDefinitionString),
+					JSONFactoryUtil.getJSONFactory(),
+					ResourceBundleLoaderUtil.
+									getPortalResourceBundleLoader(),
+					name);
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -56,8 +102,18 @@ public class ThemeCSSCETImplFactoryImpl implements CETImplFactory<ThemeCSSCET> {
 			UnicodeProperties oldTypeSettingsUnicodeProperties)
 		throws PortalException {
 
+		String frontendTokenDefinitionString = newTypeSettingsUnicodeProperties.get(
+				"frontendTokenDefinition");
+
+		FrontendTokenDefinition frontendTokenDefinition = null;
+
+		if (frontendTokenDefinitionString != null) {
+			frontendTokenDefinition = _getFrontendTokenDefinition(
+					null, frontendTokenDefinitionString);
+		}
+
 		ThemeCSSCET newThemeCSSCET = new ThemeCSSCETImpl(
-			StringPool.BLANK, newTypeSettingsUnicodeProperties);
+			StringPool.BLANK, frontendTokenDefinition, newTypeSettingsUnicodeProperties);
 
 		String baseURL = newThemeCSSCET.getBaseURL();
 

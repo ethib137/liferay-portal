@@ -29,7 +29,7 @@ public @interface CETProperty {
 
 	public enum Type {
 
-		Boolean, String, StringList, URL(true), URLList(true);
+		Boolean, FrontendTokenDefinition, String, StringList, URL(true), URLList(true);
 
 		public boolean isURL() {
 			return _url;

@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import java.util.Dictionary;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -63,34 +64,25 @@ public class FrontendTokenDefinitionRegistryImpl
 			CET cet = _cetManager.getCET(companyId, externalReferenceCode);
 
 			if (cet != null) {
+				long startTime = System.currentTimeMillis();
+
 				ThemeCSSCET themeCSSCET = (ThemeCSSCET)cet;
 
-				String frontendTokenDefinitionString =
-					themeCSSCET.getFrontendTokenDefinition();
+				FrontendTokenDefinition frontendTokenDefinition =
+						themeCSSCET.getFrontendTokenDefinition();
 
-				if (!frontendTokenDefinitionString.isEmpty()) {
-					try {
-						long startTime = System.currentTimeMillis();
+				if (frontendTokenDefinition != null) {
+					System.out.println(
+						"CET theme loading time: " +
+							(System.currentTimeMillis() - startTime));
 
-						FrontendTokenDefinitionImpl frontendTokenDefinition =
-							new FrontendTokenDefinitionImpl(
-								jsonFactory.createJSONObject(
-									frontendTokenDefinitionString),
-								jsonFactory,
-								ResourceBundleLoaderUtil.
-									getPortalResourceBundleLoader(),
-								themeId);
-
-						System.out.println(
-							"CET theme loading time: " +
-								(System.currentTimeMillis() - startTime));
-
-						return frontendTokenDefinition;
-					}
-					catch (Exception e) {
-					}
+					System.out.println(frontendTokenDefinition.getJSONObject(
+							Locale.ENGLISH));
+					return frontendTokenDefinition;
 				}
 			}
+
+			return null;
 		}
 
 		long startTime = System.currentTimeMillis();

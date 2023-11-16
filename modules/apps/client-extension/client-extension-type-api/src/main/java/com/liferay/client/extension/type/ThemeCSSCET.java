@@ -8,6 +8,8 @@ package com.liferay.client.extension.type;
 import com.liferay.client.extension.type.annotation.CETProperty;
 import com.liferay.client.extension.type.annotation.CETType;
 
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.portal.kernel.json.JSONObject;
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -28,8 +30,8 @@ public interface ThemeCSSCET extends CET {
 	public String getMainURL();
 
 	@CETProperty(
-		defaultValue = "", name = "frontendTokenDefinition", type = CETProperty.Type.String
+		defaultValue = "", name = "frontendTokenDefinition", type = CETProperty.Type.FrontendTokenDefinition
 	)
-	public String getFrontendTokenDefinition();
+	public FrontendTokenDefinition getFrontendTokenDefinition();
 
 }
