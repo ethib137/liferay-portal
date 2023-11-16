@@ -5,6 +5,7 @@
 
 package com.liferay.frontend.token.definition;
 
+import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.portal.kernel.model.LayoutSet;
 
 /**
