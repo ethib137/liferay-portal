@@ -44,17 +44,7 @@ public class ThemeCSSCETImplFactoryImpl implements CETImplFactory<ThemeCSSCET> {
 	public ThemeCSSCET create(PortletRequest portletRequest)
 		throws PortalException {
 
-		String frontendTokenDefinitionString = ParamUtil.getString(
-				portletRequest, "frontendTokenDefinition");
-
-		FrontendTokenDefinition frontendTokenDefinition = null;
-
-		if (frontendTokenDefinitionString != null) {
-			frontendTokenDefinition = _getFrontendTokenDefinition(
-					null, frontendTokenDefinitionString);
-		}
-
-		return new ThemeCSSCETImpl(frontendTokenDefinition, portletRequest);
+		return new ThemeCSSCETImpl(portletRequest);
 	}
 
 	@Override
@@ -64,36 +54,10 @@ public class ThemeCSSCETImplFactoryImpl implements CETImplFactory<ThemeCSSCET> {
 			String sourceCodeURL, UnicodeProperties unicodeProperties)
 		throws PortalException {
 
-		String frontendTokenDefinitionString = unicodeProperties.get(
-				"frontendTokenDefinition");
-
-		FrontendTokenDefinition frontendTokenDefinition = null;
-
-		if (frontendTokenDefinitionString != null) {
-			frontendTokenDefinition = _getFrontendTokenDefinition(
-					name, frontendTokenDefinitionString);
-		}
-
 		return new ThemeCSSCETImpl(
 			baseURL, companyId, description, externalReferenceCode,
-			frontendTokenDefinition, name, properties, sourceCodeURL,
+			name, properties, sourceCodeURL,
 			unicodeProperties);
-	}
-
-	private FrontendTokenDefinition _getFrontendTokenDefinition(
-			String name, String frontendTokenDefinitionString) {
-		try {
-			return new CXFrontendTokenDefinitionImpl(
-					JSONFactoryUtil.createJSONObject(
-									frontendTokenDefinitionString),
-					JSONFactoryUtil.getJSONFactory(),
-					ResourceBundleLoaderUtil.
-									getPortalResourceBundleLoader(),
-					name);
-		}
-		catch (Exception e) {
-			return null;
-		}
 	}
 
 	@Override
@@ -102,18 +66,8 @@ public class ThemeCSSCETImplFactoryImpl implements CETImplFactory<ThemeCSSCET> {
 			UnicodeProperties oldTypeSettingsUnicodeProperties)
 		throws PortalException {
 
-		String frontendTokenDefinitionString = newTypeSettingsUnicodeProperties.get(
-				"frontendTokenDefinition");
-
-		FrontendTokenDefinition frontendTokenDefinition = null;
-
-		if (frontendTokenDefinitionString != null) {
-			frontendTokenDefinition = _getFrontendTokenDefinition(
-					null, frontendTokenDefinitionString);
-		}
-
 		ThemeCSSCET newThemeCSSCET = new ThemeCSSCETImpl(
-			StringPool.BLANK, frontendTokenDefinition, newTypeSettingsUnicodeProperties);
+			StringPool.BLANK, newTypeSettingsUnicodeProperties);
 
 		String baseURL = newThemeCSSCET.getBaseURL();
 

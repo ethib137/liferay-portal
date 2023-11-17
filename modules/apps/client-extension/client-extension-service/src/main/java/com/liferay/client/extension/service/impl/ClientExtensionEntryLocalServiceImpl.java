@@ -11,6 +11,7 @@ import com.liferay.client.extension.service.ClientExtensionEntryRelLocalService;
 import com.liferay.client.extension.service.base.ClientExtensionEntryLocalServiceBaseImpl;
 import com.liferay.client.extension.type.deployer.CETDeployer;
 import com.liferay.client.extension.type.factory.CETFactory;
+import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.cluster.Clusterable;
@@ -157,6 +158,10 @@ public class ClientExtensionEntryLocalServiceImpl
 		clientExtensionEntryLocalService.undeployClientExtensionEntry(
 			clientExtensionEntry);
 
+		_cetManager.deleteCET(
+			clientExtensionEntry.getCompanyId(),
+			clientExtensionEntry.getExternalReferenceCode());
+
 		return clientExtensionEntry;
 	}
 
@@ -183,6 +188,10 @@ public class ClientExtensionEntryLocalServiceImpl
 		_serviceRegistrationsMap.put(
 			clientExtensionEntry.getClientExtensionEntryId(),
 			_cetDeployer.deploy(_cetFactory.create(clientExtensionEntry)));
+
+		_cetManager.addOrUpdateCET(
+			clientExtensionEntry.getCompanyId(),
+			clientExtensionEntry);
 	}
 
 	@Override
@@ -264,6 +273,9 @@ public class ClientExtensionEntryLocalServiceImpl
 						clientExtensionEntries) {
 
 					try {
+						// This method (setAopProxy) is called on portal startup and in case the
+						// client-extension-type-impl module (which contains the manager) changes
+						// That way we always have the existing ClientExtensionEntry CETs up to date there.
 						deployClientExtensionEntry(clientExtensionEntry);
 					}
 					catch (PortalException portalException) {
@@ -289,6 +301,10 @@ public class ClientExtensionEntryLocalServiceImpl
 				serviceRegistration.unregister();
 			}
 		}
+
+		_cetManager.deleteCET(
+			clientExtensionEntry.getCompanyId(),
+			clientExtensionEntry.getExternalReferenceCode());
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -357,6 +373,13 @@ public class ClientExtensionEntryLocalServiceImpl
 		}
 		else if (oldStatus == WorkflowConstants.STATUS_APPROVED) {
 			clientExtensionEntryLocalService.undeployClientExtensionEntry(
+				clientExtensionEntry);
+		}
+		else {
+			// deployClientExtensionEntry and undeployClientExtensionEntry
+			// already update the manager, just doing it to make sure is up to date
+			_cetManager.addOrUpdateCET(
+				clientExtensionEntry.getCompanyId(),
 				clientExtensionEntry);
 		}
 
@@ -506,6 +529,9 @@ public class ClientExtensionEntryLocalServiceImpl
 
 	@Reference
 	private ResourceLocalService _resourceLocalService;
+
+	@Reference
+	private CETManager _cetManager;
 
 	private final Map<Long, List<ServiceRegistration<?>>>
 		_serviceRegistrationsMap = new ConcurrentHashMap<>();

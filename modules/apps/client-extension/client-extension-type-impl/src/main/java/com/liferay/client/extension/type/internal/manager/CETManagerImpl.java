@@ -8,11 +8,13 @@ package com.liferay.client.extension.type.internal.manager;
 import com.liferay.client.extension.exception.ClientExtensionEntryTypeException;
 import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.service.ClientExtensionEntryLocalService;
+import com.liferay.client.extension.service.ClientExtensionEntryLocalServiceUtil;
 import com.liferay.client.extension.type.CET;
 import com.liferay.client.extension.type.configuration.CETConfiguration;
 import com.liferay.client.extension.type.deployer.CETDeployer;
 import com.liferay.client.extension.type.factory.CETFactory;
 import com.liferay.client.extension.type.manager.CETManager;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
@@ -41,6 +43,29 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = CETManager.class)
 public class CETManagerImpl implements CETManager {
+
+	@Override
+	public void addOrUpdateCET(
+		long companyId, ClientExtensionEntry clientExtensionEntry) {
+		try {
+			CET cet = _cetFactory.create(clientExtensionEntry);
+
+			Map<String, CET> cetsMap = _getCETsMap(companyId);
+
+			// For ClientExtensionEntry, UUID is the same as the
+			// externalReferenceCode. For some reason it may be not be ready yet
+			// when it gets here after creating in the local service
+			cetsMap.put(clientExtensionEntry.getUuid(), cet);
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+		}
+
+		// ClientExtensionEntry CET is not deployed as the workspace CET, we're just
+		// storing the ClientExtensionEntry CET here
+	}
 
 	@Override
 	public CET addCET(
@@ -74,25 +99,14 @@ public class CETManagerImpl implements CETManager {
 	}
 
 	@Override
+	public void deleteCET(long companyId, String externalReferenceCode) {
+		Map<String, CET> cetsMap = _getCETsMap(companyId);
+
+		cetsMap.remove(externalReferenceCode);
+	}
+
+	@Override
 	public CET getCET(long companyId, String externalReferenceCode) {
-		ClientExtensionEntry clientExtensionEntry =
-			_clientExtensionEntryLocalService.
-				fetchClientExtensionEntryByExternalReferenceCode(
-					externalReferenceCode, companyId);
-
-		if (clientExtensionEntry != null) {
-			try {
-				return _cetFactory.create(clientExtensionEntry);
-			}
-			catch (PortalException portalException) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(portalException);
-				}
-
-				return null;
-			}
-		}
-
 		Map<String, CET> cetsMap = _getCETsMap(companyId);
 
 		return cetsMap.get(externalReferenceCode);
@@ -148,26 +162,6 @@ public class CETManagerImpl implements CETManager {
 		throws PortalException {
 
 		List<CET> cets = new ArrayList<>();
-
-		for (ClientExtensionEntry clientExtensionEntry :
-				_clientExtensionEntryLocalService.getClientExtensionEntries(
-					companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS)) {
-
-			try {
-				CET cet = _cetFactory.create(clientExtensionEntry);
-
-				if (_isInclude(cet, keywords, type)) {
-					cets.add(cet);
-				}
-			}
-			catch (ClientExtensionEntryTypeException
-						clientExtensionEntryTypeException) {
-
-				if (_log.isDebugEnabled()) {
-					_log.debug(clientExtensionEntryTypeException);
-				}
-			}
-		}
 
 		Map<String, CET> cetsMap = _getCETsMap(companyId);
 
@@ -258,9 +252,6 @@ public class CETManagerImpl implements CETManager {
 
 	private final Map<Long, Map<String, CET>> _cetsMaps =
 		new ConcurrentHashMap<>();
-
-	@Reference
-	private ClientExtensionEntryLocalService _clientExtensionEntryLocalService;
 
 	private final Map<Long, Map<String, List<ServiceRegistration<?>>>>
 		_serviceRegistrationsMaps = new ConcurrentHashMap<>();

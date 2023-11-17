@@ -5,6 +5,7 @@
 
 package com.liferay.client.extension.type.manager;
 
+import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.type.CET;
 import com.liferay.client.extension.type.configuration.CETConfiguration;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -21,12 +22,17 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface CETManager {
 
+	public void addOrUpdateCET(
+		long companyId, ClientExtensionEntry clientExtensionEntry);
+
 	public CET addCET(
 			CETConfiguration cetConfiguration, long companyId,
 			String externalReferenceCode)
 		throws PortalException;
 
 	public void deleteCET(CET cet);
+
+	public void deleteCET(long companyId, String externalReferenceCode);
 
 	public CET getCET(long companyId, String externalReferenceCode);
 

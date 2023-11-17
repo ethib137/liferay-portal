@@ -30,7 +30,17 @@ ThemeCSSCET themeCSSCET = editClientExtensionEntryDisplayContext.getCET();
 </aui:field-wrapper>
 
 <aui:field-wrapper cssClass="form-group">
-	<aui:input label="frontend-token-definition" name="frontendTokenDefinition" type="textarea" value="" />
+	<%
+		FrontendTokenDefinition frontendTokenDefinition = themeCSSCET.getFrontendTokenDefinition();
+
+		String frontendTokenDefinitionString = "";
+
+		if (frontendTokenDefinition != null) {
+			frontendTokenDefinitionString =
+				frontendTokenDefinition.getJSONObject(locale).toJSONString();
+		}
+	%>
+	<aui:input label="frontend-token-definition" name="frontendTokenDefinition" type="textarea" value="<%= frontendTokenDefinitionString %>" />
 
 	<div class="form-text">
 		<liferay-ui:message key="frontend-token-definition" />

@@ -9,8 +9,11 @@ import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
 import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.type.ThemeCSSCET;
 import com.liferay.client.extension.type.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.client.extension.type.internal.frontend.token.definition.CXFrontendTokenDefinitionImpl;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -27,13 +30,13 @@ public class ThemeCSSCETImpl extends BaseCETImpl implements ThemeCSSCET {
 
 	public ThemeCSSCETImpl(ClientExtensionEntry clientExtensionEntry) {
 		super(clientExtensionEntry);
+
+		_createFrontendTokenDefinition();
 	}
 
-	public ThemeCSSCETImpl(FrontendTokenDefinition frontendTokenDefinition,
-						   PortletRequest portletRequest) {
+	public ThemeCSSCETImpl(PortletRequest portletRequest) {
 		this(
 			StringPool.BLANK,
-			frontendTokenDefinition,
 			UnicodePropertiesBuilder.create(
 				true
 			).put(
@@ -48,7 +51,7 @@ public class ThemeCSSCETImpl extends BaseCETImpl implements ThemeCSSCET {
 
 	public ThemeCSSCETImpl(
 		String baseURL, long companyId, String description,
-		String externalReferenceCode, FrontendTokenDefinition frontendTokenDefinition,
+		String externalReferenceCode,
 		String name, Properties properties, String sourceCodeURL,
 		UnicodeProperties typeSettingsUnicodeProperties) {
 
@@ -56,15 +59,15 @@ public class ThemeCSSCETImpl extends BaseCETImpl implements ThemeCSSCET {
 			baseURL, companyId, description, externalReferenceCode, name,
 			properties, sourceCodeURL, typeSettingsUnicodeProperties);
 
-		_frontendTokenDefinition = frontendTokenDefinition;
+		_createFrontendTokenDefinition();
 	}
 
 	public ThemeCSSCETImpl(
-		String baseURL, FrontendTokenDefinition frontendTokenDefinition, UnicodeProperties typeSettingsUnicodeProperties) {
+		String baseURL, UnicodeProperties typeSettingsUnicodeProperties) {
 
 		super(baseURL, typeSettingsUnicodeProperties);
 
-		_frontendTokenDefinition = frontendTokenDefinition;
+		_createFrontendTokenDefinition();
 	}
 
 	@Override
@@ -100,6 +103,27 @@ public class ThemeCSSCETImpl extends BaseCETImpl implements ThemeCSSCET {
 	@Override
 	protected boolean isURLCETPropertyName(String name) {
 		return _urlCETPropertyNames.contains(name);
+	}
+
+	private void _createFrontendTokenDefinition() {
+		String tokenDefinitionString = getString("frontendTokenDefinition");
+
+		if (tokenDefinitionString == null || tokenDefinitionString.isEmpty()) {
+			return;
+		}
+
+		try {
+			_frontendTokenDefinition = new CXFrontendTokenDefinitionImpl(
+				JSONFactoryUtil.createJSONObject(
+					tokenDefinitionString),
+				JSONFactoryUtil.getJSONFactory(),
+				ResourceBundleLoaderUtil.
+					getPortalResourceBundleLoader(),
+				null);
+		}
+		catch (Exception e) {
+			System.out.println("ERROR CREATING TOKEN DEFINITION ON THEME CSS");
+		}
 	}
 
 	private FrontendTokenDefinition _frontendTokenDefinition;

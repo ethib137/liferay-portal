@@ -60,6 +60,7 @@ renderResponse.setTitle(viewClientExtensionEntryDisplayContext.getTitle());
 						<c:otherwise>
 							<aui:input disabled="<%= true %>" label="<%= label %>" name="<%= label %>" type="text" value="<%= value %>" />
 						</c:otherwise>
+						<%-- Handle the token definition for a CX deployed into the workspace --%>
 					</c:choose>
 
 				<%

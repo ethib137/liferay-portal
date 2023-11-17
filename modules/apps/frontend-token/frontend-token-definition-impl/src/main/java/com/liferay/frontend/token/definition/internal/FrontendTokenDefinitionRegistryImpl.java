@@ -76,13 +76,11 @@ public class FrontendTokenDefinitionRegistryImpl
 						"CET theme loading time: " +
 							(System.currentTimeMillis() - startTime));
 
-					System.out.println(frontendTokenDefinition.getJSONObject(
-							Locale.ENGLISH));
+					System.out.println("Token size: " +frontendTokenDefinition.getJSONObject(
+							Locale.ENGLISH).toString().length());
 					return frontendTokenDefinition;
 				}
 			}
-
-			return null;
 		}
 
 		long startTime = System.currentTimeMillis();
