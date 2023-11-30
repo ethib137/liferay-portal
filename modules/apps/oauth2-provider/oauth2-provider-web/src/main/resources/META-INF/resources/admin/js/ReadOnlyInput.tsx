@@ -8,6 +8,7 @@ import ClayButton from '@clayui/button';
 import {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayModal, {useModal} from '@clayui/modal';
+import {getControlPanelSpritemap} from '@liferay/frontend-icons-web';
 import {FieldBase} from 'frontend-js-components-web';
 import React, {useState} from 'react';
 
@@ -19,7 +20,7 @@ interface IReadOnlyInputProps extends React.HTMLAttributes<HTMLElement> {
 	type?: string;
 }
 
-const spritemap = `${Liferay.ThemeDisplay.getPathThemeImages()}/clay/icons.svg`;
+const spritemap = getControlPanelSpritemap();
 
 const ReadOnlyInput: React.FC<IReadOnlyInputProps> = (props) => {
 	const {id, initialValue, label, tooltip, type = 'text'} = props;
