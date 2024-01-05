@@ -6,3 +6,4 @@ liferay-sample-theme-css-1:
     mainURL: css/main.css
     name: Liferay Sample Theme CSS 1
     type: themeCSS
+    token-definition: ./src/frontend-token-definition.json
