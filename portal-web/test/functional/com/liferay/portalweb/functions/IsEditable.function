@@ -4,7 +4,12 @@ definition {
 	function isEditable(locator1) {
 		WaitForSPARefresh();
 
-		selenium.isEditable(${locator1});
+		if (selenium.isElementPresent(${locator1})) {
+			selenium.isEditable(${locator1});
+		}
+		else {
+			selenium.isElementPresent(${locator1});
+		}
 	}
 
 }
