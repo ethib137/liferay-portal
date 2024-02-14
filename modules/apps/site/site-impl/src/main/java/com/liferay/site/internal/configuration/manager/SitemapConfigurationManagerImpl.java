@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.site.configuration.manager.SitemapConfigurationManager;
 import com.liferay.site.internal.configuration.SitemapCompanyConfiguration;
+import com.liferay.site.internal.configuration.SitemapGroupConfiguration;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -22,7 +23,7 @@ public class SitemapConfigurationManagerImpl
 	implements SitemapConfigurationManager {
 
 	@Override
-	public boolean includeCategories(long companyId)
+	public boolean includeCategoriesCompanyEnabled(long companyId)
 		throws ConfigurationException {
 
 		SitemapCompanyConfiguration sitemapCompanyConfiguration =
@@ -33,7 +34,24 @@ public class SitemapConfigurationManagerImpl
 	}
 
 	@Override
-	public boolean includePages(long companyId) throws ConfigurationException {
+	public boolean includeCategoriesGroupEnabled(long companyId, long groupId)
+		throws ConfigurationException {
+
+		if (!includeCategoriesCompanyEnabled(companyId)) {
+			return false;
+		}
+
+		SitemapGroupConfiguration sitemapGroupConfiguration =
+			_configurationProvider.getGroupConfiguration(
+				SitemapGroupConfiguration.class, groupId);
+
+		return sitemapGroupConfiguration.includeCategories();
+	}
+
+	@Override
+	public boolean includePagesCompanyEnabled(long companyId)
+		throws ConfigurationException {
+
 		SitemapCompanyConfiguration sitemapCompanyConfiguration =
 			_configurationProvider.getCompanyConfiguration(
 				SitemapCompanyConfiguration.class, companyId);
@@ -42,7 +60,22 @@ public class SitemapConfigurationManagerImpl
 	}
 
 	@Override
-	public boolean includeWebContent(long companyId)
+	public boolean includePagesGroupEnabled(long companyId, long groupId)
+		throws ConfigurationException {
+
+		if (!includePagesCompanyEnabled(companyId)) {
+			return false;
+		}
+
+		SitemapGroupConfiguration sitemapGroupConfiguration =
+			_configurationProvider.getGroupConfiguration(
+				SitemapGroupConfiguration.class, groupId);
+
+		return sitemapGroupConfiguration.includePages();
+	}
+
+	@Override
+	public boolean includeWebContentCompanyEnabled(long companyId)
 		throws ConfigurationException {
 
 		SitemapCompanyConfiguration sitemapCompanyConfiguration =
@@ -53,6 +86,21 @@ public class SitemapConfigurationManagerImpl
 	}
 
 	@Override
+	public boolean includeWebContentGroupEnabled(long companyId, long groupId)
+		throws ConfigurationException {
+
+		if (!includeWebContentCompanyEnabled(companyId)) {
+			return false;
+		}
+
+		SitemapGroupConfiguration sitemapGroupConfiguration =
+			_configurationProvider.getGroupConfiguration(
+				SitemapGroupConfiguration.class, groupId);
+
+		return sitemapGroupConfiguration.includeWebContent();
+	}
+
+	@Override
 	public void saveSitemapCompanyConfiguration(
 			long companyId, boolean includeCategories, boolean includePages,
 			boolean includeWebContent)
@@ -60,6 +108,23 @@ public class SitemapConfigurationManagerImpl
 
 		_configurationProvider.saveCompanyConfiguration(
 			SitemapCompanyConfiguration.class, companyId,
+			HashMapDictionaryBuilder.<String, Object>put(
+				"includeCategories", includeCategories
+			).put(
+				"includePages", includePages
+			).put(
+				"includeWebContent", includeWebContent
+			).build());
+	}
+
+	@Override
+	public void saveSitemapGroupConfiguration(
+			long groupId, boolean includeCategories, boolean includePages,
+			boolean includeWebContent)
+		throws ConfigurationException {
+
+		_configurationProvider.saveGroupConfiguration(
+			SitemapGroupConfiguration.class, groupId,
 			HashMapDictionaryBuilder.<String, Object>put(
 				"includeCategories", includeCategories
 			).put(

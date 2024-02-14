@@ -8,13 +8,13 @@ package com.liferay.jethr0.job.definition;
 import com.liferay.jethr0.job.JobEntity;
 import com.liferay.jethr0.job.definition.parameter.JenkinsBranchURLJobParameterDefinition;
 import com.liferay.jethr0.job.definition.parameter.JobParameterDefinition;
+import com.liferay.jethr0.job.definition.parameter.PoshiQueryJobParameterDefinition;
 import com.liferay.jethr0.job.definition.parameter.QAWebsitesBranchSHAJobParameterDefinition;
 import com.liferay.jethr0.job.definition.parameter.QAWebsitesBranchURLJobParameterDefinition;
 import com.liferay.jethr0.job.definition.parameter.QAWebsitesProjectNameJobParameterDefinition;
-import com.liferay.jethr0.job.definition.parameter.QAWebsitesQueryJobParameterDefinition;
 import com.liferay.jethr0.job.definition.parameter.TestSuiteNameJobParameterDefinition;
-import com.liferay.jethr0.job.definition.parameter.TestrayProjectNameParameterDefinition;
-import com.liferay.jethr0.job.definition.parameter.TestrayRoutineNameParameterDefinition;
+import com.liferay.jethr0.job.definition.parameter.TestrayProjectNameJobParameterDefinition;
+import com.liferay.jethr0.job.definition.parameter.TestrayRoutineNameJobParameterDefinition;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +30,7 @@ public class BaseQAWebsitesJobDefinition extends BaseJobDefinition {
 
 		jobParameterDefinitions.add(
 			new JenkinsBranchURLJobParameterDefinition());
+		jobParameterDefinitions.add(new PoshiQueryJobParameterDefinition());
 		jobParameterDefinitions.add(
 			new QAWebsitesBranchSHAJobParameterDefinition());
 		jobParameterDefinitions.add(
@@ -39,11 +40,9 @@ public class BaseQAWebsitesJobDefinition extends BaseJobDefinition {
 		jobParameterDefinitions.add(
 			new QAWebsitesProjectNameJobParameterDefinition());
 		jobParameterDefinitions.add(
-			new QAWebsitesQueryJobParameterDefinition());
+			new TestrayProjectNameJobParameterDefinition());
 		jobParameterDefinitions.add(
-			new TestrayProjectNameParameterDefinition());
-		jobParameterDefinitions.add(
-			new TestrayRoutineNameParameterDefinition());
+			new TestrayRoutineNameJobParameterDefinition());
 		jobParameterDefinitions.add(
 			new TestSuiteNameJobParameterDefinition(null));
 

@@ -490,7 +490,7 @@ definition {
 					-H 'Content-Type: application/json' \
 					-u ${userEmailAddress}:${userPassword} \
 					-d '{
-						"type": "${fieldType}",
+						"DBType": "${fieldType}",
 						"businessType": "${fieldBusinessType}",
 						"indexed": ${indexed},
 						"indexedAsKeyword": ${indexedAsKeyword},
@@ -664,16 +664,51 @@ definition {
 
 		var objectName = StringUtil.toLowerCase(${objectName});
 
-		var curl = '''
-			${portalURL}/o/c/${objectName}s \
-				-H 'accept: application/json' \
-				-H 'Content-Type: application/json' \
-				-u ${userEmailAddress}:${userPassword} \
-				-d '{
-					"externalReferenceCode": "${ercName}",
-					"${fieldName}": "${value}"
-				}'
-		''';
+		if (${fieldType} == "MultiselectPicklist") {
+			var fieldValue = "";
+			var list = ListUtil.newListFromString(${valueList});
+
+			var size = ListUtil.size(${list});
+			var i = 0;
+
+			while (${i} != ${size}) {
+				var value = ListUtil.get(${list}, ${i});
+
+				var key = StringUtil.replace(${value}, " ", "");
+
+				if (${i} != 0) {
+					var fieldValue = StringUtil.add(${fieldValue}, ",{\"key\": \"${key}\", \"name\": \"${value}\"}", "");
+				}
+				else {
+					var fieldValue = StringUtil.add(${fieldValue}, "{\"key\": \"${key}\", \"name\": \"${value}\"}", "");
+				}
+
+				var i = ${i} + 1;
+			}
+
+			var curl = '''
+				${portalURL}/o/c/${objectName}s \
+					-H 'accept: application/json' \
+					-H 'Content-Type: application/json' \
+					-u ${userEmailAddress}:${userPassword} \
+					-d '{
+						"externalReferenceCode": "${ercName}",
+						"${fieldName}": [${fieldValue}]
+						}'
+			''';
+		}
+		else {
+			var curl = '''
+				${portalURL}/o/c/${objectName}s \
+					-H 'accept: application/json' \
+					-H 'Content-Type: application/json' \
+					-u ${userEmailAddress}:${userPassword} \
+					-d '{
+						"externalReferenceCode": "${ercName}",
+						"${fieldName}": "${value}"
+					}'
+			''';
+		}
 
 		var objectEntryId = JSONCurlUtil.post(${curl}, "$.id");
 
@@ -1230,12 +1265,46 @@ definition {
 		if (${entryValue} == "") {
 			var entryId = JSONCurlUtil.get(${curl}, "$.items[?(@['${fieldName}'] empty true)]['id']");
 		}
-		else if (${entryValue} == "null") {
-			var entryId = JSONCurlUtil.get(${curl}, "$.items[?(@['${fieldName}'] == null)]['id']");
-		}
 		else {
 			var entryId = JSONCurlUtil.get(${curl}, "$.items[?(@['${fieldName}'] == '${entryValue}')]['id']");
 		}
+
+		return ${entryId};
+	}
+
+	@summary = "Default summary"
+	macro getObjectEntryIdByIndex(virtualHost = null) {
+		if (isSet(virtualHost)) {
+			if (!(isSet(port))) {
+				var port = 8080;
+			}
+
+			var portalURL = "http://${virtualHost}:${port}";
+		}
+		else {
+			var portalURL = JSONCompany.getPortalURL();
+		}
+
+		if (!(isSet(userEmailAddress))) {
+			var userEmailAddress = "test@liferay.com";
+		}
+
+		if (!(isSet(userPassword))) {
+			var userPassword = "test";
+		}
+
+		if (!(isSet(index))) {
+			var index = 0;
+		}
+
+		var objectName = StringUtil.toLowerCase(${objectName});
+
+		var curl = '''
+			${portalURL}/o/c/${objectName}s \
+				-u ${userEmailAddress}:${userPassword}
+		''';
+
+		var entryId = JSONCurlUtil.get(${curl}, "$.items[${index}]['id']");
 
 		return ${entryId};
 	}

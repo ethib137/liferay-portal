@@ -50,15 +50,6 @@ definition {
 			locator1 = "CommerceEntry#TABLE_LIST_TITLE");
 	}
 
-	@description = "This is a test for COMMERCE-6021. AddASKU"
-	@ignore = "true"
-	@priority = 3
-	test AddASKU {
-
-		// TODO COMMERCE-6021 AddASKU
-
-	}
-
 	@description = "This is a test for COMMERCE-6287. AddASpecificationAndVerifyIfIsPresent"
 	@priority = 3
 	test AddASpecificationAndVerifyIfIsPresent {
@@ -200,12 +191,13 @@ definition {
 			key_toggleSwitchLabel = "Purchasable",
 			locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
 
-		Type(
-			key_fieldLabel = "Base Price",
-			locator1 = "TextInput#GENERIC_TEXT_INPUT",
-			value1 = "50.0");
-
 		Button.clickPublish();
+
+		CommerceEntry.gotoMenuTab(menuTab = "Price");
+
+		CommerceSKUs.addSKUPriceEntry(
+			priceList = "Master Base Price List",
+			unitPrice = 50);
 
 		Refresh();
 
@@ -249,12 +241,13 @@ definition {
 			key_toggleSwitchLabel = "Purchasable",
 			locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
 
-		Type(
-			key_fieldLabel = "Base Price",
-			locator1 = "TextInput#GENERIC_TEXT_INPUT",
-			value1 = "10.0");
-
 		Button.click(button = "Publish");
+
+		CommerceEntry.gotoMenuTab(menuTab = "Price");
+
+		CommerceSKUs.addSKUPriceEntry(
+			priceList = "Master Base Price List",
+			unitPrice = 10);
 
 		Refresh();
 
@@ -1264,6 +1257,12 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
 
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			Button.clickSave();
+
 			CommerceProducts.configureVirtualProduct(
 				activationStatus = "Pending",
 				assertUploaded = "true",
@@ -1416,6 +1415,12 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
 
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			Button.clickSave();
+
 			CommerceProducts.configureVirtualProduct(
 				activationStatus = "Pending",
 				assertUploaded = "true",
@@ -1447,7 +1452,11 @@ definition {
 				productQuantity = 1);
 		}
 
-		task ("When the buyer call the Order API to retrieve the URL") {
+		task ("When the order status is updated from Processing to Completed via API") {
+			CommerceJSONOrdersAPI._patchCommerceOrder(orderStatus = 0);
+		}
+
+		task ("And the buyer call the Order API to retrieve the URL") {
 			var virtualItemURLs = CommerceJSONOrdersAPI.getOrderField(
 				email = "buyer@liferay.com",
 				jsonPath = "$..virtualItemURLs[:1]",
@@ -2144,7 +2153,7 @@ definition {
 			AssertElementPresent(
 				key_image = "Commerce_Black.jpg",
 				key_productName = "abs-sensor",
-				locator1 = "CommerceFrontStore#PRODUCT_CARD_IMAGE_SPECIFIC");
+				locator1 = "CommerceFrontStore#PRODUCT_CARD_IMAGE_SPECIFIC_IN_MINI_CART");
 		}
 	}
 
@@ -2340,9 +2349,17 @@ definition {
 
 		CommerceEntry.gotoMenuTab(menuTab = "Virtual");
 
-		Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
+		CommerceEntry.gotoMenuTab(menuTab = "Options");
 
-		SelectFrameTop();
+		CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+		Button.clickSave();
+
+		Click(locator1 = "Button#PLUS");
+
+		SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+		Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
 
 		SelectFrame(
 			key_frameTitle = "Select File",
@@ -2355,6 +2372,14 @@ definition {
 		Click(
 			key_filterOption = "Add",
 			locator1 = "AppBuilder#CHOOSE_SEARCH_FILTER_BY_OPTION");
+
+		SelectFrameTop();
+
+		SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+		Button.clickSave();
+
+		Click(locator1 = "Icon#CLOSE");
 
 		SelectFrameTop();
 
@@ -2406,8 +2431,8 @@ definition {
 		Refresh();
 
 		AssertElementPresent(
-			key_index = "Commerce_Black.jpg",
-			locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+			columnName = "Commerce_Black.jpg",
+			locator1 = "FrontendDataSet#COLUMN_NAME");
 
 		AssertElementPresent(
 			key_index = "Commerce_Black (1).jpg",
@@ -2456,7 +2481,8 @@ definition {
 
 		CommerceSKUs.addSKU(
 			noOption = "true",
-			optionValuesList = "Shoes:50.0");
+			optionValuesList = "Shoes:50.0",
+			priceList = "Master Base Price List");
 
 		CommerceProducts.openProductsAdmin();
 
@@ -2473,7 +2499,9 @@ definition {
 
 		CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
-		CommerceSKUs.addSKU(optionValuesList = "Black:10.0");
+		CommerceSKUs.addSKU(
+			optionValuesList = "Black:10.0",
+			priceList = "Master Base Price List");
 
 		CommerceEntry.gotoMenuTab(menuTab = "Options");
 
@@ -2558,12 +2586,13 @@ definition {
 			key_toggleSwitchLabel = "Purchasable",
 			locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
 
-		Type(
-			key_fieldLabel = "Base Price",
-			locator1 = "TextInput#GENERIC_TEXT_INPUT",
-			value1 = "50.0");
-
 		Button.clickPublish();
+
+		CommerceEntry.gotoMenuTab(menuTab = "Price");
+
+		CommerceSKUs.addSKUPriceEntry(
+			priceList = "Master Base Price List",
+			unitPrice = 50);
 
 		Refresh();
 
@@ -2607,12 +2636,13 @@ definition {
 			key_toggleSwitchLabel = "Purchasable",
 			locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
 
-		Type(
-			key_fieldLabel = "Base Price",
-			locator1 = "TextInput#GENERIC_TEXT_INPUT",
-			value1 = "10.0");
-
 		Button.click(button = "Publish");
+
+		CommerceEntry.gotoMenuTab(menuTab = "Price");
+
+		CommerceSKUs.addSKUPriceEntry(
+			priceList = "Master Base Price List",
+			unitPrice = 10);
 
 		Refresh();
 
@@ -2685,9 +2715,11 @@ definition {
 
 			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
 
-			CommerceSKUs.addPriceToSKU(price = "60.00");
+			CommerceEntry.gotoMenuTab(menuTab = "Price");
 
-			Button.clickPublish();
+			CommerceSKUs.addSKUPriceEntry(
+				priceList = "Minium Base Price List",
+				unitPrice = "60.00");
 
 			Refresh();
 		}
@@ -2705,9 +2737,13 @@ definition {
 
 			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
 
+			CommerceEntry.gotoMenuTab(menuTab = "Price");
+
 			AssertTextEquals(
-				locator1 = "CommerceEntry#PRICE_FIELD",
-				value1 = "50.00");
+				key_columnIndex = 4,
+				key_rowIndex = 1,
+				locator1 = "CommerceEntry#TABLE_ENTRY_ROW_FIELD_GENERIC",
+				value1 = "$ 50.00");
 
 			echo("The price hasn't changed");
 		}
@@ -2735,15 +2771,6 @@ definition {
 		AssertTextEquals(
 			locator1 = "CommerceEntry#NAME_FIELD",
 			value1 = "ABS");
-	}
-
-	@description = "This is a test for COMMERCE-6022. EditASKU"
-	@ignore = "true"
-	@priority = 3
-	test EditASKU {
-
-		// TODO COMMERCE-6022 EditASKU
-
 	}
 
 	@description = "This is a test for COMMERCE-5807. EditSkuAndDelete"
@@ -2803,7 +2830,9 @@ definition {
 
 		CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
-		CommerceSKUs.addSKU(optionValuesList = "6:10.0,12:20.0,24:30.0,48:40.0,112:50.0");
+		CommerceSKUs.addSKU(
+			optionValuesList = "6:10.0,12:20.0,24:30.0,48:40.0,112:50.0",
+			priceList = "Minium Base Price List");
 
 		CommerceEntry.gotoMenuTab(menuTab = "Media");
 

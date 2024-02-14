@@ -72,6 +72,10 @@ definition {
 
 		Workflow.duplicateSingleApproverWorkflow();
 
+		WaitForElementPresent(
+			key_nodeLabel = "review",
+			locator1 = "ProcessBuilderKaleoDesignerReact#DIAGRAM_NODE_LABEL");
+
 		Workflow.updateDefinition(workflowDefinitionTitle = "Single Approver 2");
 
 		Navigator.gotoBack();
@@ -116,9 +120,7 @@ definition {
 
 		Workflow.unpublishWorkflowDefinition(workflowDefinitionTitle = "Copy of Single Approver");
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Published");
+		ManagementBar.setFilterAndOrder(filterBy = "Published");
 
 		AssertElementPresent(
 			key_workflowDefinitionTitle = "Single Approver",
@@ -211,13 +213,7 @@ definition {
 
 		Navigator.gotoBack();
 
-		Click(
-			key_text = "Filter and Order",
-			locator1 = "Button#ANY_WITH_SPAN");
-
-		Click(
-			key_value = "Title",
-			locator1 = "ProcessBuilderListView#DROPDOWN_ITEM");
+		ManagementBar.sortAssets(sortDirection = "Title");
 
 		WaitForElementPresent(
 			key_index = 1,
@@ -242,29 +238,6 @@ definition {
 			key_processName = "Z Workflow",
 			key_section = "Published",
 			locator1 = "ProcessBuilderListView#PROCESS_NAME_IN_SECTION_BY_INDEX");
-	}
-
-	@description = "Verify that the user is able to reverse sort direction"
-	@priority = 2
-	test CanReverseSortDirection {
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
-
-		Workflow.duplicateSingleApproverWorkflow(workflowName = "Copy of Single Approver");
-
-		Navigator.gotoBack();
-
-		Workflow.clickRevertSortDirection();
-
-		AssertTextEquals(
-			key_rowNumber = 2,
-			locator1 = "ProcessBuilderListView#PROCESS_NAME_TABLE_ROW",
-			value1 = "Copy of Single Approver");
-
-		AssertTextEquals(
-			key_rowNumber = 3,
-			locator1 = "ProcessBuilderListView#PROCESS_NAME_TABLE_ROW",
-			value1 = "Single Approver");
 	}
 
 	@description = "Verify that the user is not able to search by Workflow description"

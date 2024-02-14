@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.change.tracking.CTAware;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
@@ -323,19 +322,22 @@ public class DataListViewResourceImpl extends BaseDataListViewResourceImpl {
 
 		return new DataListView() {
 			{
-				appliedFilters = _toMap(deDataListView.getAppliedFilters());
-				dataDefinitionId = deDataListView.getDdmStructureId();
-				dateCreated = deDataListView.getCreateDate();
-				dateModified = deDataListView.getModifiedDate();
-				fieldNames = JSONUtil.toStringArray(
-					_jsonFactory.createJSONArray(
-						deDataListView.getFieldNames()));
-				id = deDataListView.getPrimaryKey();
-				name = LocalizedValueUtil.toStringObjectMap(
-					deDataListView.getNameMap());
-				siteId = deDataListView.getGroupId();
-				sortField = deDataListView.getSortField();
-				userId = deDataListView.getUserId();
+				setAppliedFilters(
+					() -> _toMap(deDataListView.getAppliedFilters()));
+				setDataDefinitionId(deDataListView::getDdmStructureId);
+				setDateCreated(deDataListView::getCreateDate);
+				setDateModified(deDataListView::getModifiedDate);
+				setFieldNames(
+					() -> JSONUtil.toStringArray(
+						_jsonFactory.createJSONArray(
+							deDataListView.getFieldNames())));
+				setId(deDataListView::getPrimaryKey);
+				setName(
+					() -> LocalizedValueUtil.toStringObjectMap(
+						deDataListView.getNameMap()));
+				setSiteId(deDataListView::getGroupId);
+				setSortField(deDataListView::getSortField);
+				setUserId(deDataListView::getUserId);
 			}
 		};
 	}
@@ -412,9 +414,6 @@ public class DataListViewResourceImpl extends BaseDataListViewResourceImpl {
 
 	@Reference
 	private JSONFactory _jsonFactory;
-
-	@Reference
-	private Language _language;
 
 	@Reference
 	private Portal _portal;

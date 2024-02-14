@@ -6,17 +6,8 @@
 module.exports = {
 	build: {
 		bundler: {
-			ignore: [
-				'**/config.js',
-				'**/custom_filter.js',
-				'**/date_facet_configuration.js',
-				'**/date_facet.js',
-				'**/facet_util.js',
-				'**/modified_facet_configuration.js',
-				'**/modified_facet.js',
-				'**/sort_configuration.js',
-				'**/sort_util.js',
-			],
+			ignore: ['**/config.js', '**/date_facet.js'],
 		},
+		main: 'src/main/resources/META-INF/resources/js/index.js',
 	},
 };

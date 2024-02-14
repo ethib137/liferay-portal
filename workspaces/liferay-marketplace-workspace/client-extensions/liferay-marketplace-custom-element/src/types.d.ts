@@ -113,6 +113,7 @@ type Cart = {
 	billingAddress: BillingAddress;
 	cartItems: CartItem[];
 	currencyCode: string;
+	customFields: any;
 	id: number;
 	orderStatusInfo: {[key: string]: string};
 	orderTypeExternalReferenceCode: string;
@@ -153,6 +154,14 @@ type Catalog = {
 	system: boolean;
 };
 
+type ContactSales = {
+	accountName: string;
+	additionalAppsRequested?: string | undefined;
+	comments?: string | undefined;
+	email: string;
+	name: string;
+};
+
 type EmailAppInformation = {
 	dashboardLink: string;
 	orderID: number;
@@ -186,6 +195,8 @@ type Channel = {
 
 type DefaultProperties = {
 	cloudBaseURL: string;
+	contactSupportUrl: string;
+	eulaBaseURL: string;
 };
 
 interface CommerceAccount extends Omit<Account, 'description'> {
@@ -271,6 +282,7 @@ interface PlacedOrderItems {
 	name: string;
 	options: string;
 	price: {
+		price: number;
 		priceFormatted: string;
 	};
 	productId: number;
@@ -480,7 +492,7 @@ type ProductSpecification = {
 	priority?: number;
 	productId?: number;
 	specificationId?: number;
-	specificationKey?: string;
+	specificationKey: string;
 	value: {[key: string]: string};
 };
 
@@ -500,6 +512,7 @@ type UserAccount = {
 	name: string;
 	newsSubscription: boolean;
 	password: string;
+	roleBriefs: {id: number; name: string}[];
 };
 
 type RequestBody = {

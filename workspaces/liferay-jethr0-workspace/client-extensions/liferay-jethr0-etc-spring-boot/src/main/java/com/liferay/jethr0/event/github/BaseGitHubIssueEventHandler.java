@@ -5,18 +5,14 @@
 
 package com.liferay.jethr0.event.github;
 
-import com.liferay.jethr0.bui1d.queue.BuildQueue;
-import com.liferay.jethr0.bui1d.repository.BuildEntityRepository;
 import com.liferay.jethr0.event.EventHandlerContext;
 import com.liferay.jethr0.event.github.client.GitHubClient;
-import com.liferay.jethr0.event.github.comment.GitHubComment;
 import com.liferay.jethr0.event.github.issue.GitHubIssue;
 import com.liferay.jethr0.event.github.pullrequest.GitHubPullRequest;
 import com.liferay.jethr0.event.github.repository.GitHubRepository;
 import com.liferay.jethr0.event.github.user.GitHubUser;
 import com.liferay.jethr0.git.branch.GitBranchEntity;
 import com.liferay.jethr0.git.branch.repository.GitBranchEntityRepository;
-import com.liferay.jethr0.jenkins.JenkinsQueue;
 import com.liferay.jethr0.job.JobEntity;
 import com.liferay.jethr0.job.PortalPullRequestJobEntity;
 import com.liferay.jethr0.job.repository.JobEntityRepository;
@@ -42,10 +38,64 @@ import org.json.JSONObject;
 public abstract class BaseGitHubIssueEventHandler
 	extends BaseGitHubEventHandler {
 
+	public boolean isReceiverLiferayGitHubUser() throws InvalidJSONException {
+		GitHubPullRequest gitHubPullRequest = getGitHubPullRequest();
+
+		if (gitHubPullRequest == null) {
+			return false;
+		}
+
+		GitHubUser receiverGitHubUser =
+			gitHubPullRequest.getReceiverGitHubUser();
+
+		if (!receiverGitHubUser.isLiferayUser()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean isSenderLiferayGitHubUser() throws InvalidJSONException {
+		GitHubPullRequest gitHubPullRequest = getGitHubPullRequest();
+
+		if (gitHubPullRequest == null) {
+			return false;
+		}
+
+		GitHubUser senderGitHubUser = gitHubPullRequest.getSenderGitHubUser();
+
+		if (!senderGitHubUser.isLiferayUser()) {
+			return false;
+		}
+
+		return true;
+	}
+
 	protected BaseGitHubIssueEventHandler(
 		EventHandlerContext eventHandlerContext, JSONObject messageJSONObject) {
 
 		super(eventHandlerContext, messageJSONObject);
+	}
+
+	protected boolean checkLiferayGitHubUser() throws InvalidJSONException {
+		if (involvesLiferayGitHubUsersOnly()) {
+			return false;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("You cannot perform that action because you are not a ");
+		sb.append("member of the Liferay organization. Please make sure that ");
+		sb.append("you have been added and that your organization membership ");
+		sb.append("is set as public. See https://help.github.com/articles");
+		sb.append("/publicizing-or-hiding-organization-membership for more ");
+		sb.append("information.");
+
+		GitHubPullRequest gitHubPullRequest = getGitHubPullRequest();
+
+		gitHubPullRequest.comment(sb.toString());
+
+		return true;
 	}
 
 	protected void closeGitHubPullRequest(String body)
@@ -62,9 +112,9 @@ public abstract class BaseGitHubIssueEventHandler
 		GitHubIssue gitHubIssue = getGitHubIssue();
 
 		if (gitHubIssue != null) {
-			gitHubClient.createGitHubComment(gitHubIssue, body);
+			gitHubIssue.createGitHubComment(body);
 
-			gitHubClient.closeGitHubIssue(gitHubIssue);
+			gitHubIssue.close();
 
 			return;
 		}
@@ -72,9 +122,9 @@ public abstract class BaseGitHubIssueEventHandler
 		GitHubPullRequest gitHubPullRequest = getGitHubPullRequest();
 
 		if (gitHubPullRequest != null) {
-			gitHubClient.createGitHubComment(gitHubPullRequest, body);
+			gitHubPullRequest.comment(body);
 
-			gitHubClient.closeGitHubPullRequest(gitHubPullRequest);
+			gitHubPullRequest.close();
 		}
 	}
 
@@ -91,7 +141,7 @@ public abstract class BaseGitHubIssueEventHandler
 			"Closing pull request because pulls for reference ",
 			upstreamGitBranchEntity.getBranchName(),
 			" should not be sent to repository ",
-			upstreamGitBranchEntity.getRepositoryName());
+			upstreamGitBranchEntity.getRepositoryName(), ".");
 
 		closeGitHubPullRequest(body);
 
@@ -102,8 +152,9 @@ public abstract class BaseGitHubIssueEventHandler
 		return true;
 	}
 
-	protected JobEntity createJobEntity(String testSuite)
-		throws InvalidJSONException {
+	protected PortalPullRequestJobEntity createPortalPullRequestJobEntity(
+			String testSuite)
+		throws InvalidJSONException, IOException {
 
 		GitBranchEntity upstreamGitBranchEntity = getUpstreamGitBranchEntity();
 
@@ -123,52 +174,54 @@ public abstract class BaseGitHubIssueEventHandler
 		JobEntity jobEntity = jobEntityRepository.create(
 			name, priority, null, JobEntity.State.OPENED, type);
 
-		if (jobEntity instanceof PortalPullRequestJobEntity) {
-			PortalPullRequestJobEntity portalPullRequestJobEntity =
-				(PortalPullRequestJobEntity)jobEntity;
-
-			portalPullRequestJobEntity.setTestSuiteName(testSuite);
-
-			GitHubPullRequest gitHubPullRequest = getGitHubPullRequest();
-
-			if (gitHubPullRequest != null) {
-				portalPullRequestJobEntity.setPortalPullRequestURL(
-					gitHubPullRequest.getHTMLURL());
-
-				GitHubUser originGitHubUser =
-					gitHubPullRequest.getOriginGitHubUser();
-
-				portalPullRequestJobEntity.setOriginName(
-					originGitHubUser.getName());
-
-				portalPullRequestJobEntity.setSenderBranchName(
-					gitHubPullRequest.getHeadBranchName());
-				portalPullRequestJobEntity.setSenderBranchSHA(
-					gitHubPullRequest.getHeadBranchSHA());
-
-				GitHubUser senderGitHubUser =
-					gitHubPullRequest.getSenderGitHubUser();
-
-				portalPullRequestJobEntity.setSenderUserName(
-					senderGitHubUser.getName());
-
-				portalPullRequestJobEntity.setUpstreamBranchName(
-					gitHubPullRequest.getBaseBranchName());
-				portalPullRequestJobEntity.setUpstreamBranchSHA(
-					gitHubPullRequest.getBaseBranchSHA());
-			}
-
-			if (upstreamGitBranchEntity != null) {
-				portalPullRequestJobEntity.setUpstreamBranchName(
-					upstreamGitBranchEntity.getBranchName());
-				portalPullRequestJobEntity.setUpstreamBranchSHA(
-					upstreamGitBranchEntity.getBranchSHA());
-			}
-
-			jobEntityRepository.update(portalPullRequestJobEntity);
+		if (!(jobEntity instanceof PortalPullRequestJobEntity)) {
+			return null;
 		}
 
-		return jobEntity;
+		PortalPullRequestJobEntity portalPullRequestJobEntity =
+			(PortalPullRequestJobEntity)jobEntity;
+
+		portalPullRequestJobEntity.setTestSuiteName(testSuite);
+
+		GitHubPullRequest gitHubPullRequest = getGitHubPullRequest();
+
+		if (gitHubPullRequest != null) {
+			portalPullRequestJobEntity.setPortalPullRequestURL(
+				gitHubPullRequest.getHTMLURL());
+
+			GitHubUser originGitHubUser =
+				gitHubPullRequest.getOriginGitHubUser();
+
+			portalPullRequestJobEntity.setOriginName(
+				originGitHubUser.getName());
+
+			portalPullRequestJobEntity.setSenderBranchName(
+				gitHubPullRequest.getHeadBranchName());
+			portalPullRequestJobEntity.setSenderBranchSHA(
+				gitHubPullRequest.getHeadBranchSHA());
+
+			GitHubUser senderGitHubUser =
+				gitHubPullRequest.getSenderGitHubUser();
+
+			portalPullRequestJobEntity.setSenderUserName(
+				senderGitHubUser.getName());
+
+			portalPullRequestJobEntity.setUpstreamBranchName(
+				gitHubPullRequest.getBaseBranchName());
+			portalPullRequestJobEntity.setUpstreamBranchSHA(
+				gitHubPullRequest.getBaseBranchSHA());
+		}
+
+		if (upstreamGitBranchEntity != null) {
+			portalPullRequestJobEntity.setUpstreamBranchName(
+				upstreamGitBranchEntity.getBranchName());
+			portalPullRequestJobEntity.setUpstreamBranchSHA(
+				upstreamGitBranchEntity.getBranchSHA());
+		}
+
+		jobEntityRepository.update(portalPullRequestJobEntity);
+
+		return portalPullRequestJobEntity;
 	}
 
 	protected Set<String> getAvailableTestSuites()
@@ -215,20 +268,6 @@ public abstract class BaseGitHubIssueEventHandler
 		return null;
 	}
 
-	protected GitHubComment getGitHubComment() throws InvalidJSONException {
-		JSONObject messageJSONObject = getMessageJSONObject();
-
-		JSONObject commentJSONObject = messageJSONObject.optJSONObject(
-			"comment");
-
-		if (commentJSONObject == null) {
-			throw new InvalidJSONException(
-				"Missing \"comment\" from message JSON");
-		}
-
-		return new GitHubComment(commentJSONObject);
-	}
-
 	protected GitHubIssue getGitHubIssue() throws InvalidJSONException {
 		JSONObject messageJSONObject = getMessageJSONObject();
 
@@ -239,7 +278,9 @@ public abstract class BaseGitHubIssueEventHandler
 				"Missing \"issue\" from message JSON");
 		}
 
-		return new GitHubIssue(issueJSONObject);
+		GitHubFactory gitHubFactory = getGitHubFactory();
+
+		return gitHubFactory.newGitHubIssue(issueJSONObject);
 	}
 
 	protected GitHubPullRequest getGitHubPullRequest()
@@ -251,14 +292,13 @@ public abstract class BaseGitHubIssueEventHandler
 
 		GitHubIssue gitHubIssue = getGitHubIssue();
 
-		GitHubClient gitHubClient = getGitHubClient();
-
-		_gitHubPullRequest = gitHubClient.getGitHubPullRequest(gitHubIssue);
+		_gitHubPullRequest = gitHubIssue.getGitHubPullRequest();
 
 		return _gitHubPullRequest;
 	}
 
-	protected String getSenderBranchCIPropertyValue(String propertyName)
+	protected String getSenderBranchCIPropertyValue(
+			String propertyName, String... propertyOpts)
 		throws InvalidJSONException, IOException {
 
 		GitBranchEntity gitBranchEntity = getSenderGitBranchEntity();
@@ -273,7 +313,8 @@ public abstract class BaseGitHubIssueEventHandler
 			return null;
 		}
 
-		return PropertiesUtil.getPropertyValue(properties, propertyName);
+		return PropertiesUtil.getPropertyValue(
+			properties, propertyName, propertyOpts);
 	}
 
 	protected GitBranchEntity getSenderGitBranchEntity()
@@ -294,7 +335,8 @@ public abstract class BaseGitHubIssueEventHandler
 		return _senderGitBranchEntity;
 	}
 
-	protected String getUpstreamBranchCIPropertyValue(String propertyName)
+	protected String getUpstreamBranchCIPropertyValue(
+			String propertyName, String... propertyOpts)
 		throws InvalidJSONException, IOException {
 
 		GitBranchEntity gitBranchEntity = getUpstreamGitBranchEntity();
@@ -309,7 +351,8 @@ public abstract class BaseGitHubIssueEventHandler
 			return null;
 		}
 
-		return PropertiesUtil.getPropertyValue(properties, propertyName);
+		return PropertiesUtil.getPropertyValue(
+			properties, propertyName, propertyOpts);
 	}
 
 	protected GitBranchEntity getUpstreamGitBranchEntity()
@@ -330,22 +373,14 @@ public abstract class BaseGitHubIssueEventHandler
 		return _upstreamGitBranchEntity;
 	}
 
-	protected void invokeJobEntity(JobEntity jobEntity) {
-		BuildEntityRepository buildEntityRepository = getBuildRepository();
+	protected boolean involvesLiferayGitHubUsersOnly()
+		throws InvalidJSONException {
 
-		for (JSONObject initialBuildJSONObject :
-				jobEntity.getInitialBuildJSONObjects()) {
-
-			buildEntityRepository.create(jobEntity, initialBuildJSONObject);
+		if (isReceiverLiferayGitHubUser() && isSenderLiferayGitHubUser()) {
+			return true;
 		}
 
-		BuildQueue buildQueue = getBuildQueue();
-
-		buildQueue.addJobEntity(jobEntity);
-
-		JenkinsQueue jenkinsQueue = getJenkinsQueue();
-
-		jenkinsQueue.invoke();
+		return false;
 	}
 
 	private boolean _isGitHubCIEnabledBranchNames()

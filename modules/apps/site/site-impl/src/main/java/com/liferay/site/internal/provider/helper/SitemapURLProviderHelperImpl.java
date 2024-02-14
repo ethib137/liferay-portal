@@ -11,6 +11,7 @@ import com.liferay.layout.seo.service.LayoutSEOEntryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -31,6 +32,18 @@ public class SitemapURLProviderHelperImpl implements SitemapURLProviderHelper {
 	@Override
 	public boolean isExcludeLayoutFromSitemap(Layout layout) {
 		if (layout == null) {
+			return true;
+		}
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			layout.getTypeSettingsProperties();
+
+		if (!GetterUtil.getBoolean(
+				typeSettingsUnicodeProperties.getProperty(
+					LayoutTypePortletConstants.SITEMAP_INCLUDE),
+				true) ||
+			!layout.isPublished()) {
+
 			return true;
 		}
 
@@ -59,22 +72,37 @@ public class SitemapURLProviderHelperImpl implements SitemapURLProviderHelper {
 					return true;
 				}
 			}
-		}
 
-		UnicodeProperties typeSettingsUnicodeProperties =
-			layout.getTypeSettingsProperties();
+			long parentPlid = layout.getParentPlid();
 
-		if (!GetterUtil.getBoolean(
-				typeSettingsUnicodeProperties.getProperty(
-					LayoutTypePortletConstants.SITEMAP_INCLUDE),
-				true) ||
-			!layout.isPublished()) {
+			while (parentPlid > 0) {
+				Layout parentLayout = _layoutLocalService.fetchLayout(
+					parentPlid);
 
-			return true;
+				if (parentLayout == null) {
+					break;
+				}
+
+				typeSettingsUnicodeProperties =
+					parentLayout.getTypeSettingsProperties();
+
+				if (!GetterUtil.getBoolean(
+						typeSettingsUnicodeProperties.getProperty(
+							"sitemap-include-child-layouts"),
+						true)) {
+
+					return true;
+				}
+
+				parentPlid = parentLayout.getParentPlid();
+			}
 		}
 
 		return false;
 	}
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
 
 	@Reference
 	private LayoutSEOEntryLocalService _layoutSEOEntryLocalService;

@@ -450,10 +450,12 @@ definition {
 		var objectEntryId = JSONObject.addObjectSingleFieldEntry(
 			ercName = ${ercName},
 			fieldName = ${fieldName},
+			fieldType = ${fieldType},
 			objectName = ${objectName},
 			userEmailAddress = ${userEmailAddress},
 			userPassword = ${userPassword},
-			value = ${value});
+			value = ${value},
+			valueList = ${valueList});
 
 		return ${objectEntryId};
 
@@ -1163,6 +1165,25 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro editObjectField(field = null, deletionType = null, label = null, labelName = null) {
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectCustomObject(label = ${label});
+
+		ObjectAdmin.goToFieldsTab();
+
+		ObjectAdmin.goToFieldsDetails(label = ${labelName});
+
+		Check.checkToggleSwitch(
+			key_toggleSwitchLabel = "Accept Unique Values Only",
+			locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+		CreateObject.saveObject();
+
+		ObjectAdmin.publishObjectViaAPI(objectName = ${objectName});
+	}
+
+	@summary = "Default summary"
 	macro enableCondition() {
 		Check.checkToggleSwitch(locator1 = "ObjectAction#ENABLE_DISABLE_CONDITION");
 	}
@@ -1290,7 +1311,7 @@ definition {
 
 			if (${thenAction} == "Notification") {
 				Click(
-					key_currentOption = "Select an option",
+					key_currentOption = "Select an Option",
 					locator1 = "ObjectAdmin#CLAY_GENERIC_SELECT_OPTION");
 
 				Click(
@@ -1516,21 +1537,6 @@ definition {
 		Click(locator1 = "ObjectAdmin#LAYOUT_INFO_TAB");
 
 		Click.clickAtNotVisible(locator1 = "ObjectAdmin#ENTRY_BOOLEAN_CHECKBOX");
-	}
-
-	@summary = "Default summary"
-	macro moveDefinitionFolder(definitionName = null,folderLabel = null) {
-		Click(
-			key_value = ${definitionName},
-			locator1 = "ObjectAdmin#BODY_VERTICAL_ELLIPSIS");
-
-		DropdownMenuItem.click(menuItem = "Move");
-
-		Click(
-			key_folderLabel = ${folderLabel},
-			locator1 = "ObjectAdmin#SELECT_MOVE_FOLDER");
-
-		Button.click(button = "Move");
 	}
 
 	@summary = "Default summary"

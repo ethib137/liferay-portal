@@ -382,6 +382,42 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 
 	protected abstract String getJenkinsJobName();
 
+	protected Boolean getParameterValueBoolean(String name) {
+		String valueBoolean = getParameterValue(name);
+
+		if (StringUtil.isNullOrEmpty(valueBoolean)) {
+			return null;
+		}
+
+		valueBoolean = StringUtil.toLowerCase(valueBoolean);
+
+		if (!valueBoolean.equals("false") && !valueBoolean.equals("true")) {
+			return null;
+		}
+
+		return Boolean.valueOf(valueBoolean);
+	}
+
+	protected Integer getParameterValueInteger(String name) {
+		String valueInteger = getParameterValue(name);
+
+		if (StringUtil.isNullOrEmpty(valueInteger)) {
+			return null;
+		}
+
+		return Integer.valueOf(valueInteger);
+	}
+
+	protected Long getParameterValueLong(String name) {
+		String valueLong = getParameterValue(name);
+
+		if (StringUtil.isNullOrEmpty(valueLong)) {
+			return null;
+		}
+
+		return Long.valueOf(valueLong);
+	}
+
 	protected URL getParameterValueURL(String name) {
 		String urlString = getParameterValue(name);
 
@@ -390,6 +426,18 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 		}
 
 		return StringUtil.toURL(urlString);
+	}
+
+	protected void setParameterValueBoolean(String name, Boolean valueBoolean) {
+		setParameterValue(name, String.valueOf(valueBoolean));
+	}
+
+	protected void setParameterValueInteger(String name, Integer valueInteger) {
+		setParameterValue(name, String.valueOf(valueInteger));
+	}
+
+	protected void setParameterValueLong(String name, Long valueLong) {
+		setParameterValue(name, String.valueOf(valueLong));
 	}
 
 	protected void setParameterValueURL(String name, URL valueURL) {
@@ -412,7 +460,9 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 			String initialBuildParameterValue =
 				initialBuildParameter.getValue();
 
-			if (StringUtil.isNullOrEmpty(initialBuildParameterValue)) {
+			if (StringUtil.isNullOrEmpty(initialBuildParameterValue) ||
+				initialBuildParameterValue.equals("null")) {
+
 				continue;
 			}
 

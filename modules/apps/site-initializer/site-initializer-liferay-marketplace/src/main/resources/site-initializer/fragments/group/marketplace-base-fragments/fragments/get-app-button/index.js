@@ -64,8 +64,8 @@ const getProductPrice = (product) => {
 };
 
 const customizeGetAppButton = (product) => {
-	getAppButtonElement.onclick = () => {
-		window.location.href = `${getSiteURL()}/get-app?productId=${productId}`;
+	getAppButtonElement.onclick = async () => {
+		Liferay.Util.navigate(`${getSiteURL()}/get-app?productId=${productId}`);
 	};
 
 	getAppDescriptionElement.innerText = getProductPrice(product);

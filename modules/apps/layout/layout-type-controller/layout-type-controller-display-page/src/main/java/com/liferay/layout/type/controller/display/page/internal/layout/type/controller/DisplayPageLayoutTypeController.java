@@ -39,7 +39,6 @@ import com.liferay.portal.kernel.servlet.PipingServletResponse;
 import com.liferay.portal.kernel.servlet.TransferHeadersHelperUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -178,8 +177,8 @@ public class DisplayPageLayoutTypeController
 		DisplayPageLayoutTypeControllerDisplayContext
 			displayPageLayoutTypeControllerDisplayContext =
 				new DisplayPageLayoutTypeControllerDisplayContext(
-					_assetDisplayPageFriendlyURLProvider, httpServletRequest,
-					_infoItemServiceRegistry, _infoSearchClassMapperRegistry);
+					httpServletRequest, _infoItemServiceRegistry,
+					_infoSearchClassMapperRegistry);
 
 		httpServletRequest.setAttribute(
 			DisplayPageLayoutTypeControllerWebKeys.
@@ -219,9 +218,7 @@ public class DisplayPageLayoutTypeController
 				httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			}
 			else if (!hasViewPermission) {
-				redirect = HttpComponentsUtil.setParameter(
-					themeDisplay.getURLSignIn(), "redirect",
-					themeDisplay.getURLCurrent());
+				throw new NoSuchLayoutException();
 			}
 
 			if (Validator.isNotNull(redirect)) {

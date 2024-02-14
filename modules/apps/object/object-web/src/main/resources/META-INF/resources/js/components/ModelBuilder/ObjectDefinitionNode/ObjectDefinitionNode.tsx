@@ -24,10 +24,12 @@ const selfRelationshipHandleStyle = {
 };
 export function ObjectDefinitionNode({
 	data: {
+		dbTableName,
 		defaultLanguageId,
 		externalReferenceCode,
 		hasObjectDefinitionDeleteResourcePermission,
 		hasObjectDefinitionManagePermissionsResourcePermission,
+		hasObjectDefinitionUpdateResourcePermission,
 		id,
 		label,
 		linkedObjectDefinition,
@@ -40,7 +42,12 @@ export function ObjectDefinitionNode({
 	},
 }: NodeProps<ObjectDefinitionNodeData>) {
 	const [
-		{baseResourceURL, modelBuilderModals, objectDefinitionPermissionsURL},
+		{
+			baseResourceURL,
+			nodeHandleConnectable,
+			objectDefinitionPermissionsURL,
+			objectFolders,
+		},
 		dispatch,
 	] = useObjectFolderContext();
 
@@ -74,17 +81,6 @@ export function ObjectDefinitionNode({
 		}
 	};
 
-	const handleDeleteObjectDefinition = (
-		deleteObjectDefinition: DeletedObjectDefinition
-	) => {
-		dispatch({
-			payload: {
-				newDeleteObjectDefinition: deleteObjectDefinition,
-			},
-			type: TYPES.SET_DELETE_OBJECT_DEFINITION,
-		});
-	};
-
 	const handleSelectObjectDefinitionNode = () => {
 		const {edges, nodes} = store.getState();
 
@@ -95,42 +91,6 @@ export function ObjectDefinitionNode({
 				selectedObjectDefinitionId: id.toString(),
 			},
 			type: TYPES.SET_SELECTED_OBJECT_DEFINITION_NODE,
-		});
-	};
-
-	const handleShowDeleteObjectDefinitionModal = () => {
-		dispatch({
-			payload: {
-				modelBuilderModals: {
-					...modelBuilderModals,
-					deleteObjectDefinition: true,
-				},
-			},
-			type: TYPES.UPDATE_VISIBILITY_MODEL_BUILDER_MODALS,
-		});
-	};
-
-	const handleShowEditObjectDefinitionExternalReferenceCodeModal = () => {
-		dispatch({
-			payload: {
-				modelBuilderModals: {
-					...modelBuilderModals,
-					editObjectDefinitionExternalReferenceCode: true,
-				},
-			},
-			type: TYPES.UPDATE_VISIBILITY_MODEL_BUILDER_MODALS,
-		});
-	};
-
-	const handleShowRedirectObjectDefinitionModal = () => {
-		dispatch({
-			payload: {
-				modelBuilderModals: {
-					...modelBuilderModals,
-					redirectToEditObjectDefinitionDetails: true,
-				},
-			},
-			type: TYPES.UPDATE_VISIBILITY_MODEL_BUILDER_MODALS,
 		});
 	};
 
@@ -152,17 +112,17 @@ export function ObjectDefinitionNode({
 				}}
 			>
 				<ObjectDefinitionNodeHeader
+					dbTableName={dbTableName}
 					dropDownItems={getObjectDefinitionNodeActions({
 						baseResourceURL,
-						handleDeleteObjectDefinition,
-						handleShowDeleteObjectDefinitionModal,
-						handleShowEditObjectDefinitionExternalReferenceCodeModal,
-						handleShowRedirectObjectDefinitionModal,
+						dispatch,
 						hasObjectDefinitionDeleteResourcePermission,
 						hasObjectDefinitionManagePermissionsResourcePermission,
+						hasObjectDefinitionUpdateResourcePermission,
 						objectDefinitionId: id,
 						objectDefinitionName: name,
 						objectDefinitionPermissionsURL,
+						objectFoldersLenght: objectFolders.length,
 						status,
 					})}
 					handleSelectObjectDefinitionNode={
@@ -204,16 +164,33 @@ export function ObjectDefinitionNode({
 							ref={nodeHandleRefs[position]}
 							style={{
 								background: '#80ACFF',
-								height: '12px',
+								height: '18px',
 								opacity: 0,
-								[position]: '-18px',
-								width: '12px',
+								[position]: '-27px',
+								width: '18px',
 							}}
 							type="source"
 						/>
 					))}
 				</>
 				<>
+					<Handle
+						className="lfr-objects__model-builder-node-handle"
+						id={`${id}`}
+						isConnectable={nodeHandleConnectable}
+						key={`${id}`}
+						position={Position.Bottom}
+						style={{
+							borderRadius: 0,
+							bottom: '-27px',
+							height: '410px',
+							opacity: 0,
+							width: '350px',
+							zIndex: -1,
+						}}
+						type="target"
+					/>
+
 					<Handle
 						className="lfr-objects__model-builder-node-handle"
 						id="fixedLeftHandle"

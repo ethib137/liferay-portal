@@ -37,9 +37,12 @@ import com.liferay.layout.seo.model.LayoutSEOEntry;
 import com.liferay.layout.seo.model.LayoutSEOSite;
 import com.liferay.layout.seo.service.LayoutSEOEntryLocalServiceUtil;
 import com.liferay.layout.seo.service.LayoutSEOSiteLocalService;
+import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
+import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -98,6 +101,7 @@ public class LayoutsSEODisplayContext {
 		LayoutSEOCanonicalURLProvider layoutSEOCanonicalURLProvider,
 		LayoutSEOLinkManager layoutSEOLinkManager,
 		LayoutSEOSiteLocalService layoutSEOSiteLocalService,
+		LayoutUtilityPageEntryLocalService layoutUtilityPageEntryLocalService,
 		LiferayPortletRequest liferayPortletRequest,
 		LiferayPortletResponse liferayPortletResponse) {
 
@@ -112,6 +116,8 @@ public class LayoutsSEODisplayContext {
 		_layoutSEOCanonicalURLProvider = layoutSEOCanonicalURLProvider;
 		_layoutSEOLinkManager = layoutSEOLinkManager;
 		_layoutSEOSiteLocalService = layoutSEOSiteLocalService;
+		_layoutUtilityPageEntryLocalService =
+			layoutUtilityPageEntryLocalService;
 		_liferayPortletRequest = liferayPortletRequest;
 		_liferayPortletResponse = liferayPortletResponse;
 
@@ -534,11 +540,17 @@ public class LayoutsSEODisplayContext {
 				).build()
 			).put(
 				"url",
-				HashMapBuilder.<String, Object>put(
-					"defaultValue", getDefaultCanonicalURLMap()
-				).put(
-					"id", "canonicalURL"
-				).build()
+				() -> {
+					if (isLayoutUtilityPageEntry()) {
+						return null;
+					}
+
+					return HashMapBuilder.<String, Object>put(
+						"defaultValue", getDefaultCanonicalURLMap()
+					).put(
+						"id", "canonicalURL"
+					).build();
+				}
 			).build()
 		).put(
 			"titleSuffix", getPageTitleSuffix()
@@ -589,17 +601,42 @@ public class LayoutsSEODisplayContext {
 				!sitemapInclude));
 	}
 
-	public boolean isDefaultAssetDisplayPage() {
-		Layout layout = getSelLayout();
+	public boolean isIncludeChildLayoutsInSitemap() {
+		Layout selLayout = getSelLayout();
 
-		if ((layout == null) || !layout.isTypeAssetDisplay()) {
-			return false;
+		UnicodeProperties layoutTypeSettingsUnicodeProperties =
+			selLayout.getTypeSettingsProperties();
+
+		if (GetterUtil.getBoolean(
+				layoutTypeSettingsUnicodeProperties.getProperty(
+					"sitemap-include-child-layouts",
+					Boolean.TRUE.toString()))) {
+
+			return true;
 		}
 
-		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_getLayoutPageTemplateEntry();
+		return false;
+	}
 
-		return layoutPageTemplateEntry.isDefaultTemplate();
+	public boolean isLayoutUtilityPageEntry() throws PortalException {
+		if (_layoutUtilityPageEntry != null) {
+			return _layoutUtilityPageEntry;
+		}
+
+		Layout layout = getSelLayout();
+
+		LayoutUtilityPageEntry layoutUtilityPageEntry =
+			_layoutUtilityPageEntryLocalService.
+				fetchLayoutUtilityPageEntryByPlid(layout.getPlid());
+
+		if (layoutUtilityPageEntry != null) {
+			_layoutUtilityPageEntry = true;
+		}
+		else {
+			_layoutUtilityPageEntry = false;
+		}
+
+		return _layoutUtilityPageEntry;
 	}
 
 	public boolean isPrivateLayout() {
@@ -635,6 +672,18 @@ public class LayoutsSEODisplayContext {
 			_liferayPortletRequest, "privateLayout");
 
 		return _privateLayout;
+	}
+
+	public boolean showIncludeChildLayoutsInSitemap() {
+		Layout selLayout = getSelLayout();
+
+		if (!FeatureFlagManagerUtil.isEnabled("LPS-187793") ||
+			selLayout.isTypeAssetDisplay()) {
+
+			return false;
+		}
+
+		return true;
 	}
 
 	private HashMap<String, Object> _getBaseSEOMappingData()
@@ -811,6 +860,9 @@ public class LayoutsSEODisplayContext {
 	private final LayoutSEOCanonicalURLProvider _layoutSEOCanonicalURLProvider;
 	private final LayoutSEOLinkManager _layoutSEOLinkManager;
 	private final LayoutSEOSiteLocalService _layoutSEOSiteLocalService;
+	private Boolean _layoutUtilityPageEntry;
+	private final LayoutUtilityPageEntryLocalService
+		_layoutUtilityPageEntryLocalService;
 	private final LiferayPortletRequest _liferayPortletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
 	private Boolean _privateLayout;

@@ -6,7 +6,6 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import {filesize} from 'filesize';
-import {uniqueId} from 'lodash';
 import {useEffect, useState} from 'react';
 import ReactDOMServer from 'react-dom/server';
 
@@ -30,6 +29,7 @@ import {submitBase64EncodedFile} from '../../utils/util';
 
 import './DefineAppProfilePage.scss';
 import {useMarketplaceContext} from '../../context/MarketplaceContext';
+import HeadlessCommerceAdminCatalogImpl from '../../services/rest/HeadlessCommerceAdminCatalog';
 
 type DefineAppProfilePageProps = {
 	onClickBack: () => void;
@@ -60,6 +60,7 @@ export function DefineAppProfilePage({
 	const [categories, setCategories] = useState<VocabDropdownItem[]>([]);
 	const [productType, setProductType] = useState<Categories>();
 	const [tags, setTags] = useState<VocabDropdownItem[]>([]);
+	const [isLoading, setLoading] = useState<boolean>(false);
 
 	const handleLogoUpload = (files: FileList) => {
 		const file = files[0];
@@ -68,7 +69,7 @@ export function DefineAppProfilePage({
 			error: false,
 			file,
 			fileName: file.name,
-			id: uniqueId(),
+			id: crypto.randomUUID(),
 			preview: URL.createObjectURL(file),
 			progress: 0,
 			readableSize: filesize(file.size),
@@ -96,9 +97,15 @@ export function DefineAppProfilePage({
 		let product;
 		let response;
 
+		setLoading(true);
+
+		const catalog = await HeadlessCommerceAdminCatalogImpl.getCatalog(
+			catalogId
+		);
+
 		if (appERC) {
 			response = await updateApp({
-				appDescription,
+				appDescription: appDescription.replace(/\n/g, '<br>'),
 				appERC,
 				appName,
 			});
@@ -110,7 +117,7 @@ export function DefineAppProfilePage({
 					...appTags,
 					productType as Categories,
 				],
-				appDescription,
+				appDescription: appDescription.replace(/\n/g, '<br>'),
 				appName,
 				catalogId,
 				productChannels: [
@@ -121,6 +128,12 @@ export function DefineAppProfilePage({
 						id: channel?.id as number,
 						name: channel?.name as string,
 						type: channel?.type as string,
+					},
+				],
+				productSpecifications: [
+					{
+						specificationKey: 'developer-name',
+						value: {en_US: catalog?.name},
 					},
 				],
 			});
@@ -149,6 +162,8 @@ export function DefineAppProfilePage({
 				title: appLogo.fileName,
 			});
 		}
+
+		setLoading(false);
 
 		onClickContinue();
 	};
@@ -233,9 +248,7 @@ export function DefineAppProfilePage({
 	return (
 		<div className="profile-page-container">
 			<Header
-				description="Enter your new app details. 
-                                This information will be used for submission, 
-                                presentation, customer support, and search capabilities."
+				description="Enter your new app details. This information will be used for submission, presentation, customer support, and search capabilities."
 				title="Define the app profile"
 			/>
 
@@ -309,7 +322,6 @@ export function DefineAppProfilePage({
 						<Input
 							component="textarea"
 							label="Description"
-							localized
 							localizedTooltipText="Descriptions can be localized for each language your app supports.  Please choose the appropriate language and enter description in the language selected."
 							onChange={({target}) =>
 								dispatch({
@@ -339,6 +351,7 @@ export function DefineAppProfilePage({
 							placeholder="Select categories"
 							required
 							tooltip="Choose the Marketplace category that most accurately describes what your app does. Users looking for specific types of apps will often browse categories by searching on a specific category name in the main Marketplace home page. Having your app listed under the appropriate category will help them find your app."
+							value={appCategories}
 						/>
 
 						<MultiSelect<VocabDropdownItem>
@@ -355,6 +368,7 @@ export function DefineAppProfilePage({
 							placeholder="Select tags"
 							required
 							tooltip="Tags help to describe your app in the Marketplace. Select the tags most relevant to your app. They can be changed if needed."
+							value={appTags}
 						/>
 					</div>
 				</Section>
@@ -362,10 +376,15 @@ export function DefineAppProfilePage({
 
 			<NewAppPageFooterButtons
 				disableContinueButton={
-					!appCategories || !appDescription || !appName || !appTags
+					isLoading ||
+					!appCategories ||
+					!appDescription ||
+					!appName ||
+					!appTags
 				}
+				isLoading={isLoading}
 				onClickBack={() => onClickBack()}
-				onClickContinue={async () => await onContinue()}
+				onClickContinue={onContinue}
 				showBackButton
 			/>
 		</div>

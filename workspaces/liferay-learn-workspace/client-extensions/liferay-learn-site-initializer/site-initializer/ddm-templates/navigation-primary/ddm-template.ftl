@@ -1,92 +1,151 @@
 <style>
-	.br-13 {
-		border-radius: 13px;
+	.adt-av-title {
+		font-weight: 600;
 	}
 
-	.color-black {
-		color: black!important;
+	.dropdown-full .adt-nav-item {
+		background-color: rgba(0, 0, 0, 0);
+		border: none;
 	}
 
-	.dropdown-item:active{
-		background-color:#f8f9fa;
+	.dropdown-full .adt-nav-item .adt-nav-text {
+		align-items: center;
+		display: flex;
+		justify-content: flex-start;
 	}
 
-	.product-icon {
-		width: 1.5rem;
-		height: 1.5rem;
+	.dropdown-full.show .adt-nav-item {
+		border-bottom: 1px solid white;
+		border-radius: 2px;
 	}
 
-	.pt-05 {
-		padding-top: 0.5rem;
+	.dropdown-full.show .adt-nav-item .adt-nav-text .lexicon-icon {
+		transform: rotate(180deg);
 	}
 
-	.t-56 {
-		top: 55.5px!important;
+	.dropdown-menu {
+		border: none;
+		border-radius: 0px 0px 8px 8px;
+		box-shadow: 0px 10px 5px rgba(0, 0, 0, 0.15);
 	}
 
-	.t-109 {
-		top: 109.5px!important;
+	.dropdown-menu .row {
+		margin: 25px !important;
+		min-width: auto !important;
+	}
+
+	.dropdown-menu .row .dropdown-item-div {
+		padding: 0 1rem;
+		margin-bottom: 0;
+	}
+
+	.dropdown-menu .row .dropdown-item-div .dropdown-item {
+		border-radius: 10px;
+		height: 150px;
+	}
+
+	.dropdown-menu .row .dropdown-item-div .dropdown-item:hover {
+		background: var(--color-action-primary-hover-10, #EDF3FE);
+	}
+
+	.dropdown-menu .row .dropdown-item-div .dropdown-item:hover .title {
+		color: var(--color-brand-primary-darken-1, #0053F0);
+	}
+
+	.dropdown-menu .row .dropdown-item-div .dropdown-item .icon {
+		height: 32px;
+		width: 32px;
+	}
+
+	.dropdown-menu .row .dropdown-item-div .dropdown-item .subtitle {
+		color: var(--color-neutral-8, #54555F);
+		font-family: 'Source Sans Pro', sans-serif;
+		font-size: 13px;
+		font-style: normal;
+		font-weight: 400;
+		line-height: 16px;
+	}
+
+	.dropdown-menu .row .dropdown-item-div .dropdown-item .title {
+		color: var(--color-neutral-10, #282934);
+		font-family: 'Source Sans Pro', sans-serif;
+		font-size: 18px;
+		font-style: normal;
+		font-weight: 600;
+		line-height: 20px;
+	}
+
+	.dropdown-menu.show .product{
+		height: 290px;
+		min-height: -webkit-fill-available;
+	}
+
+	.maxh-90 {
+	  	max-height: 90px;
+	}
+
+	.product-box {
+	  	padding: 1rem;
+		margin-bottom: 1.5rem !important;
+	}
+
+	.responsive-text {
+		display: -webkit-box;
+	  	overflow: hidden;
+	  	text-overflow: ellipsis;
+	  	-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
 	}
 </style>
 
-<#assign taxonomyVocabularies = restClient.get("/headless-admin-taxonomy/v1.0/sites/${themeDisplay.getSiteGroupId()}/taxonomy-vocabularies").items />
-<#if taxonomyVocabularies?has_content>
-	<#list taxonomyVocabularies as taxonomyVocabulary>
-		<#if stringUtil.equals(taxonomyVocabulary.externalReferenceCode, "CAPABILITY")>
-			<#if taxonomyVocabulary.id?has_content>
-				<#assign capabilityId = taxonomyVocabulary.id />
-	  		</#if>
-		</#if>
-	</#list>
-</#if>
+<#assign
+	taxonomyVocabularyId = restClient.get("/headless-admin-taxonomy/v1.0/sites/${themeDisplay.getSiteGroupId()}/taxonomy-vocabularies/by-external-reference-code/CAPABILITY?fields=id").id
+	taxonomyVocabulary = {}
+/>
 
-<#if capabilityId?has_content>
-	<#assign capabilitiesFieldsMap = {} />
-	<#list restClient.get("/headless-admin-taxonomy/v1.0/taxonomy-vocabularies/${capabilityId}/taxonomy-categories").items as taxonomyCategories>
-		<#assign capabilitiesFieldsMap = capabilitiesFieldsMap +
-			{
-				taxonomyCategories.name:
+<#list restClient.get("/headless-admin-taxonomy/v1.0/taxonomy-vocabularies/${taxonomyVocabularyId}/taxonomy-categories?fields=description%2Cid%2Cname%2CtaxonomyCategoryProperties").items as taxonomyCategory>
+	<#assign icons = taxonomyCategory.taxonomyCategoryProperties?filter(property -> stringUtil.equals(property.key, "icon")) />
+
+	<#if icons?size != 0>
+		<#assign icon = icons[0].value />
+	</#if>
+
+	<#assign taxonomyVocabulary = taxonomyVocabulary + {
+			taxonomyCategory.name:
 				{
-					"description": taxonomyCategories.description,
-					"id": taxonomyCategories.id
-		  		}
-	  		}
-		/>
-	</#list>
-</#if>
+					"description": taxonomyCategory.description,
+					"icon": icon!"documents/d${themeDisplay.getScopeGroup().getFriendlyURL()}/blank_icon",
+					"id": taxonomyCategory.id
+				}
+		}
+	>
+</#list>
 
 <div class="adt-navigation">
+	<#assign groupFriendlyURL = portalUtil.getGroupFriendlyURL(themeDisplay.getLayoutSet(), themeDisplay, true, false) />
+
 	<#list entries as navPrimaryItem>
-
-		<#assign
-			customFields = navPrimaryItem.getExpandoAttributes()!{}
-			navItemType = customFields["Primary Nav Item Type"]!""
-		/>
-
 		<#if navPrimaryItem.hasChildren()>
 			<#assign
-				columns = "12"
-				dropdownType = "dropdown"
-				menuType = ""
-				menuWidth = "width:200px; overflow-x:hidden;"
-				topPosition = "t-56"
+				columns = "4"
+				customFields = navPrimaryItem.getExpandoAttributes()!{}
+				navItemType = customFields["Primary Nav Item Type"]!""
+				cssClassName = "maxh-90 product-box"
 			/>
 
 			<#if stringUtil.equals(navItemType, "CAPABILITIES")>
 				<#assign
 					columns = "3"
-					dropdownType = "dropdown-wide dropdown-wide-container"
-					menuType = "dropdown-menu-center p-5"
-					menuWidth = "width:95%;"
-					topPosition = "t-109"
+					cssClassName = ""
 				/>
 			</#if>
-			<div class="${dropdownType}">
-				<div
+
+			<div class="dropdown-full nav-item">
+				<button
 					class="adt-nav-item w-100"
 					data-toggle="liferay-dropdown"
 				>
-					<div class="adt-nav-text d-flex">
+					<div class="adt-nav-text">
 						<span
 							aria-expanded="false"
 							aria-haspopup="true"
@@ -94,63 +153,79 @@
 							id=${navPrimaryItem.getName()}
 						>
 							${navPrimaryItem.getName()}
+
 							<svg class="lexicon-icon lexicon-icon-caret-bottom" role="presentation" viewBox="0 0 512 512">
 								<use xlink:href="/o/admin-theme/images/clay/icons.svg#caret-bottom"></use>
 							</svg>
 						</span>
 					</div>
-				</div>
+				</button>
 
 				<div
 					aria-labelledby=${navPrimaryItem.getName()}
-					class="br-13 dropdown-menu ${menuType} ${topPosition}"
-					style="position: absolute; will-change: transform; ${menuWidth}"
+					class="dropdown-menu"
 				>
 					<div class="row">
 						<#list navPrimaryItem.getChildren() as navSecondaryItem>
-							<div class="br-13 dropdown-item col-sm-${columns}">
-								<#if capabilitiesFieldsMap?has_content && stringUtil.equals(navItemType, "CAPABILITIES")>
-									<#assign categoryFields = capabilitiesFieldsMap[navSecondaryItem.getName()] />
+							<#if taxonomyVocabulary?has_content && stringUtil.equals(navItemType, "CAPABILITIES")>
+								<#if taxonomyVocabulary[navSecondaryItem.getName()]?has_content>
+									<div class="dropdown-item-div col-12 col-lg-${columns} ${cssClassName}">
+										<#assign capabilityFields = taxonomyVocabulary[navSecondaryItem.getName()] />
 
-									<a class="adt-submenu-item-link color-black text-decoration-none" href="/search?category=${categoryFields['id']}" tabindex="4">
-										<h5 class="pl-3 pt-2">
-											${navSecondaryItem.getName()}
-										</h5>
-										<#if categoryFields["description"]?has_content>
-											<div
-												class="pl-3 pt-05"
-											>
-												${categoryFields["description"]}
-											</div>
-										</#if>
-									</a>
-								<#else>
-									<#assign
-										customFields = navSecondaryItem.getExpandoAttributes()!{}
-										navItemIconId = customFields["Svg Sprite Map Id"]!""
-									/>
-
-									<a class="adt-submenu-item-link color-black text-decoration-none" href="${navSecondaryItem.getRegularURL()}" tabindex="4">
-										<div class="pl-2 pt-3">
+										<a class="d-flex dropdown-item p-3 text-decoration-none" href="${groupFriendlyURL}/search?category=${capabilityFields['id']}" tabindex="4">
 											<img
-												alt="${navSecondaryItem.getName()} Logo"
-												class="lexicon-icon lexicon-icon-caret-bottom product-icon"
-												role="presentation"
-												src="${navItemIconId}"
-												viewBox="0 0 512 512"
+												alt="${navSecondaryItem.getName()} icon"
+												class="icon mr-3"
+												src="${capabilityFields["icon"]}"
 											/>
 
-											<b class="pl-2">${navSecondaryItem.getName()}</b>
+											<div>
+												<h5 class="responsive-text title">
+													${navSecondaryItem.getName()}
+												</h5>
+
+												<#if capabilityFields["description"]?has_content>
+													<p class="pt-2 responsive-text subtitle">
+														${capabilityFields["description"]}
+													</p>
+												</#if>
+											</div>
+										</a>
+									</div>
+								</#if>
+							<#else>
+								<div class="dropdown-item-div col-12 col-lg-${columns} ${cssClassName}">
+									<#assign
+										customFields = navSecondaryItem.getExpandoAttributes()!{}
+										navItemDescription = customFields["Description"]!""
+										navItemIcon = customFields["Icon URL"]!""
+									/>
+
+									<a class="d-flex dropdown-item maxh-90 p-3 text-decoration-none" href="${groupFriendlyURL}${navSecondaryItem.getRegularURL()}" tabindex="4">
+										<img
+											alt="${navSecondaryItem.getName()} icon"
+											class="icon mr-3"
+											src="${navItemIcon}"
+										/>
+
+										<div>
+											<h5 class="responsive-text title">
+												${navSecondaryItem.getName()}
+											</h5>
+
+											<p class="pt-2 responsive-text subtitle">
+												${navItemDescription}
+											</p>
 										</div>
 									</a>
-								</#if>
-							</div>
+								</div>
+							</#if>
 						</#list>
 					</div>
 				</div>
 			</div>
 		<#else>
-			<a class="adt-nav-item w-100" href="${navPrimaryItem.getRegularURL()}">
+			<a class="adt-nav-item w-100" href="${groupFriendlyURL}${navPrimaryItem.getRegularURL()}">
 				<div class="adt-nav-text d-flex pr-3">
 					<span class="adt-nav-title text-truncate">
 			  			${navPrimaryItem.getName()}

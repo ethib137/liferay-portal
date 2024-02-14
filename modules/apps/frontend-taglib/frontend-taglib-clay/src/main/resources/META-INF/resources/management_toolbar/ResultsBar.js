@@ -86,6 +86,7 @@ const ResultsBar = ({
 							`"${searchValue}"`
 						)}
 						className="component-text text-truncate-inline"
+						data-qa-id="searchResultText"
 						ref={resultsBarRef}
 						tabIndex={-1}
 					>
@@ -150,6 +151,16 @@ const ResultsBar = ({
 
 							navigate(clearResultsURL);
 						}}
+						onKeyPress={(event) => {
+							if (event.key === 'Enter') {
+								event.preventDefault();
+
+								searchContainerRef.current?.fire('clearFilter');
+
+								navigate(clearResultsURL);
+							}
+						}}
+						tabIndex={0}
 					>
 						{Liferay.Language.get('clear')}
 					</ClayLink>

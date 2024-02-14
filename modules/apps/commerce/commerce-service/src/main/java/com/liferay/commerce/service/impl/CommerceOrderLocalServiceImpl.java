@@ -39,7 +39,11 @@ import com.liferay.commerce.model.attributes.provider.CommerceModelAttributesPro
 import com.liferay.commerce.order.CommerceOrderThreadLocal;
 import com.liferay.commerce.price.CommerceOrderPrice;
 import com.liferay.commerce.price.CommerceOrderPriceCalculation;
+import com.liferay.commerce.product.constants.CommerceChannelAccountEntryRelConstants;
+import com.liferay.commerce.product.exception.NoSuchChannelAccountEntryRelException;
 import com.liferay.commerce.product.model.CommerceChannel;
+import com.liferay.commerce.product.model.CommerceChannelAccountEntryRel;
+import com.liferay.commerce.product.service.CommerceChannelAccountEntryRelLocalService;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.service.CommerceAddressLocalService;
 import com.liferay.commerce.service.CommerceOrderItemLocalService;
@@ -52,7 +56,6 @@ import com.liferay.commerce.service.persistence.CommerceOrderItemPersistence;
 import com.liferay.commerce.term.model.CommerceTermEntry;
 import com.liferay.commerce.term.service.CommerceTermEntryLocalService;
 import com.liferay.commerce.util.CommerceShippingEngineRegistry;
-import com.liferay.commerce.util.CommerceShippingHelper;
 import com.liferay.commerce.util.CommerceUtil;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.petra.string.StringPool;
@@ -216,6 +219,7 @@ public class CommerceOrderLocalServiceImpl
 		// Commerce order
 
 		_validateAccountOrdersLimit(groupId, commerceAccountId);
+		_validateCommerceChannelAccount(groupId, commerceAccountId);
 		_validateGuestOrders();
 
 		if (commerceCurrencyId <= 0) {
@@ -1963,6 +1967,9 @@ public class CommerceOrderLocalServiceImpl
 		CommerceOrder commerceOrder = commerceOrderPersistence.findByPrimaryKey(
 			commerceOrderId);
 
+		CommerceOrder originalCommerceOrder =
+			commerceOrder.cloneWithOriginalValues();
+
 		int previousPaymentStatus = commerceOrder.getPaymentStatus();
 
 		commerceOrder.setPaymentStatus(paymentStatus);
@@ -1972,7 +1979,8 @@ public class CommerceOrderLocalServiceImpl
 
 		// Messaging
 
-		_sendPaymentStatusMessage(commerceOrder, previousPaymentStatus);
+		_sendPaymentStatusMessage(
+			commerceOrder, originalCommerceOrder, previousPaymentStatus);
 
 		return commerceOrder;
 	}
@@ -2406,7 +2414,8 @@ public class CommerceOrderLocalServiceImpl
 	}
 
 	private void _sendPaymentStatusMessage(
-		CommerceOrder commerceOrder, int previousPaymentStatus) {
+		CommerceOrder commerceOrder, CommerceOrder originalCommerceOrder,
+		int previousPaymentStatus) {
 
 		TransactionCommitCallbackUtil.registerCallback(
 			() -> {
@@ -2434,6 +2443,9 @@ public class CommerceOrderLocalServiceImpl
 						_commerceModelAttributesProvider.getModelAttributes(
 							commerceOrder, commerceOrderDTOConverter,
 							commerceOrder.getUserId())
+					).put(
+						"originalCommerceOrder",
+						originalCommerceOrder.getModelAttributes()
 					).put(
 						"paymentStatus", commerceOrder.getPaymentStatus()
 					).put(
@@ -2764,7 +2776,34 @@ public class CommerceOrderLocalServiceImpl
 				commerceOrderFieldsConfiguration.accountCartMaxAllowed())) {
 
 			throw new CommerceOrderAccountLimitException(
-				"The account carts limit was reached");
+				"The commerce account carts limit was reached");
+		}
+	}
+
+	private void _validateCommerceChannelAccount(
+			long commerceChannelGroupId, long accountEntryId)
+		throws PortalException {
+
+		CommerceChannel commerceChannel =
+			_commerceChannelLocalService.getCommerceChannelByGroupId(
+				commerceChannelGroupId);
+
+		CommerceChannelAccountEntryRel commerceChannelAccountEntryRel =
+			_commerceChannelAccountEntryRelLocalService.
+				fetchCommerceChannelAccountEntryRel(
+					accountEntryId, commerceChannel.getCommerceChannelId(),
+					CommerceChannelAccountEntryRelConstants.TYPE_ELIGIBILITY);
+
+		int count =
+			_commerceChannelAccountEntryRelLocalService.
+				getCommerceChannelAccountEntryRelsCount(
+					commerceChannel.getCommerceChannelId(), null,
+					CommerceChannelAccountEntryRelConstants.TYPE_ELIGIBILITY);
+
+		if ((commerceChannelAccountEntryRel == null) && (count != 0)) {
+			throw new NoSuchChannelAccountEntryRelException(
+				"This commerce account is not eligible for this commerce " +
+					"channel");
 		}
 	}
 
@@ -2790,6 +2829,10 @@ public class CommerceOrderLocalServiceImpl
 
 	@Reference
 	private CommerceAddressLocalService _commerceAddressLocalService;
+
+	@Reference
+	private CommerceChannelAccountEntryRelLocalService
+		_commerceChannelAccountEntryRelLocalService;
 
 	@Reference
 	private CommerceChannelLocalService _commerceChannelLocalService;
@@ -2832,9 +2875,6 @@ public class CommerceOrderLocalServiceImpl
 
 	@Reference
 	private CommerceShippingEngineRegistry _commerceShippingEngineRegistry;
-
-	@Reference
-	private CommerceShippingHelper _commerceShippingHelper;
 
 	@Reference
 	private CommerceShippingMethodLocalService

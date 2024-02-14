@@ -65,7 +65,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Javier Gamarra
  */
-@FeatureFlags({"LPS-148856", "LPS-181663", "LPS-187142"})
+@FeatureFlags("LPS-187142")
 @RunWith(Arquillian.class)
 public class ObjectDefinitionResourceTest
 	extends BaseObjectDefinitionResourceTestCase {
@@ -121,6 +121,50 @@ public class ObjectDefinitionResourceTest
 		Assert.assertEquals(
 			"/o/c/" + objectDefinitionPluralName,
 			objectDefinition.getRestContextPath());
+	}
+
+	@Override
+	@Test
+	public void testGetObjectDefinitionsPage() throws Exception {
+		super.testGetObjectDefinitionsPage();
+
+		Page<ObjectDefinition> page =
+			objectDefinitionResource.getObjectDefinitionsPage(
+				null, null, "status/any(k:k eq 2)", Pagination.of(1, 20), null);
+
+		long totalCount = page.getTotalCount();
+
+		ObjectDefinition objectDefinition =
+			testGetObjectDefinitionsPage_addObjectDefinition(
+				randomObjectDefinition());
+
+		ObjectDefinition randomObjectDefinition = randomObjectDefinition();
+
+		Status status = new Status() {
+			{
+				code = WorkflowConstants.STATUS_APPROVED;
+				label = WorkflowConstants.getStatusLabel(
+					WorkflowConstants.STATUS_APPROVED);
+				label_i18n = _language.get(
+					LanguageResources.getResourceBundle(
+						LocaleUtil.getDefault()),
+					WorkflowConstants.getStatusLabel(
+						WorkflowConstants.STATUS_APPROVED));
+			}
+		};
+
+		randomObjectDefinition.setStatus(status);
+
+		testGetObjectDefinitionsPage_addObjectDefinition(
+			randomObjectDefinition);
+
+		page = objectDefinitionResource.getObjectDefinitionsPage(
+			null, null, "status/any(k:k eq 2)", Pagination.of(1, 20), null);
+
+		Assert.assertEquals(totalCount + 1, page.getTotalCount());
+
+		assertContains(
+			objectDefinition, (List<ObjectDefinition>)page.getItems());
 	}
 
 	@Override
@@ -361,6 +405,52 @@ public class ObjectDefinitionResourceTest
 		_objectDefinitionLocalService.deleteObjectDefinition(
 			postObjectDefinition.getId());
 
+		// Draft custom object definition
+
+		postObjectDefinition = objectDefinitionResource.postObjectDefinition(
+			randomObjectDefinition());
+
+		Assert.assertEquals(
+			postObjectDefinition.getStatus(),
+			new Status() {
+				{
+					code = WorkflowConstants.STATUS_DRAFT;
+					label = WorkflowConstants.getStatusLabel(
+						WorkflowConstants.STATUS_DRAFT);
+					label_i18n = _language.get(
+						LanguageResources.getResourceBundle(
+							LocaleUtil.getDefault()),
+						WorkflowConstants.getStatusLabel(
+							WorkflowConstants.STATUS_DRAFT));
+				}
+			});
+
+		postObjectDefinition.setStatus(
+			new Status() {
+				{
+					code = WorkflowConstants.STATUS_APPROVED;
+				}
+			});
+
+		ObjectDefinition randomPersistedPublishedObjectDefinition =
+			objectDefinitionResource.putObjectDefinition(
+				postObjectDefinition.getId(), postObjectDefinition);
+
+		Assert.assertEquals(
+			randomPersistedPublishedObjectDefinition.getStatus(),
+			new Status() {
+				{
+					code = WorkflowConstants.STATUS_APPROVED;
+					label = WorkflowConstants.getStatusLabel(
+						WorkflowConstants.STATUS_APPROVED);
+					label_i18n = _language.get(
+						LanguageResources.getResourceBundle(
+							LocaleUtil.getDefault()),
+						WorkflowConstants.getStatusLabel(
+							WorkflowConstants.STATUS_APPROVED));
+				}
+			});
+
 		// Modifiable system object definition
 
 		ObjectDefinition randomModifiableSystemObjectDefinition =
@@ -526,7 +616,7 @@ public class ObjectDefinitionResourceTest
 		objectDefinition.setModifiable(true);
 		objectDefinition.setName("O" + objectDefinition.getName());
 		objectDefinition.setObjectFolderExternalReferenceCode(
-			ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_UNCATEGORIZED);
+			ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_DEFAULT);
 		objectDefinition.setPluralLabel(
 			Collections.singletonMap(
 				"en_US", "O" + objectDefinition.getName()));

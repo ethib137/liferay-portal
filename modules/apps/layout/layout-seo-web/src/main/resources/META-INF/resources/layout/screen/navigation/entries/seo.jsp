@@ -13,7 +13,6 @@ LayoutsSEODisplayContext layoutsSEODisplayContext = (LayoutsSEODisplayContext)re
 Layout selLayout = layoutsSEODisplayContext.getSelLayout();
 
 UnicodeProperties layoutTypeSettingsUnicodeProperties = selLayout.getTypeSettingsProperties();
-boolean nondefaultAssetDisplayPage = selLayout.isTypeAssetDisplay() && !layoutsSEODisplayContext.isDefaultAssetDisplayPage();
 %>
 
 <liferay-util:html-top>
@@ -55,16 +54,16 @@ boolean nondefaultAssetDisplayPage = selLayout.isTypeAssetDisplay() && !layoutsS
 						<liferay-ui:message key="settings" />
 					</h3>
 
-					<clay:alert
-						cssClass="mb-4"
-						displayType="info"
-						message="add-multiple-fields-to-define-how-the-meta-tags-will-be-filled"
-					/>
-
 					<aui:model-context bean="<%= selLayout %>" model="<%= Layout.class %>" />
 
 					<c:choose>
 						<c:when test="<%= selLayout.isTypeAssetDisplay() %>">
+							<clay:alert
+								cssClass="mb-4"
+								displayType="info"
+								message="add-multiple-fields-to-define-how-the-meta-tags-will-be-filled"
+							/>
+
 							<div class="dpt-mapping">
 								<div class="dpt-mapping-placeholder">
 									<aui:model-context bean="<%= null %>" model="<%= null %>" />
@@ -85,7 +84,7 @@ boolean nondefaultAssetDisplayPage = selLayout.isTypeAssetDisplay() && !layoutsS
 								</div>
 
 								<react:component
-									module="js/seo/display_page_templates/SeoMapping"
+									module="{SeoMapping} from layout-seo-web"
 									props="<%= layoutsSEODisplayContext.getSEOMappingData() %>"
 									servletContext="<%= application %>"
 								/>
@@ -95,84 +94,78 @@ boolean nondefaultAssetDisplayPage = selLayout.isTypeAssetDisplay() && !layoutsS
 							<aui:input helpMessage="html-title-help" id="title" label="html-title" name="title" placeholder="title" />
 							<aui:input helpMessage="description-help" id="descriptionSEO" name="description" placeholder="description" />
 
-							<%
-							LayoutSEOEntry selLayoutSEOEntry = layoutsSEODisplayContext.getSelLayoutSEOEntry();
-							%>
+							<c:if test="<%= !layoutsSEODisplayContext.isLayoutUtilityPageEntry() %>">
 
-							<liferay-util:buffer
-								var="infoCanonicalURL"
-							>
-								<clay:alert
-									message="use-custom-canonical-url-alert-info"
+								<%
+								LayoutSEOEntry selLayoutSEOEntry = layoutsSEODisplayContext.getSelLayoutSEOEntry();
+								%>
+
+								<liferay-util:buffer
+									var="infoCanonicalURL"
+								>
+									<clay:alert
+										message="use-custom-canonical-url-alert-info"
+									/>
+								</liferay-util:buffer>
+
+								<c:choose>
+									<c:when test="<%= selLayoutSEOEntry != null %>">
+										<aui:model-context bean="<%= selLayoutSEOEntry %>" model="<%= LayoutSEOEntry.class %>" />
+
+										<aui:input checked="<%= selLayoutSEOEntry.isCanonicalURLEnabled() %>" helpMessage="use-custom-canonical-url-help" label="use-custom-canonical-url" labelCssClass="font-weight-normal" name="canonicalURLEnabled" type="checkbox" wrapperCssClass="mb-2" />
+
+										<div id="<portlet:namespace />customCanonicalURLSettings">
+											<aui:input disabled="<%= !selLayoutSEOEntry.isCanonicalURLEnabled() %>" label="canonical-url" name="canonicalURL" placeholder="<%= layoutsSEODisplayContext.getDefaultCanonicalURL() %>">
+												<aui:validator name="url" />
+											</aui:input>
+										</div>
+
+										<div class="<%= selLayoutSEOEntry.isCanonicalURLEnabled() ? StringPool.BLANK : "hide" %>" id="<portlet:namespace />canonicalURLAlert">
+											<%= infoCanonicalURL %>
+										</div>
+
+										<aui:model-context bean="<%= selLayout %>" model="<%= Layout.class %>" />
+									</c:when>
+									<c:otherwise>
+										<aui:input checked="<%= false %>" helpMessage="use-custom-canonical-url-help" label="use-custom-canonical-url" name="canonicalURLEnabled" type="checkbox" wrapperCssClass="mb-2" />
+
+										<div id="<portlet:namespace />customCanonicalURLSettings">
+											<aui:input disabled="<%= true %>" label="canonical-url" localized="<%= true %>" name="canonicalURL" placeholder="<%= layoutsSEODisplayContext.getDefaultCanonicalURL() %>" type="text">
+												<aui:validator name="url" />
+											</aui:input>
+										</div>
+
+										<div class="hide" id="<portlet:namespace />canonicalURLAlert">
+											<%= infoCanonicalURL %>
+										</div>
+									</c:otherwise>
+								</c:choose>
+
+								<liferay-frontend:component
+									module="{toggleCanonicalURLFields} from layout-seo-web"
+									servletContext="<%= application %>"
 								/>
-							</liferay-util:buffer>
 
-							<c:choose>
-								<c:when test="<%= selLayoutSEOEntry != null %>">
-									<aui:model-context bean="<%= selLayoutSEOEntry %>" model="<%= LayoutSEOEntry.class %>" />
-
-									<aui:input checked="<%= selLayoutSEOEntry.isCanonicalURLEnabled() %>" helpMessage="use-custom-canonical-url-help" label="use-custom-canonical-url" labelCssClass="font-weight-normal" name="canonicalURLEnabled" type="checkbox" wrapperCssClass="mb-2" />
-
-									<div id="<portlet:namespace />customCanonicalURLSettings">
-										<aui:input disabled="<%= !selLayoutSEOEntry.isCanonicalURLEnabled() %>" label="canonical-url" name="canonicalURL" placeholder="<%= layoutsSEODisplayContext.getDefaultCanonicalURL() %>">
-											<aui:validator name="url" />
-										</aui:input>
-									</div>
-
-									<div class="<%= selLayoutSEOEntry.isCanonicalURLEnabled() ? StringPool.BLANK : "hide" %>" id="<portlet:namespace />canonicalURLAlert">
-										<%= infoCanonicalURL %>
-									</div>
-
-									<aui:model-context bean="<%= selLayout %>" model="<%= Layout.class %>" />
-								</c:when>
-								<c:otherwise>
-									<aui:input checked="<%= false %>" helpMessage="use-custom-canonical-url-help" label="use-custom-canonical-url" name="canonicalURLEnabled" type="checkbox" wrapperCssClass="mb-2" />
-
-									<div id="<portlet:namespace />customCanonicalURLSettings">
-										<aui:input disabled="<%= true %>" label="canonical-url" localized="<%= true %>" name="canonicalURL" placeholder="<%= layoutsSEODisplayContext.getDefaultCanonicalURL() %>" type="text">
-											<aui:validator name="url" />
-										</aui:input>
-									</div>
-
-									<div class="hide" id="<portlet:namespace />canonicalURLAlert">
-										<%= infoCanonicalURL %>
-									</div>
-								</c:otherwise>
-							</c:choose>
-
-							<aui:input name="keywords" placeholder="keywords" />
+								<aui:input name="keywords" placeholder="keywords" />
+							</c:if>
 
 							<div class="form-group">
 								<label><liferay-ui:message key="preview" /></label>
 
 								<div>
 									<react:component
-										module="js/seo/PreviewSeo"
+										module="{PreviewSeo} from layout-seo-web"
 										props="<%= layoutsSEODisplayContext.getSEOPreviewSeoProperties() %>"
 										servletContext="<%= application %>"
 									/>
 								</div>
 							</div>
-
-							<liferay-frontend:component
-								module="js/seo/toggleCanonicalURLFields"
-								servletContext="<%= application %>"
-							/>
 						</c:otherwise>
 					</c:choose>
 
-					<c:if test="<%= nondefaultAssetDisplayPage %>">
-						<clay:alert
-							displayType="info"
-							message="robots-can-only-be-defined-for-display-page-templates-marked-as-default"
-						/>
-
-						<aui:input disabled="<%= true %>" id="<%= StringUtil.randomId() %>" label="robots" name="" placeholder="robots" type="textarea" value="noindex, nofollow" />
-					</c:if>
-
-					<div class="<%= nondefaultAssetDisplayPage ? "d-none" : StringPool.BLANK %>">
+					<c:if test="<%= !layoutsSEODisplayContext.isLayoutUtilityPageEntry() %>">
 						<aui:input name="robots" placeholder="robots" />
-					</div>
+					</c:if>
 				</div>
 			</clay:sheet-section>
 		</clay:sheet>
@@ -195,43 +188,40 @@ boolean nondefaultAssetDisplayPage = selLayout.isTypeAssetDisplay() && !layoutsS
 						<liferay-ui:error exception="<%= SitemapIncludeException.class %>" message="please-select-a-valid-include-value" />
 						<liferay-ui:error exception="<%= SitemapPagePriorityException.class %>" message="please-enter-a-valid-page-priority" />
 
-						<div class="<%= nondefaultAssetDisplayPage ? "section-disabled" : StringPool.BLANK %>">
-							<c:if test="<%= nondefaultAssetDisplayPage %>">
-								<clay:alert
-									displayType="info"
-									message="only-display-page-templates-that-are-marked-as-default-for-an-asset-type-will-be-indexed-in-order-to-avoid-duplicity"
-								/>
-							</c:if>
+						<clay:select
+							cssClass="propagatable-field"
+							disabled="<%= selLayout.isLayoutPrototypeLinkActive() %>"
+							id='<%= liferayPortletResponse.getNamespace() + "sitemap-include" %>'
+							label="include"
+							name="TypeSettingsProperties--sitemap-include--"
+							options="<%= layoutsSEODisplayContext.getSitemapIncludeSelectOptions() %>"
+						/>
 
-							<clay:select
-								cssClass="propagatable-field"
-								disabled="<%= nondefaultAssetDisplayPage || selLayout.isLayoutPrototypeLinkActive() %>"
-								id='<%= liferayPortletResponse.getNamespace() + "sitemap-include" %>'
-								label="include"
-								name="TypeSettingsProperties--sitemap-include--"
-								options="<%= layoutsSEODisplayContext.getSitemapIncludeSelectOptions() %>"
-							/>
+						<aui:input cssClass="propagatable-field" disabled="<%= selLayout.isLayoutPrototypeLinkActive() %>" helpMessage="page-priority-help" label="page-priority" name="TypeSettingsProperties--sitemap-priority--" placeholder="0.0" size="3" type="text" value='<%= layoutTypeSettingsUnicodeProperties.getProperty("sitemap-priority", PropsValues.SITES_SITEMAP_DEFAULT_PRIORITY) %>'>
+							<aui:validator name="number" />
+							<aui:validator errorMessage="please-enter-a-valid-page-priority" name="range">[0,1]</aui:validator>
+						</aui:input>
 
-							<aui:input cssClass="propagatable-field" disabled="<%= nondefaultAssetDisplayPage || selLayout.isLayoutPrototypeLinkActive() %>" helpMessage="page-priority-help" label="page-priority" name="TypeSettingsProperties--sitemap-priority--" placeholder="0.0" size="3" type="text" value='<%= layoutTypeSettingsUnicodeProperties.getProperty("sitemap-priority", PropsValues.SITES_SITEMAP_DEFAULT_PRIORITY) %>'>
-								<aui:validator name="number" />
-								<aui:validator errorMessage="please-enter-a-valid-page-priority" name="range">[0,1]</aui:validator>
-							</aui:input>
+						<clay:select
+							cssClass="propagatable-field"
+							disabled="<%= selLayout.isLayoutPrototypeLinkActive() %>"
+							id='<%= liferayPortletResponse.getNamespace() + "sitemap-changefreq" %>'
+							label="change-frequency"
+							name="TypeSettingsProperties--sitemap-changefreq--"
+							options="<%= layoutsSEODisplayContext.getSitemapChangeFrequencySelectOptions() %>"
+						/>
 
-							<clay:select
-								cssClass="propagatable-field"
-								disabled="<%= nondefaultAssetDisplayPage || selLayout.isLayoutPrototypeLinkActive() %>"
-								id='<%= liferayPortletResponse.getNamespace() + "sitemap-changefreq" %>'
-								label="change-frequency"
-								name="TypeSettingsProperties--sitemap-changefreq--"
-								options="<%= layoutsSEODisplayContext.getSitemapChangeFrequencySelectOptions() %>"
-							/>
-						</div>
+						<c:if test="<%= layoutsSEODisplayContext.showIncludeChildLayoutsInSitemap() %>">
+							<aui:input checked="<%= layoutsSEODisplayContext.isIncludeChildLayoutsInSitemap() %>" label="include-child-page-urls-in-the-xml-sitemap" labelCssClass="font-weight-normal" name="TypeSettingsProperties--sitemap-include-child-layouts--" type="checkbox" wrapperCssClass="mb-2" />
+
+							<p class="c-mb-0 c-mt-2 small text-secondary"><liferay-ui:message key="when-this-configuration-is-enabled,-search-engines-will-be-notified-that-child-page-urls-are-available-for-crawling" /></p>
+						</c:if>
 					</div>
 				</clay:sheet-section>
 			</clay:sheet>
 
 			<liferay-frontend:component
-				module="js/seo/toggleSitemapFields"
+				module="{toggleSitemapFields} from layout-seo-web"
 				servletContext="<%= application %>"
 			/>
 		</c:if>

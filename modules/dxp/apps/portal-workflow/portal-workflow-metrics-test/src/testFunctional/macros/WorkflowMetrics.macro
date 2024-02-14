@@ -54,6 +54,8 @@ definition {
 				echo("timeout exceeded");
 			}
 
+			WaitForElementPresent(locator1 = "WorkflowMetrics#METRICS_ALL_ITEMS_TABLE_NAME");
+
 			AssertElementPresent(locator1 = "WorkflowMetrics#METRICS_ALL_ITEMS_TABLE_NAME");
 
 			AssertElementPresent(locator1 = "WorkflowMetrics#METRICS_ALL_ITEMS_TABLE_INSTANCE");
@@ -723,7 +725,7 @@ definition {
 		else {
 			PortletEntry.selectAll();
 
-			Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+			Click(locator1 = "ManagementBar#ELLIPSIS");
 		}
 
 		MenuItem.click(menuItem = "Reassign Task");
@@ -733,14 +735,14 @@ definition {
 	macro goToTransitionSteps() {
 		PortletEntry.selectAll();
 
-		Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+		Click(locator1 = "ManagementBar#ELLIPSIS");
 
 		MenuItem.clickNoError(menuItem = "Transition");
 	}
 
 	@summary = "Default summary"
 	macro goToUpdateTasksDueDates() {
-		Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+		Click(locator1 = "ManagementBar#ELLIPSIS");
 
 		MenuItem.clickNoError(menuItem = "Update Tasks Due Dates");
 	}

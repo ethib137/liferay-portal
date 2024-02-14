@@ -57,7 +57,7 @@ export function ChoosePricingModelPage({
 							});
 						}}
 						selected={priceModel.value === 'Free'}
-						title="FREE"
+						title="Free"
 						tooltip="The app is offered in the Marketplace with no charge."
 					/>
 
@@ -109,7 +109,7 @@ export function ChoosePricingModelPage({
 
 								dispatch({
 									payload: {value: 0},
-									type: TYPES.UPDATE_APP_LICENSE_PRICE,
+									type: TYPES.UPDATE_APP_LICENSE_PRICES,
 								});
 							}
 						}
@@ -119,7 +119,6 @@ export function ChoosePricingModelPage({
 							);
 
 							const {id} = await createProductSpecification({
-								appId,
 								body: {
 									productId: appProductId,
 									specificationId: dataSpecification.id,
@@ -129,6 +128,7 @@ export function ChoosePricingModelPage({
 											? {en_US: 'Free'}
 											: {en_US: 'Paid'},
 								},
+								id: appId,
 							});
 
 							dispatch({

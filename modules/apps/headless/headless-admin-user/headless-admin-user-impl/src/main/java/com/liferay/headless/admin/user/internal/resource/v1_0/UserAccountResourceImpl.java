@@ -7,7 +7,6 @@ package com.liferay.headless.admin.user.internal.resource.v1_0;
 
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.model.AccountEntryUserRel;
-import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountEntryUserRelService;
 import com.liferay.account.service.AccountRoleLocalService;
@@ -78,7 +77,6 @@ import com.liferay.portal.kernel.util.File;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -548,6 +546,12 @@ public class UserAccountResourceImpl extends BaseUserAccountResourceImpl {
 
 		ServiceContext serviceContext = _createServiceContext(userAccount);
 
+		user = _userService.updateExternalReferenceCode(
+			userAccountId,
+			GetterUtil.getString(
+				userAccount.getExternalReferenceCode(),
+				user.getExternalReferenceCode()));
+
 		user = _userService.updateUser(
 			userAccountId, null, null, null, false, null, null,
 			GetterUtil.getString(
@@ -1004,6 +1008,12 @@ public class UserAccountResourceImpl extends BaseUserAccountResourceImpl {
 			user, userAccount.getCurrentPassword(), userAccount.getPassword());
 
 		ServiceContext serviceContext = _createServiceContext(userAccount);
+
+		user = _userService.updateExternalReferenceCode(
+			userAccountId,
+			GetterUtil.getString(
+				userAccount.getExternalReferenceCode(),
+				user.getExternalReferenceCode()));
 
 		_userService.updateStatus(
 			userAccountId, workflowStatus, serviceContext);
@@ -1583,16 +1593,17 @@ public class UserAccountResourceImpl extends BaseUserAccountResourceImpl {
 		DTOConverterContext dtoConverterContext = _getDTOConverterContext(
 			userId);
 
+		Map<String, Map<String, String>> actionsMap = new HashMap<>();
+
 		if (!actions.isEmpty()) {
-			MapUtil.merge(dtoConverterContext.getActions(), actions);
+			actionsMap.putAll(actions);
 		}
-		else {
-			actions = dtoConverterContext.getActions();
-		}
+
+		actionsMap.putAll(dtoConverterContext.getActions());
 
 		return _userResourceDTOConverter.toDTO(
 			new DefaultDTOConverterContext(
-				contextAcceptLanguage.isAcceptAllLanguages(), actions,
+				contextAcceptLanguage.isAcceptAllLanguages(), actionsMap,
 				_dtoConverterRegistry, userId,
 				contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
 				contextUser));
@@ -1643,9 +1654,6 @@ public class UserAccountResourceImpl extends BaseUserAccountResourceImpl {
 
 	private static final EntityModel _entityModel =
 		new UserAccountEntityModel();
-
-	@Reference
-	private AccountEntryLocalService _accountEntryLocalService;
 
 	@Reference(
 		policy = ReferencePolicy.DYNAMIC,

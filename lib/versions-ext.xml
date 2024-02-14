@@ -105,18 +105,6 @@
 				</licenses>
 			</library>
 			<library>
-				<file-name>lib/development/appium.jar</file-name>
-				<version>1.6.2</version>
-				<project-name>Appium</project-name>
-				<project-url>http://appium.io</project-url>
-				<licenses>
-					<license>
-						<license-name>Apache License 2.0</license-name>
-						<license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
-					</license>
-				</licenses>
-			</library>
-			<library>
 				<file-name>lib/development/asm-commons.jar</file-name>
 				<version>7.0</version>
 				<project-name>ASM</project-name>
@@ -543,18 +531,6 @@
 				</licenses>
 			</library>
 			<library>
-				<file-name>lib/development/jserrorcollector.jar</file-name>
-				<version>0.6-atlassian-3</version>
-				<project-name>JSErrorCollector</project-name>
-				<project-url>https://github.com/atlassian/JSErrorCollector</project-url>
-				<licenses>
-					<license>
-						<license-name>Apache License 2.0</license-name>
-						<license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
-					</license>
-				</licenses>
-			</library>
-			<library>
 				<file-name>lib/development/jsonassert.jar</file-name>
 				<version>1.2.3</version>
 				<project-name>JSONassert</project-name>
@@ -676,7 +652,7 @@
 			</library>
 			<library>
 				<file-name>lib/development/mysql.jar</file-name>
-				<version>8.0.33</version>
+				<version>8.3.0</version>
 				<project-name>MySQL Connector/J</project-name>
 				<project-url>http://www.mysql.com/products/connector/j</project-url>
 				<licenses>
@@ -1010,7 +986,7 @@
 			</library>
 			<library>
 				<file-name>lib/development/velocity.jar</file-name>
-				<version>1.6.4.LIFERAY-PATCHED-2</version>
+				<version>1.6.4.LIFERAY-PATCHED-3</version>
 				<project-name>Velocity</project-name>
 				<project-url>http://velocity.apache.org</project-url>
 				<licenses>
@@ -1109,7 +1085,7 @@
 			</library>
 			<library>
 				<file-name>lib/portal/hibernate-core.jar</file-name>
-				<version>5.6.7.LIFERAY-PATCHED-1</version>
+				<version>5.6.7.LIFERAY-PATCHED-2</version>
 				<project-name>Hibernate</project-name>
 				<project-url>http://www.hibernate.org</project-url>
 				<licenses>
@@ -1188,7 +1164,7 @@
 			</library>
 			<library>
 				<file-name>lib/portal/jaxb-runtime.jar</file-name>
-				<version>2.3.1.LIFERAY-PATCHED-1</version>
+				<version>2.3.1.LIFERAY-PATCHED-2</version>
 				<project-name>Java Architecture for XML Binding</project-name>
 				<project-url>https://javaee.github.io/jaxb-v2</project-url>
 				<licenses>
@@ -1238,7 +1214,7 @@
 			</library>
 			<library>
 				<file-name>lib/portal/jodd-util.jar</file-name>
-				<version>6.0.1.LIFERAY-PATCHED-1</version>
+				<version>6.0.1.LIFERAY-PATCHED-2</version>
 				<project-name>Jodd Util</project-name>
 				<project-url>http://jodd.org</project-url>
 				<licenses>
@@ -1272,18 +1248,6 @@
 					<license>
 						<license-name>CDDL 1.1</license-name>
 						<license-url>https://oss.oracle.com/licenses/CDDL-1.1</license-url>
-					</license>
-				</licenses>
-			</library>
-			<library>
-				<file-name>lib/portal/log4j-1.2-api.jar</file-name>
-				<version>2.17.1</version>
-				<project-name>Log4j 1.x Compatibility API</project-name>
-				<project-url>http://logging.apache.org/log4j</project-url>
-				<licenses>
-					<license>
-						<license-name>Apache License 2.0</license-name>
-						<license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
 					</license>
 				</licenses>
 			</library>
@@ -1375,7 +1339,7 @@
 			</library>
 			<library>
 				<file-name>lib/portal/spring-beans.jar</file-name>
-				<version>5.2.24.LIFERAY-PATCHED-1</version>
+				<version>5.2.24.LIFERAY-PATCHED-2</version>
 				<project-name>Spring</project-name>
 				<project-url>http://www.springframework.org</project-url>
 				<licenses>
@@ -1450,7 +1414,7 @@
 			</library>
 			<library>
 				<file-name>lib/portal/spring-orm.jar</file-name>
-				<version>5.2.24.LIFERAY-PATCHED-1</version>
+				<version>5.2.24.LIFERAY-PATCHED-2</version>
 				<project-name>Spring</project-name>
 				<project-url>http://www.springframework.org</project-url>
 				<licenses>
@@ -1465,7 +1429,7 @@
 			</library>
 			<library>
 				<file-name>lib/portal/spring-tx.jar</file-name>
-				<version>5.2.24</version>
+				<version>5.2.24.LIFERAY-PATCHED-1</version>
 				<project-name>Spring</project-name>
 				<project-url>http://www.springframework.org</project-url>
 				<licenses>

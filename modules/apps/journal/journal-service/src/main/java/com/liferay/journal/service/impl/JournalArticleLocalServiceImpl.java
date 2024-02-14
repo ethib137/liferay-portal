@@ -145,7 +145,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
-import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ImageLocalService;
 import com.liferay.portal.kernel.service.ResourceLocalService;
@@ -4196,7 +4195,6 @@ public class JournalArticleLocalServiceImpl
 			trashEntry.getEntryId());
 
 		for (JournalArticle articleVersion : articleVersions) {
-			articleVersion.setExternalReferenceCode(trashArticleId);
 			articleVersion.setArticleId(trashArticleId);
 			articleVersion.setStatus(WorkflowConstants.STATUS_IN_TRASH);
 
@@ -4207,7 +4205,6 @@ public class JournalArticleLocalServiceImpl
 
 		_journalArticleResourcePersistence.update(articleResource);
 
-		article.setExternalReferenceCode(trashArticleId);
 		article.setArticleId(trashArticleId);
 
 		article = journalArticlePersistence.update(article);
@@ -4390,7 +4387,6 @@ public class JournalArticleLocalServiceImpl
 				article.getGroupId(), article.getArticleId());
 
 		for (JournalArticle articleVersion : articleVersions) {
-			articleVersion.setExternalReferenceCode(trashArticleId);
 			articleVersion.setArticleId(trashArticleId);
 
 			articleVersion = journalArticlePersistence.update(articleVersion);
@@ -4400,7 +4396,6 @@ public class JournalArticleLocalServiceImpl
 			}
 		}
 
-		article.setExternalReferenceCode(trashArticleId);
 		article.setArticleId(trashArticleId);
 
 		article = journalArticlePersistence.update(article);
@@ -6232,8 +6227,9 @@ public class JournalArticleLocalServiceImpl
 				article.getGroupId(), portletId, null);
 
 			articleURL = HttpComponentsUtil.addParameter(
-				articleURL, _portal.getPortletNamespace(portletId) + "mvcPath",
-				"/edit_article.jsp");
+				articleURL,
+				_portal.getPortletNamespace(portletId) + "mvcRenderCommandName",
+				"/journal/edit_article");
 
 			articleURL = buildArticleURL(
 				articleURL, article.getGroupId(), article.getFolderId(),
@@ -7003,6 +6999,7 @@ public class JournalArticleLocalServiceImpl
 		subscriptionSender.setContextAttribute(
 			"[$ARTICLE_USER_NAME$]", article.getUserName());
 		subscriptionSender.setEntryTitle(article.getTitle(user.getLocale()));
+		subscriptionSender.setNotificationType(_getNotificationType(emailType));
 
 		if (emailType.equals("review") && (serviceContext.getUserId() == 0)) {
 			subscriptionSender.setSendToCurrentUser(true);
@@ -7801,6 +7798,10 @@ public class JournalArticleLocalServiceImpl
 				NOTIFICATION_TYPE_MOVE_ENTRY_TO_TRASH;
 		}
 
+		if (emailType.equals("review")) {
+			return UserNotificationDefinition.NOTIFICATION_TYPE_REVIEW_ENTRY;
+		}
+
 		if (emailType.equals("update")) {
 			return UserNotificationDefinition.NOTIFICATION_TYPE_UPDATE_ENTRY;
 		}
@@ -7969,7 +7970,7 @@ public class JournalArticleLocalServiceImpl
 		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
 			Value value = ddmFormFieldValue.getValue();
 
-			if (value != null) {
+			if ((value != null) && value.isLocalized()) {
 				value.removeLocale(locale);
 			}
 
@@ -8109,9 +8110,6 @@ public class JournalArticleLocalServiceImpl
 
 	@Reference
 	private CommentManager _commentManager;
-
-	@Reference
-	private CompanyLocalService _companyLocalService;
 
 	private final Map<Long, Date> _companyPreviousCheckDate =
 		new ConcurrentHashMap<>();

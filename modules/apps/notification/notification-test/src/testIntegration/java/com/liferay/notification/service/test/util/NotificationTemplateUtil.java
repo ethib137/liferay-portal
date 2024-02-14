@@ -7,6 +7,7 @@ package com.liferay.notification.service.test.util;
 
 import com.liferay.notification.constants.NotificationConstants;
 import com.liferay.notification.constants.NotificationQueueEntryConstants;
+import com.liferay.notification.constants.NotificationRecipientSettingConstants;
 import com.liferay.notification.constants.NotificationTemplateConstants;
 import com.liferay.notification.context.NotificationContext;
 import com.liferay.notification.model.NotificationQueueEntry;
@@ -21,6 +22,8 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,6 +50,7 @@ public class NotificationTemplateUtil {
 
 	public static NotificationContext createNotificationContext(
 		User user, long objectDefinitionId, String body, String description,
+		String editorType,
 		List<NotificationRecipientSetting> notificationRecipientSettings,
 		String subject, String type, List<Long> attachmentObjectFieldIds) {
 
@@ -64,7 +68,7 @@ public class NotificationTemplateUtil {
 		notificationContext.setNotificationTemplate(
 			createNotificationTemplate(
 				user.getUserId(), objectDefinitionId, body, description,
-				subject, type));
+				editorType, subject, type));
 		notificationContext.setType(type);
 
 		return notificationContext;
@@ -84,21 +88,41 @@ public class NotificationTemplateUtil {
 		String subject, String type) {
 
 		return createNotificationContext(
-			user, 0, body, description, notificationRecipientSettings, subject,
-			type, Collections.emptyList());
+			user, 0, body, description,
+			NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT,
+			notificationRecipientSettings, subject, type,
+			Collections.emptyList());
 	}
 
 	public static NotificationContext createNotificationContext(
 		User user, String body, String description, String subject,
 		String type) {
 
-		return createNotificationContext(
-			user, body, description,
-			Collections.singletonList(
+		List<NotificationRecipientSetting> notificationRecipientSettings =
+			new ArrayList<>();
+
+		if (type.equals(NotificationConstants.TYPE_EMAIL)) {
+			notificationRecipientSettings = Arrays.asList(
 				createNotificationRecipientSetting(
-					RandomTestUtil.randomString(),
-					RandomTestUtil.randomString())),
-			subject, type);
+					NotificationRecipientSettingConstants.NAME_FROM,
+					"[%CURRENT_USER_EMAIL_ADDRESS%]"),
+				createNotificationRecipientSetting(
+					NotificationRecipientSettingConstants.NAME_FROM_NAME,
+					"[%CURRENT_USER_FIRST_NAME%]"),
+				createNotificationRecipientSetting(
+					NotificationRecipientSettingConstants.NAME_TO,
+					"test@liferay.com"));
+		}
+		else if (type.equals(NotificationConstants.TYPE_USER_NOTIFICATION)) {
+			notificationRecipientSettings = Collections.singletonList(
+				createNotificationRecipientSetting(
+					NotificationRecipientSettingConstants.NAME_USER_SCREEN_NAME,
+					user.getScreenName()));
+		}
+
+		return createNotificationContext(
+			user, body, description, notificationRecipientSettings, subject,
+			type);
 	}
 
 	public static NotificationQueueEntry createNotificationQueueEntry(
@@ -134,7 +158,7 @@ public class NotificationTemplateUtil {
 
 	public static NotificationTemplate createNotificationTemplate(
 		long userId, long objectDefinitionId, String body, String description,
-		String subject, String type) {
+		String editorType, String subject, String type) {
 
 		NotificationTemplate notificationTemplate =
 			NotificationTemplateLocalServiceUtil.createNotificationTemplate(
@@ -144,8 +168,7 @@ public class NotificationTemplateUtil {
 		notificationTemplate.setObjectDefinitionId(objectDefinitionId);
 		notificationTemplate.setBody(body);
 		notificationTemplate.setDescription(description);
-		notificationTemplate.setEditorType(
-			NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT);
+		notificationTemplate.setEditorType(editorType);
 		notificationTemplate.setName(RandomTestUtil.randomString());
 		notificationTemplate.setSubject(subject);
 		notificationTemplate.setType(type);

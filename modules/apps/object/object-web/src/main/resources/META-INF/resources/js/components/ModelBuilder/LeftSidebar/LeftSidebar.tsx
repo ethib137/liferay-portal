@@ -20,14 +20,13 @@ import LeftSidebarTreeView from './LeftSidebarTreeView';
 
 export default function LeftSidebar() {
 	const [expandedKeys, setExpandedKeys] = useState<Set<React.Key>>(
-		new Set(['uncategorized'])
+		new Set(['default'])
 	);
 	const [query, setQuery] = useState('');
 	const [
 		{
 			isLoadingObjectFolder,
 			leftSidebarItems,
-			modelBuilderModals,
 			selectedObjectFolder,
 			showSidebars,
 		},
@@ -112,8 +111,7 @@ export default function LeftSidebar() {
 					onClick={() =>
 						dispatch({
 							payload: {
-								modelBuilderModals: {
-									...modelBuilderModals,
+								updatedModelBuilderModals: {
 									addObjectDefinition: true,
 								},
 							},
@@ -150,7 +148,7 @@ export default function LeftSidebar() {
 										}
 										setExpandedKeys={setExpandedKeys}
 									/>
-
+									<hr className="lfr-objects__model-builder-left-sidebar-body-separator" />
 									<ClayPanel
 										className="lfr-objects__model-builder-left-sidebar-body-panel"
 										collapsable

@@ -36,12 +36,32 @@ public class GitHubEventHandlerFactory extends BaseEventHandlerFactory {
 				if (commentJSONObject != null) {
 					String body = commentJSONObject.getString("body");
 
-					if (body.startsWith("ci:help")) {
-						return new HelpGitHubIssueEventHandler(
+					if (body.startsWith("ci:close")) {
+						return new CloseGitHubCommentEventHandler(
+							eventHandlerContext, messageJSONObject);
+					}
+					else if (body.startsWith("ci:forward")) {
+						return new ForwardGitHubCommentEventHandler(
+							eventHandlerContext, messageJSONObject);
+					}
+					else if (body.startsWith("ci:help")) {
+						return new HelpGitHubCommentEventHandler(
+							eventHandlerContext, messageJSONObject);
+					}
+					else if (body.startsWith("ci:merge")) {
+						return new MergeGitHubCommentEventHandler(
+							eventHandlerContext, messageJSONObject);
+					}
+					else if (body.startsWith("ci:reevaluate")) {
+						return new ReevaluateGitHubCommentEventHandler(
+							eventHandlerContext, messageJSONObject);
+					}
+					else if (body.startsWith("ci:reopen")) {
+						return new ReopenGitHubCommentEventHandler(
 							eventHandlerContext, messageJSONObject);
 					}
 					else if (body.startsWith("ci:test")) {
-						return new TestGitHubIssueEventHandler(
+						return new TestGitHubCommentEventHandler(
 							eventHandlerContext, messageJSONObject);
 					}
 
@@ -55,6 +75,15 @@ public class GitHubEventHandlerFactory extends BaseEventHandlerFactory {
 
 				if (pullRequestJSONObject != null) {
 					return new OpenGitHubPullRequestEventHandler(
+						eventHandlerContext, messageJSONObject);
+				}
+			}
+			else if (action.equals("synchronize")) {
+				JSONObject pullRequestJSONObject =
+					messageJSONObject.optJSONObject("pull_request");
+
+				if (pullRequestJSONObject != null) {
+					return new SynchronizeGitHubPullRequestEventHandler(
 						eventHandlerContext, messageJSONObject);
 				}
 			}

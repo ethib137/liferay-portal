@@ -958,6 +958,13 @@ mariadb.executable=${mariadb.executable}]]></echo>
 					</if>
 				</then>
 			</if>
+
+			<if>
+				<contains string="${suite.search.engine}" substring="opensearch" />
+				<then>
+					<ant antfile="build-test-elasticsearch7.xml" target="start-opensearch" />
+				</then>
+			</if>
 		</sequential>
 	</macrodef>
 
@@ -1714,40 +1721,6 @@ app.server.type=@{app.server.type}]]></echo>
 										<if>
 											<equals arg1="@{test.portal.log.assert}" arg2="true" />
 											<then>
-												<gradle-execute dir="modules/core" task="deploy">
-													<arg value="--parallel" />
-													<arg value="-Dbuild.profile=portal-pre" />
-													<arg value="-Pforced.deploy.dir=${project.dir}/tmp/lib-pre" />
-												</gradle-execute>
-
-												<ant dir="portal-kernel" inheritAll="false" target="install-portal-snapshot" />
-
-												<gradle-execute dir="modules/apps" task="deploy">
-													<arg value="--parallel" />
-													<arg value="-Dbuild.profile=portal-pre" />
-													<arg value="-Pforced.deploy.dir=${project.dir}/tmp/lib-pre" />
-												</gradle-execute>
-
-												<get-test-app-server-lib-portal-dir />
-
-												<unzip
-													dest="portal-impl/classes"
-													src="${test.app.server.lib.portal.dir}/portal-impl.jar"
-												/>
-
-												<ant dir="portal-test" inheritAll="false" target="jar" />
-
-												<local name="artifact.version" />
-
-												<property name="artifact.version" value="1.0.0-TEST_ARTIFACT" />
-
-												<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/portal-impl.jar" artifact.name="com.liferay.portal.impl" artifact.version="${artifact.version}" />
-												<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/portal-kernel.jar" artifact.name="com.liferay.portal.kernel" artifact.version="${artifact.version}" />
-												<copy-artifact-to-local-cache artifact.file="${project.dir}/portal-test/portal-test.jar" artifact.name="com.liferay.portal.test" artifact.version="${artifact.version}" />
-												<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/util-bridges.jar" artifact.name="com.liferay.util.bridges" artifact.version="${artifact.version}" />
-												<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/util-java.jar" artifact.name="com.liferay.util.java" artifact.version="${artifact.version}" />
-												<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/util-taglib.jar" artifact.name="com.liferay.util.taglib" artifact.version="${artifact.version}" />
-
 												<ant dir="portal-kernel" inheritAll="false" target="test-class">
 													<property name="test.class" value="PortalLogAssertorTest" />
 												</ant>
@@ -1785,6 +1758,40 @@ app.server.type=@{app.server.type}]]></echo>
 									test.portal.bundle.zip.url="${test.portal.bundle.zip.url}"
 									test.sql.zip.url="${test.sql.zip.url}"
 								/>
+
+								<gradle-execute dir="modules/core" task="deploy">
+									<arg value="--parallel" />
+									<arg value="-Dbuild.profile=portal-pre" />
+									<arg value="-Pforced.deploy.dir=${project.dir}/tmp/lib-pre" />
+								</gradle-execute>
+
+								<ant dir="portal-kernel" inheritAll="false" target="install-portal-snapshot" />
+
+								<gradle-execute dir="modules/apps" task="deploy">
+									<arg value="--parallel" />
+									<arg value="-Dbuild.profile=portal-pre" />
+									<arg value="-Pforced.deploy.dir=${project.dir}/tmp/lib-pre" />
+								</gradle-execute>
+
+								<get-test-app-server-lib-portal-dir />
+
+								<unzip
+									dest="portal-impl/classes"
+									src="${test.app.server.lib.portal.dir}/portal-impl.jar"
+								/>
+
+								<ant dir="portal-test" inheritAll="false" target="jar" />
+
+								<local name="artifact.version" />
+
+								<property name="artifact.version" value="1.0.0-TEST_ARTIFACT" />
+
+								<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/portal-impl.jar" artifact.name="com.liferay.portal.impl" artifact.version="${artifact.version}" />
+								<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/portal-kernel.jar" artifact.name="com.liferay.portal.kernel" artifact.version="${artifact.version}" />
+								<copy-artifact-to-local-cache artifact.file="${project.dir}/portal-test/portal-test.jar" artifact.name="com.liferay.portal.test" artifact.version="${artifact.version}" />
+								<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/util-bridges.jar" artifact.name="com.liferay.util.bridges" artifact.version="${artifact.version}" />
+								<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/util-java.jar" artifact.name="com.liferay.util.java" artifact.version="${artifact.version}" />
+								<copy-artifact-to-local-cache artifact.file="${test.app.server.lib.portal.dir}/util-taglib.jar" artifact.name="com.liferay.util.taglib" artifact.version="${artifact.version}" />
 							</then>
 							<elseif>
 								<and>
@@ -1950,9 +1957,7 @@ ${poshi.runner.testsuite.testcase.name}</echo>
 								<param name="database.type" value="@{database.type}" />
 							</antcall>
 
-							<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false
-
-com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000</echo>
+							<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false</echo>
 
 							<gradle-execute dir="modules/apps/static/portal-lpkg-deployer/portal-lpkg-deployer-test" task="test">
 								<arg value="test" />
@@ -2156,8 +2161,7 @@ com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000</echo>
 								<param name="database.type" value="@{database.type}" />
 							</antcall>
 
-							<echo file="${app.server.classes.portal.dir}/system-ext.properties">com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000
-log.sanitizer.enabled=false</echo>
+							<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false</echo>
 
 							<gradle-execute dir="modules/apps/static/portal-lpkg-deployer/portal-lpkg-deployer-test" task="test">
 								<arg value="test" />
@@ -2793,8 +2797,7 @@ log.sanitizer.enabled=false</echo>
 								<param name="database.type" value="@{database.type}" />
 							</antcall>
 
-							<echo file="${app.server.classes.portal.dir}/system-ext.properties">com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000
-log.sanitizer.enabled=false</echo>
+							<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false</echo>
 
 							<antcall inheritall="false" target="start-app-server" />
 
@@ -2976,8 +2979,7 @@ log.sanitizer.enabled=false</echo>
 				<param name="database.type" value="@{database.type}" />
 			</antcall>
 
-			<echo file="${app.server.classes.portal.dir}/system-ext.properties">com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000
-log.sanitizer.enabled=false</echo>
+			<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false</echo>
 
 			<ant dir="modules" inheritAll="false" target="build-app-lpkg-all">
 				<property name="app.server.parent.dir" value="${project.dir}/bundles" />
@@ -3249,6 +3251,13 @@ log.sanitizer.enabled=false</echo>
 				<equals arg1="${suite.search.engine}" arg2="solr" />
 				<then>
 					<ant antfile="build-test-solr.xml" target="stop-solr-core" />
+				</then>
+			</if>
+
+			<if>
+				<contains string="${suite.search.engine}" substring="opensearch" />
+				<then>
+					<ant antfile="build-test-elasticsearch7.xml" target="stop-opensearch" />
 				</then>
 			</if>
 		</sequential>
@@ -5082,6 +5091,12 @@ information. Make sure to commit in all format-javadoc results.
 		<run-functional-test app.server.type="jboss" app.server.version="7.3.0" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
 	</target>
 
+	<target name="functional-smoke-jboss73-mysql57-jdk21_zulu">
+		<set-app-server-version-number app.server.type="jboss" app.server.version="7.3.0" />
+
+		<run-functional-test app.server.type="jboss" app.server.version="7.3.0" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
+	</target>
+
 	<target name="functional-smoke-jboss74-mysql57-jdk8">
 		<set-app-server-version-number app.server.type="jboss" app.server.version="7.4.0" />
 
@@ -5089,6 +5104,12 @@ information. Make sure to commit in all format-javadoc results.
 	</target>
 
 	<target name="functional-smoke-jboss74-mysql57-jdk11_open">
+		<set-app-server-version-number app.server.type="jboss" app.server.version="7.4.0" />
+
+		<run-functional-test app.server.type="jboss" app.server.version="7.4.0" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
+	</target>
+
+	<target name="functional-smoke-jboss74-mysql57-jdk21_zulu">
 		<set-app-server-version-number app.server.type="jboss" app.server.version="7.4.0" />
 
 		<run-functional-test app.server.type="jboss" app.server.version="7.4.0" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
@@ -5286,6 +5307,12 @@ information. Make sure to commit in all format-javadoc results.
 		<run-functional-test app.server.type="weblogic" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
 	</target>
 
+	<target name="functional-smoke-weblogic141-mysql57-jdk21_zulu">
+		<set-app-server-version-number app.server.type="weblogic" app.server.version="14.1.1" />
+
+		<run-functional-test app.server.type="weblogic" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
+	</target>
+
 	<target name="functional-smoke-websphere90-mysql57-jdk8">
 		<run-functional-test app.server.type="websphere" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
 	</target>
@@ -5330,6 +5357,12 @@ information. Make sure to commit in all format-javadoc results.
 		<run-functional-test app.server.type="wildfly" app.server.version="23.0.0" database.type="mariadb" test.portal.log.assert="true" />
 	</target>
 
+	<target name="functional-smoke-wildfly230-mariadb106-jdk21_zulu">
+		<set-app-server-version-number app.server.type="wildfly" app.server.version="23.0.0" />
+
+		<run-functional-test app.server.type="wildfly" app.server.version="23.0.0" database.type="mariadb" test.portal.log.assert="true" />
+	</target>
+
 	<target name="functional-smoke-wildfly261-mariadb104-jdk8">
 		<set-app-server-version-number app.server.type="wildfly" app.server.version="26.1.0" />
 
@@ -5349,6 +5382,12 @@ information. Make sure to commit in all format-javadoc results.
 	</target>
 
 	<target name="functional-smoke-wildfly261-mariadb106-jdk11_open">
+		<set-app-server-version-number app.server.type="wildfly" app.server.version="26.1.0" />
+
+		<run-functional-test app.server.type="wildfly" app.server.version="26.1.0" database.type="mariadb" test.portal.log.assert="true" />
+	</target>
+
+	<target name="functional-smoke-wildfly261-mariadb106-jdk21_zulu">
 		<set-app-server-version-number app.server.type="wildfly" app.server.version="26.1.0" />
 
 		<run-functional-test app.server.type="wildfly" app.server.version="26.1.0" database.type="mariadb" test.portal.log.assert="true" />
@@ -5443,6 +5482,10 @@ information. Make sure to commit in all format-javadoc results.
 	</target>
 
 	<target name="functional-tomcat90-mysql57-jdk11_zulu">
+		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" />
+	</target>
+
+	<target name="functional-tomcat90-mysql57-jdk21_zulu">
 		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" />
 	</target>
 
@@ -5623,6 +5666,10 @@ information. Make sure to commit in all format-javadoc results.
 	</target>
 
 	<target name="functional-upgrade-tomcat90-mysql57-jdk11_open">
+		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" />
+	</target>
+
+	<target name="functional-upgrade-tomcat90-mysql57-jdk21_zulu">
 		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" />
 	</target>
 
@@ -6841,6 +6888,10 @@ information. Make sure to commit in all format-javadoc results.
 		<run-modules-integration-test database.type="mysql" database.version="5.7" />
 	</target>
 
+	<target name="modules-integration-mysql57-jdk21_zulu">
+		<run-modules-integration-test database.type="mysql" database.version="5.7" />
+	</target>
+
 	<target name="modules-integration-mysql80-jdk8">
 		<run-modules-integration-test database.type="mysql" database.version="8.0" />
 	</target>
@@ -7219,44 +7270,76 @@ ${output.content}</echo>
 
 						<antcall inheritAll="false" target="prepare-log4j-ext-xml" />
 
-						<antcall if:set="env.JENKINS_HOME" inheritAll="false" target="prepare-portal-ext-properties" />
+						<generate-jdbc-properties properties.file="portal-impl/src/portal-ext.properties" />
 
-						<antcall inheritall="false" target="start-app-server" />
+						<apply-portal-ext-properties />
 
-						<waitfor maxwait="${timeout.app.server.wait}" maxwaitunit="second">
-							<http url="http://localhost:8080/web/guest" />
-						</waitfor>
+						<condition else="portal" property="playwright.project.name" value="${env.PLAYWRIGHT_PROJECT_NAME}">
+							<isset property="env.PLAYWRIGHT_PROJECT_NAME" />
+						</condition>
 
 						<trycatch>
 							<try>
+								<ant antfile="build-test-playwright.xml" target="set-up-playwright-environment">
+									<property name="playwright.project.name" value="${playwright.project.name}" />
+								</ant>
+
 								<start-docker-playwright />
 
 								<gradle-execute dir="${playwright.dir}" task="npmInstall" />
 
-								<local name="playwright.args" />
+								<local name="playwright.test.shard" />
 
 								<if>
 									<isset property="PLAYWRIGHT_ARGS_${axis.variable}" />
 									<then>
-										<propertycopy from="PLAYWRIGHT_ARGS_${axis.variable}" name="playwright.args" />
+										<propertycopy from="PLAYWRIGHT_ARGS_${axis.variable}" name="playwright.test.shard" />
 									</then>
 									<else>
-										<property name="playwright.args" value="" />
+										<property name="playwright.test.shard" value="" />
 									</else>
 								</if>
+
+								<if>
+									<isset property="PLAYWRIGHT_PROJECT_NAME" />
+									<then>
+										<propertycopy from="PLAYWRIGHT_PROJECT_NAME" name="playwright.project.name" />
+									</then>
+									<else>
+										<property name="playwright.project.name" value="" />
+									</else>
+								</if>
+
+								<local name="playwright.command" />
+
+								<if>
+									<equals arg1="${playwright.project.name}" arg2="" />
+									<then>
+										<property name="playwright.command" value="npx playwright test ${playwright.test.shard}" />
+									</then>
+									<else>
+										<property name="playwright.command" value="npx playwright test --project ${playwright.project.name} ${playwright.test.shard}" />
+									</else>
+								</if>
+
+								<echo>Running "${playwright.command}" from ${playwright.dir}</echo>
 
 								<docker-execute container="${playwright.docker.host}">
 									cd ${playwright.dir}
 
-									npx playwright test ${playwright.args}
+									${playwright.command}
 								</docker-execute>
 							</try>
 							<finally>
 								<stop-docker-playwright />
 
-								<antcall target="stop-app-server" />
+								<ant antfile="build-test-playwright.xml" target="tear-down-playwright-environment">
+									<property name="playwright.project.name" value="${playwright.project.name}" />
+								</ant>
 
 								<split-testsuites-junit-report test.suites.report.filepath="${playwright.dir}/test-results/TEST-playwright.xml" />
+
+								<print-docker-database-logs />
 							</finally>
 						</trycatch>
 					</test-action>
@@ -7267,6 +7350,10 @@ ${output.content}</echo>
 				<setup-test-environment />
 			</test-set-up>
 		</run-batch-test>
+	</target>
+
+	<target name="playwright-js-tomcat90-mysql57-jdk8_stable">
+		<antcall target="playwright-js-tomcat90-mysql57-jdk8" />
 	</target>
 
 	<target name="plugins-compile-jdk8">
@@ -8697,9 +8784,9 @@ ${output.content}</echo>
 							<available file="${workspace.dir}" />
 							<then>
 								<echo></echo>
-								<echo>#</echo>
-								<echo># @{workspace.name}</echo>
-								<echo>#</echo>
+								<echo>##</echo>
+								<echo>## @{workspace.name}</echo>
+								<echo>##</echo>
 								<echo></echo>
 
 								<execute dir="${workspace.dir}">

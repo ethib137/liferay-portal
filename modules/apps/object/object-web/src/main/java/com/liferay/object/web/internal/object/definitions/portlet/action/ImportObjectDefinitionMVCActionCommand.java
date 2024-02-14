@@ -83,14 +83,15 @@ public class ImportObjectDefinitionMVCActionCommand
 					"title",
 					_language.get(
 						_portal.getHttpServletRequest(actionRequest),
-						"the-structure-was-imported-without-a-custom-view"));
+						"the-object-definition-was-imported-without-a-custom-" +
+							"view"));
 			}
 			else {
 				jsonObject = JSONUtil.put(
 					"title",
 					_language.get(
 						_portal.getHttpServletRequest(actionRequest),
-						"the-structure-failed-to-import"));
+						"the-object-definition-failed-to-import"));
 			}
 
 			JSONPortletResponseUtil.writeJSON(
@@ -138,12 +139,9 @@ public class ImportObjectDefinitionMVCActionCommand
 		}
 
 		objectDefinition.setName(ParamUtil.getString(actionRequest, "name"));
-
-		if (FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
-			objectDefinition.setObjectFolderExternalReferenceCode(
-				ParamUtil.getString(
-					actionRequest, "objectFolderExternalReferenceCode"));
-		}
+		objectDefinition.setObjectFolderExternalReferenceCode(
+			ParamUtil.getString(
+				actionRequest, "objectFolderExternalReferenceCode"));
 
 		ObjectDefinition putObjectDefinition =
 			objectDefinitionResource.putObjectDefinitionByExternalReferenceCode(

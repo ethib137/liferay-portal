@@ -7,7 +7,7 @@ import ClayForm from '@clayui/form';
 import {Container} from '@clayui/layout';
 import classNames from 'classnames';
 import {LearnMessage, LearnResourcesContext} from 'frontend-js-components-web';
-import {fetch} from 'frontend-js-web';
+import {fetch, getOpener} from 'frontend-js-web';
 import React, {FormEvent, useState} from 'react';
 
 import {ErrorMessage} from './ErrorMessage';
@@ -17,9 +17,11 @@ import {ImagesResult} from './ImagesResult';
 import {LoadingMessage} from './LoadingMessage';
 
 interface Props {
+	eventName?: string;
 	getGenerationsURL: string;
 	learnResources: AICreatorModalLearnResources;
 	portletNamespace: string;
+	uploadGenerationsURL: string;
 }
 
 type AICreatorModalLearnResources = {
@@ -34,44 +36,94 @@ type AICreatorModalLearnResources = {
 };
 
 type RequestStatus =
+	| {type: 'adding'}
 	| {type: 'idle'}
 	| {type: 'loading'}
 	| {errorMessage: string; type: 'error'};
 
 export default function AICreatorImageModal({
+	eventName,
 	getGenerationsURL,
 	learnResources,
 	portletNamespace,
+	uploadGenerationsURL,
 }: Props) {
 	const closeModal = () => {
-		const opener = Liferay.Util.getOpener();
-
-		opener.Liferay.fire('closeModal');
+		getOpener().Liferay.fire('closeModal');
 	};
 
 	const [status, setStatus] = useState<RequestStatus>({type: 'idle'});
 	const [imagesURL, setImagesURL] = useState<string[] | null>(null);
 
-	const onAdd = () => {
-		if (imagesURL) {
-			const opener = Liferay.Util.getOpener();
+	const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
-			opener.Liferay.fire('closeModal', {imagesURL});
+	const setErrorStatus = (
+		errorMessage = Liferay.Language.get('an-unexpected-error-occurred')
+	) => {
+		setStatus({
+			errorMessage,
+			type: 'error',
+		});
+	};
+
+	const onAdd = () => {
+		if (selectedImages.length) {
+			setStatus({type: 'adding'});
+
+			const addedImages: string[] = [];
+
+			Promise.all(
+				selectedImages.map((imageURL) => {
+					const formData = new FormData();
+					formData.append(`${portletNamespace}urlPath`, imageURL);
+
+					return fetch(uploadGenerationsURL, {
+						body: formData,
+						method: 'POST',
+					})
+						.then((response) => response.json())
+						.then((json) => {
+							if (json.success) {
+								addedImages.push(imageURL);
+							}
+							else {
+								setErrorStatus(json.error?.message);
+							}
+						})
+						.catch((error) => {
+							if (process.env.NODE_ENV === 'development') {
+								console.error(error);
+							}
+
+							setErrorStatus();
+						});
+				})
+			).then(() => {
+				setStatus({type: 'idle'});
+
+				getOpener().Liferay.fire(eventName, {
+					selectedItems: addedImages,
+				});
+			});
 		}
+	};
+
+	const onSelectedChange = (imageURL: string) => {
+		const newSelectedImages = [...selectedImages];
+
+		if (newSelectedImages.includes(imageURL)) {
+			newSelectedImages.splice(newSelectedImages.indexOf(imageURL), 1);
+		}
+		else {
+			newSelectedImages.push(imageURL);
+		}
+
+		setSelectedImages(newSelectedImages);
 	};
 
 	const onSubmit = (event: FormEvent) => {
 		event.preventDefault();
 		setStatus({type: 'loading'});
-
-		const setErrorStatus = (
-			errorMessage = Liferay.Language.get('an-unexpected-error-occurred')
-		) => {
-			setStatus({
-				errorMessage,
-				type: 'error',
-			});
-		};
 
 		const formData = new FormData(event.target as HTMLFormElement);
 		const url = new URL(window.location.href);
@@ -131,7 +183,13 @@ export default function AICreatorImageModal({
 					>
 						<FormImage portletNamespace={portletNamespace} />
 
-						{imagesURL && <ImagesResult imagesURL={imagesURL} />}
+						{imagesURL && (
+							<ImagesResult
+								imagesURL={imagesURL}
+								onSelectedChange={onSelectedChange}
+								selectedImages={selectedImages}
+							/>
+						)}
 
 						<ClayForm.Group className="c-mb-0">
 							<LearnResourcesContext.Provider
@@ -147,6 +205,16 @@ export default function AICreatorImageModal({
 
 					<div className="d-flex flex-column flex-shrink-0">
 						<FormFooter
+							addButtonLabel={Liferay.Language.get(
+								'add-selected'
+							)}
+							disableAddButton={Boolean(
+								!selectedImages?.length ||
+									status.type === 'adding'
+							)}
+							disableRetryButton={Boolean(
+								status.type === 'adding'
+							)}
 							onAdd={onAdd}
 							onClose={closeModal}
 							showAddButton={Boolean(imagesURL?.length)}

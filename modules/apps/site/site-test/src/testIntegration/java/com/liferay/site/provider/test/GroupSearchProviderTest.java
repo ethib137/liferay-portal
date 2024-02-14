@@ -6,8 +6,10 @@
 package com.liferay.site.provider.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
@@ -34,6 +36,7 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.site.provider.GroupSearchProvider;
 import com.liferay.site.search.GroupSearch;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -121,10 +124,16 @@ public class GroupSearchProviderTest {
 			PropsValues.class, "GROUPS_COMPLEX_SQL_CLASS_NAMES",
 			new String[] {"com.liferay.portal.kernel.model.User"});
 
-		_assertGroupSearch(
-			childGroup1,
-			_groupSearchProvider.getGroupSearch(
-				mockLiferayPortletActionRequest, new MockLiferayPortletURL()));
+		GroupSearch groupSearch = new GroupSearch(
+			mockLiferayPortletActionRequest, new MockLiferayPortletURL());
+
+		GroupSearchProvider.setResultsAndTotal(
+			Arrays.asList(
+				Company.class.getName(), Group.class.getName(),
+				Organization.class.getName()),
+			null, groupSearch, mockLiferayPortletActionRequest);
+
+		_assertGroupSearch(childGroup1, groupSearch);
 
 		ReflectionTestUtil.setFieldValue(
 			PropsValues.class, "GROUPS_COMPLEX_SQL_CLASS_NAMES",
@@ -135,8 +144,14 @@ public class GroupSearchProviderTest {
 				"com.liferay.portal.kernel.model.Company"
 			});
 
-		GroupSearch complexSQLGroupSearch = _groupSearchProvider.getGroupSearch(
+		GroupSearch complexSQLGroupSearch = new GroupSearch(
 			mockLiferayPortletActionRequest, new MockLiferayPortletURL());
+
+		GroupSearchProvider.setResultsAndTotal(
+			Arrays.asList(
+				Company.class.getName(), Group.class.getName(),
+				Organization.class.getName()),
+			null, complexSQLGroupSearch, mockLiferayPortletActionRequest);
 
 		_assertGroupSearch(childGroup1, complexSQLGroupSearch);
 	}
@@ -177,8 +192,5 @@ public class GroupSearchProviderTest {
 
 	@Inject
 	private GroupLocalService _groupLocalService;
-
-	@Inject
-	private GroupSearchProvider _groupSearchProvider;
 
 }

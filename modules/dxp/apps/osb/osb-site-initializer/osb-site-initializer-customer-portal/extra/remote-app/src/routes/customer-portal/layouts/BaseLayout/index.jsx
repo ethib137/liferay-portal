@@ -3,9 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useEffect, useRef, useState} from 'react';
 import {Outlet, useParams} from 'react-router-dom';
+import {useProjectOrganizations} from '~/routes/home/hooks/useProjectCategoryItems';
 import ProjectBreadcrumb from '../../components/ProjectBreadcrumb/ProjectBreadcrumb';
+import ProjectErrorMessage from '../../components/ProjectErrorMessage';
 import SideMenu from '../../containers/SideMenu';
 
 const Layout = () => {
@@ -19,6 +22,49 @@ const Layout = () => {
 			window.location.reload();
 		}
 	}, [accountKey]);
+
+	const {myUserAccount, organizations, swr} = useProjectOrganizations();
+
+	if (
+		swr.myUserAccountSWR.isLoading ||
+		swr.myUserAccountSWR.isValidating ||
+		swr.organizationsSWR.isLoading ||
+		swr.organizationsSWR.isValidating
+	) {
+		return <ClayLoadingIndicator />;
+	}
+
+	const teamMembersERC = myUserAccount?.accountBriefs?.map(
+		({externalReferenceCode}) => externalReferenceCode
+	);
+	const isTeamMember = teamMembersERC.includes(accountKey);
+
+	const liferayContactERC =
+		myUserAccount.accountBriefs
+			?.filter(({roleBriefs}) =>
+				roleBriefs.some(
+					(roleBrief) => roleBrief.name === 'Provisioning'
+				)
+			)
+			.map(({externalReferenceCode}) => externalReferenceCode) || [];
+
+	const accountInsideOrganization = organizations.some(
+		({externalReferenceCode}) => externalReferenceCode === accountKey
+	);
+	const isLiferayContact = liferayContactERC.includes(accountKey);
+	const isAccountAdministrator = myUserAccount.roleBriefs?.some(
+		(roleBrief) => roleBrief.name === 'Administrator'
+	);
+
+	const accountPermission =
+		accountInsideOrganization ||
+		isAccountAdministrator ||
+		isLiferayContact ||
+		isTeamMember;
+
+	if (!accountPermission) {
+		return <ProjectErrorMessage />;
+	}
 
 	return (
 		<div className="d-flex position-relative w-100">

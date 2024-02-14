@@ -78,7 +78,6 @@ import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.model.Role;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -465,7 +464,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				HashMapBuilder.put(
 					LocaleUtil.getDefault(), RandomTestUtil.randomString()
 				).build(),
-				null, true, null, User.class.getName(), serviceContext);
+				null, true, null, serviceContext);
 
 		SegmentsExperience segmentsExperience =
 			_segmentsExperienceLocalService.addSegmentsExperience(
@@ -917,7 +916,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 				RandomTestUtil.randomString(), StringPool.BLANK,
 				"<lfr-editable id=\"fragmentEditableId\" type=\"text\">" +
 					"Default Fragment Text</lfr-editable>",
-				StringPool.BLANK, false, null, null, 0,
+				StringPool.BLANK, false, null, null, 0, false,
 				FragmentConstants.TYPE_COMPONENT, null,
 				WorkflowConstants.STATUS_APPROVED, serviceContext);
 
@@ -1563,6 +1562,8 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 							{
 								changeFrequency = ChangeFrequency.ALWAYS;
 								include = RandomTestUtil.randomBoolean();
+								includeChildSitePages =
+									RandomTestUtil.randomBoolean();
 								pagePriority = RandomTestUtil.randomDouble();
 							}
 						};

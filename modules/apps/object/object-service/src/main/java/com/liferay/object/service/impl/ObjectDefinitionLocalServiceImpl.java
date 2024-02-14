@@ -89,12 +89,16 @@ import com.liferay.portal.kernel.cache.MultiVMPool;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cluster.ClusterExecutorUtil;
 import com.liferay.portal.kernel.cluster.ClusterRequest;
+import com.liferay.portal.kernel.dao.db.DB;
+import com.liferay.portal.kernel.dao.db.DBManagerUtil;
+import com.liferay.portal.kernel.dao.jdbc.ConnectionUtil;
 import com.liferay.portal.kernel.dao.jdbc.CurrentConnection;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dependency.manager.DependencyManagerSyncUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -138,6 +142,8 @@ import com.liferay.portal.search.spi.model.query.contributor.ModelPreFilterContr
 import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
+import java.sql.Connection;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -147,6 +153,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.sql.DataSource;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -284,7 +292,11 @@ public class ObjectDefinitionLocalServiceImpl
 			return objectDefinition;
 		}
 
+		objectDefinition.setLabelMap(
+			systemObjectDefinitionManager.getLabelMap());
 		objectDefinition.setObjectFolderId(objectFolderId);
+		objectDefinition.setPluralLabelMap(
+			systemObjectDefinitionManager.getPluralLabelMap());
 		objectDefinition.setVersion(systemObjectDefinitionManager.getVersion());
 
 		objectDefinition = objectDefinitionPersistence.update(objectDefinition);
@@ -750,6 +762,14 @@ public class ObjectDefinitionLocalServiceImpl
 
 	@Override
 	public List<ObjectDefinition> getObjectDefinitions(
+		boolean accountEntryRestricted) {
+
+		return objectDefinitionPersistence.findByAccountEntryRestricted(
+			accountEntryRestricted);
+	}
+
+	@Override
+	public List<ObjectDefinition> getObjectDefinitions(
 		long companyId, boolean active, boolean system, int status) {
 
 		return objectDefinitionPersistence.findByC_A_S_S(
@@ -822,6 +842,7 @@ public class ObjectDefinitionLocalServiceImpl
 		return false;
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectDefinition publishCustomObjectDefinition(
 			long userId, long objectDefinitionId)
@@ -859,6 +880,7 @@ public class ObjectDefinitionLocalServiceImpl
 		return getObjectDefinition(objectDefinitionId);
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectDefinition publishSystemObjectDefinition(
 			long userId, long objectDefinitionId)
@@ -1081,7 +1103,7 @@ public class ObjectDefinitionLocalServiceImpl
 			boolean enableObjectEntryDraft, boolean enableObjectEntryHistory,
 			Map<Locale, String> labelMap, String name, String panelAppOrder,
 			String panelCategoryKey, boolean portlet,
-			Map<Locale, String> pluralLabelMap, String scope)
+			Map<Locale, String> pluralLabelMap, String scope, int status)
 		throws PortalException {
 
 		ObjectDefinition objectDefinition =
@@ -1136,7 +1158,7 @@ public class ObjectDefinitionLocalServiceImpl
 			null, enableCategorization, enableComments, enableLocalization,
 			enableObjectEntryDraft, enableObjectEntryHistory, labelMap, name,
 			panelAppOrder, panelCategoryKey, portlet, null, null,
-			pluralLabelMap, scope);
+			pluralLabelMap, scope, status);
 	}
 
 	@Override
@@ -1545,16 +1567,6 @@ public class ObjectDefinitionLocalServiceImpl
 			null);
 	}
 
-	private void _createIndexMetadata(
-			String dbTableName, boolean unique, String... dbColumnNames)
-		throws PortalException {
-
-		ObjectDBManagerUtil.createIndexMetadata(
-			_currentConnection.getConnection(
-				objectDefinitionPersistence.getDataSource()),
-			dbTableName, unique, dbColumnNames);
-	}
-
 	private void _createLocalizationTable(ObjectDefinition objectDefinition) {
 		DynamicObjectDefinitionLocalizationTable
 			dynamicObjectDefinitionLocalizedTable =
@@ -1583,44 +1595,37 @@ public class ObjectDefinitionLocalServiceImpl
 		runSQL(dynamicObjectDefinitionTable.getCreateTableSQL());
 
 		for (ObjectField objectField : objectFields) {
-			boolean indexable = false;
-			boolean unique = false;
-
-			if (StringUtil.equals(
+			if (!StringUtil.equals(
 					objectField.getBusinessType(),
 					ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP)) {
 
-				indexable = true;
-			}
-			else if (objectField.hasUniqueValues()) {
-				indexable = true;
-				unique = true;
-			}
-
-			if (!indexable) {
 				continue;
 			}
 
-			if (objectField.isLocalized()) {
-				_createIndexMetadata(
-					objectDefinition.getLocalizationDBTableName(), unique,
-					objectField.getDBColumnName(), "languageId");
-			}
-			else {
-				_createIndexMetadata(
-					dbTableName, unique, objectField.getDBColumnName());
-			}
+			ObjectDBManagerUtil.createIndexMetadata(
+				_currentConnection.getConnection(
+					objectDefinitionPersistence.getDataSource()),
+				dbTableName, false, objectField.getDBColumnName());
 		}
 	}
 
 	private void _dropTable(String dbTableName) {
-		String sql = "drop table " + dbTableName;
+		String sql = "DROP_TABLE_IF_EXISTS(" + dbTableName + ")";
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("SQL: " + sql);
 		}
 
-		runSQL(sql);
+		DataSource dataSource = objectDefinitionPersistence.getDataSource();
+
+		DB db = DBManagerUtil.getDB();
+
+		try (Connection connection = ConnectionUtil.getConnection(dataSource)) {
+			db.runSQL(connection, new String[] {sql});
+		}
+		catch (Exception exception) {
+			throw new SystemException(exception);
+		}
 	}
 
 	private String _getClassName(
@@ -1675,8 +1680,7 @@ public class ObjectDefinitionLocalServiceImpl
 
 		if (objectFolderId == 0) {
 			ObjectFolder objectFolder =
-				_objectFolderLocalService.getUncategorizedObjectFolder(
-					companyId);
+				_objectFolderLocalService.getDefaultObjectFolder(companyId);
 
 			return objectFolder.getObjectFolderId();
 		}
@@ -1869,7 +1873,7 @@ public class ObjectDefinitionLocalServiceImpl
 			Map<Locale, String> labelMap, String name, String panelAppOrder,
 			String panelCategoryKey, boolean portlet,
 			String pkObjectFieldDBColumnName, String pkObjectFieldName,
-			Map<Locale, String> pluralLabelMap, String scope)
+			Map<Locale, String> pluralLabelMap, String scope, int status)
 		throws PortalException {
 
 		long oldObjectFolderId = objectDefinition.getObjectFolderId();
@@ -1883,7 +1887,7 @@ public class ObjectDefinitionLocalServiceImpl
 			objectDefinition);
 		_validateObjectFieldId(objectDefinition, descriptionObjectFieldId);
 		_validateObjectFieldId(objectDefinition, titleObjectFieldId);
-		_validateActive(objectDefinition, active);
+		_validateActive(active, status);
 		_validateEnableCategorization(
 			enableCategorization, objectDefinition.isModifiable(),
 			objectDefinition.getStorageType(), objectDefinition.isSystem());
@@ -2106,11 +2110,12 @@ public class ObjectDefinitionLocalServiceImpl
 		}
 	}
 
-	private void _validateActive(
-			ObjectDefinition objectDefinition, boolean active)
+	private void _validateActive(boolean active, int status)
 		throws PortalException {
 
-		if (active && !objectDefinition.isApproved()) {
+		if (active &&
+			!Objects.equals(WorkflowConstants.STATUS_APPROVED, status)) {
+
 			throw new ObjectDefinitionActiveException(
 				"Object definitions must be published before being activated");
 		}

@@ -1017,7 +1017,9 @@ definition {
 		task ("And adding only two of the four values as SKUs from SKUs tab of the Product") {
 			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
-			CommerceSKUs.addSKU(optionValuesList = "Delhi:1,Mumbai:2");
+			CommerceSKUs.addSKU(
+				optionValuesList = "Delhi:1,Mumbai:2",
+				priceList = "Minium Base Price List");
 		}
 
 		task ("When the buyer user logs in and navigates to the product detail page") {
@@ -1234,6 +1236,12 @@ definition {
 			CommerceSKUs.generateAllSkuCombinations();
 
 			CommerceNavigator.gotoEntry(entryName = 112);
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Price");
+
+			CommerceNavigator.gotoEntry(entryName = "Minium Base Price List");
 
 			CommerceEntry.editSkuPricingAndInventory(
 				basePrice = "20.00",
@@ -1524,6 +1532,12 @@ definition {
 				var priceAndQuantity = StringUtil.extractLast(${value}, ":");
 
 				CommerceNavigator.gotoEntry(entryName = ${sku});
+
+				SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+				CommerceEntry.gotoMenuTab(menuTab = "Price");
+
+				CommerceNavigator.gotoEntry(entryName = "Minium Base Price List");
 
 				CommerceEntry.editSkuPricingAndInventory(
 					basePrice = ${priceAndQuantity},
@@ -2295,7 +2309,7 @@ definition {
 	@description = "COMMERCE-12701 Verify that is possible to view and use the accordion 'Show Options' for the bundled products with UOM"
 	@priority = 5
 	test CanUseTheAccordionForBundledProductsWithUOM {
-		property custom.properties = "feature.flag.COMMERCE-9599=true${line.separator}feature.flag.COMMERCE-11287=true${line.separator}jsonws.web.service.paths.excludes=";
+		property custom.properties = "feature.flag.COMMERCE-9599=true${line.separator}jsonws.web.service.paths.excludes=";
 		property portal.acceptance = "true";
 
 		task ("Given a Minium site with a buyer user is created") {

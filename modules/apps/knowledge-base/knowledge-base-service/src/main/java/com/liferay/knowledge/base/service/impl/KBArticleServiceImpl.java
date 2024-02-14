@@ -25,6 +25,7 @@ import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
@@ -409,9 +410,9 @@ public class KBArticleServiceImpl extends KBArticleServiceBaseImpl {
 				orderByComparator);
 		}
 		else if (status == WorkflowConstants.STATUS_APPROVED) {
-			return kbArticlePersistence.filterFindByG_P_M_NotS(
+			return kbArticlePersistence.filterFindByG_P_M_S(
 				groupId, parentResourcePrimKey, true,
-				WorkflowConstants.STATUS_IN_TRASH, start, end,
+				WorkflowConstants.STATUS_APPROVED, start, end,
 				orderByComparator);
 		}
 
@@ -739,6 +740,15 @@ public class KBArticleServiceImpl extends KBArticleServiceBaseImpl {
 	}
 
 	@Override
+	public Lock lockKBArticle(long resourcePrimKey) throws PortalException {
+		_kbArticleModelResourcePermission.check(
+			getPermissionChecker(), resourcePrimKey, KBActionKeys.UPDATE);
+
+		return kbArticleLocalService.lockKBArticle(
+			getUserId(), resourcePrimKey);
+	}
+
+	@Override
 	public void moveKBArticle(
 			long resourcePrimKey, long parentResourceClassNameId,
 			long parentResourcePrimKey, double priority)
@@ -804,6 +814,14 @@ public class KBArticleServiceImpl extends KBArticleServiceBaseImpl {
 	}
 
 	@Override
+	public void unlockKBArticle(long resourcePrimKey) throws PortalException {
+		_kbArticleModelResourcePermission.check(
+			getPermissionChecker(), resourcePrimKey, KBActionKeys.UPDATE);
+
+		kbArticleLocalService.unlockKBArticle(resourcePrimKey);
+	}
+
+	@Override
 	public void unsubscribeGroupKBArticles(long groupId, String portletId)
 		throws PortalException {
 
@@ -828,6 +846,24 @@ public class KBArticleServiceImpl extends KBArticleServiceBaseImpl {
 
 		kbArticleLocalService.unsubscribeKBArticle(
 			getUserId(), resourcePrimKey);
+	}
+
+	@Override
+	public KBArticle updateAndUnlockKBArticle(
+			long resourcePrimKey, String title, String content,
+			String description, String[] sections, String sourceURL,
+			Date displayDate, Date expirationDate, Date reviewDate,
+			String[] selectedFileNames, long[] removeFileEntryIds,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		_kbArticleModelResourcePermission.check(
+			getPermissionChecker(), resourcePrimKey, KBActionKeys.UPDATE);
+
+		return kbArticleLocalService.updateAndUnlockKBArticle(
+			getUserId(), resourcePrimKey, title, content, description, sections,
+			sourceURL, displayDate, expirationDate, reviewDate,
+			selectedFileNames, removeFileEntryIds, serviceContext);
 	}
 
 	@Override

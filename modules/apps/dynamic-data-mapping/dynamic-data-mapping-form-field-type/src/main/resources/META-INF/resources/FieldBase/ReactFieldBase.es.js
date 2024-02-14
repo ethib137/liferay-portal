@@ -19,7 +19,7 @@ import {
 } from 'data-engine-js-components-web';
 import {sub} from 'frontend-js-web';
 import moment from 'moment/min/moment-with-locales';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 import './FieldBase.scss';
 
@@ -157,6 +157,9 @@ const Popover = ({tooltip}) => {
 	);
 };
 
+const FIELDSET_REGEX = /Fieldset\d+/g;
+const FIELDSET_REPEAT_INDEX_REGEX = /\$(\d+)(?:#|\$|$)/g;
+
 export function FieldBase({
 	accessible = true,
 	children,
@@ -167,6 +170,7 @@ export function FieldBase({
 	hideField,
 	hideEditedFlag,
 	id,
+	instanceId,
 	itemPath,
 	label,
 	localizedValue = {},
@@ -174,7 +178,6 @@ export function FieldBase({
 	nestedFields,
 	onClick,
 	overMaximumRepetitionsLimit,
-	parentInstanceId,
 	readOnly,
 	repeatable,
 	required,
@@ -189,6 +192,9 @@ export function FieldBase({
 	warningMessage,
 }) {
 	const {editingLanguageId, pages} = useFormState();
+	const [disabledRepeatableButton, setDisabledRepeatableButton] = useState(
+		false
+	);
 	const dispatch = useForm();
 
 	const hasError = displayErrors && errorMessage && !valid;
@@ -211,12 +217,17 @@ export function FieldBase({
 		}
 
 		return Object.entries(localizedValue).map(([locale, value]) => {
-			if (locale === editingLanguageId) {
+			if (
+				!Liferay.FeatureFlags['LPS-114700'] &&
+				locale === editingLanguageId
+			) {
 				return null;
 			}
 
 			return (
 				<input
+					data-field-name={`${fieldName}${instanceId}`}
+					data-languageid={locale}
 					key={locale}
 					name={name.replace(editingLanguageId, locale)}
 					type="hidden"
@@ -224,7 +235,7 @@ export function FieldBase({
 				/>
 			);
 		});
-	}, [localizedValue, editingLanguageId, name, type]);
+	}, [localizedValue, editingLanguageId, fieldName, instanceId, name, type]);
 
 	const renderLabel =
 		(label && showLabel) || hideField || repeatable || required || tooltip;
@@ -241,10 +252,10 @@ export function FieldBase({
 		type === 'numeric' ||
 		type === 'image' ||
 		type === 'rich_text' ||
-		type === 'search_location' ||
-		type === 'select';
+		type === 'search_location';
 	const readFieldDetails = !showFor;
-	const hasFieldDetails = accessible && fieldDetails && readFieldDetails;
+	const hasFieldDetails =
+		accessible && fieldDetails && readFieldDetails && type !== 'select';
 
 	const accessiblePropsGroup = {
 		...(!renderLabel && {'aria-labelledby': fieldDetailsId}),
@@ -261,28 +272,76 @@ export function FieldBase({
 		columns: [{fields: [field], size: 12}],
 	}));
 
-	const checkRepetitions = () => {
-		let repetitionsCounter = 0;
+	const checkRepetitions = useMemo(() => {
+		if (repeatable && name) {
+			const currentFieldFieldsets = name.match(FIELDSET_REGEX);
+			const currentFieldsetRepeatIndexes = name.match(
+				FIELDSET_REPEAT_INDEX_REGEX
+			);
 
-		const visitor = new PagesVisitor(pages);
+			if (currentFieldsetRepeatIndexes) {
+				currentFieldsetRepeatIndexes.pop();
+			}
 
-		const newParentInstanceId = parentInstanceId;
+			const visitor = new PagesVisitor(pages);
 
-		visitor.mapFields(
-			(field) => {
-				if (
-					fieldReference === field.fieldReference &&
-					newParentInstanceId === field.parentInstanceId
-				) {
-					repetitionsCounter++;
+			const repeatableFields = [];
+
+			visitor.visitFields((field) => {
+				const fieldFieldsets = field.name.match(FIELDSET_REGEX);
+				const fieldsetRepeatIndexes = field.name.match(
+					FIELDSET_REPEAT_INDEX_REGEX
+				);
+
+				if (fieldsetRepeatIndexes) {
+					fieldsetRepeatIndexes.pop();
 				}
-			},
-			true,
-			true
-		);
 
-		return repetitionsCounter;
+				const isSameFieldset =
+					currentFieldFieldsets &&
+					fieldFieldsets &&
+					currentFieldsetRepeatIndexes &&
+					fieldsetRepeatIndexes &&
+					currentFieldFieldsets.every(
+						(fieldFieldset, index) =>
+							fieldFieldset === fieldFieldsets[index]
+					) &&
+					currentFieldsetRepeatIndexes.every(
+						(fieldFieldset, index) =>
+							fieldFieldset === fieldsetRepeatIndexes[index]
+					);
+
+				if (fieldReference === field.fieldReference && isSameFieldset) {
+					repeatableFields.push(field);
+				}
+
+				if (
+					!currentFieldFieldsets &&
+					fieldReference === field.fieldReference
+				) {
+					repeatableFields.push(field);
+				}
+			});
+
+			return repeatableFields.length;
+		}
+	}, [fieldReference, name, pages, repeatable]);
+
+	const disableRepeatableButton = () => {
+		setDisabledRepeatableButton(true);
+
+		setTimeout(() => {
+			setDisabledRepeatableButton(false);
+		}, 1000);
 	};
+
+	useEffect(() => {
+		Liferay.on('disableRepeatableButton', disableRepeatableButton);
+
+		return () => {
+			Liferay.detach('disableRepeatableButton', disableRepeatableButton);
+		};
+	}, []);
 
 	return (
 		<ClayForm.Group
@@ -299,14 +358,19 @@ export function FieldBase({
 		>
 			{repeatable && (
 				<div className="lfr-ddm-form-field-repeatable-toolbar">
-					{checkRepetitions() > 1 && (
+					{checkRepetitions > 1 && (
 						<ClayButton
 							aria-label={sub(
 								Liferay.Language.get('remove-duplicate-field'),
 								label ? label : type
 							)}
-							className="ddm-form-field-repeatable-delete-button p-0"
-							disabled={readOnly}
+							className={classNames(
+								'ddm-form-field-repeatable-delete-button p-0',
+								{
+									'ddm-form-field-repeatable-button-disabled': disabledRepeatableButton,
+								}
+							)}
+							disabled={readOnly || disabledRepeatableButton}
 							onClick={() =>
 								dispatch({
 									payload: name,
@@ -329,17 +393,16 @@ export function FieldBase({
 						className={classNames(
 							'ddm-form-field-repeatable-add-button p-0',
 							{
-								hide: overMaximumRepetitionsLimit,
+								'ddm-form-field-repeatable-button-disabled': disabledRepeatableButton,
+								'hide': overMaximumRepetitionsLimit,
 							}
 						)}
-						disabled={readOnly}
+						disabled={readOnly || disabledRepeatableButton}
 						onClick={() =>
-							setTimeout(() => {
-								dispatch({
-									payload: name,
-									type: CORE_EVENT_TYPES.FIELD.REPEATED,
-								});
-							}, 200)
+							dispatch({
+								payload: name,
+								type: CORE_EVENT_TYPES.FIELD.REPEATED,
+							})
 						}
 						small
 						title={Liferay.Language.get('duplicate')}

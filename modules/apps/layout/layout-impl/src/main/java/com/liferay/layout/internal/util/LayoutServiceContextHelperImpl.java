@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
-import com.liferay.portal.kernel.service.PortalPreferencesLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.ThemeLocalService;
@@ -120,9 +119,6 @@ public class LayoutServiceContextHelperImpl
 
 	@Reference
 	private Portal _portal;
-
-	@Reference
-	private PortalPreferencesLocalService _portalPreferencesLocalService;
 
 	@Reference
 	private ThemeLocalService _themeLocalService;
@@ -458,9 +454,7 @@ public class LayoutServiceContextHelperImpl
 
 		@Override
 		public void setAttribute(String name, Object value) {
-			if ((name != null) && (value != null)) {
-				_attributes.put(name, value);
-			}
+			_setAttribute(name, value);
 		}
 
 		@Override
@@ -486,6 +480,15 @@ public class LayoutServiceContextHelperImpl
 			throws IOException, ServletException {
 
 			return null;
+		}
+
+		private void _setAttribute(String name, Object value) {
+			if ((name != null) && (value != null)) {
+				_attributes.put(name, value);
+			}
+			else if (name != null) {
+				_attributes.remove(name);
+			}
 		}
 
 		private final Map<String, Object> _attributes =
@@ -569,7 +572,7 @@ public class LayoutServiceContextHelperImpl
 
 			@Override
 			public void setAttribute(String name, Object value) {
-				_attributes.put(name, value);
+				_setAttribute(name, value);
 			}
 
 			@Override

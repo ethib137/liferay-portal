@@ -26,6 +26,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.portlet.FriendlyURLResolver;
+import com.liferay.portal.kernel.portlet.FriendlyURLResolverRegistryUtil;
 import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
@@ -35,6 +37,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.site.configuration.manager.SitemapConfigurationManager;
 import com.liferay.site.manager.SitemapManager;
 import com.liferay.site.provider.SitemapURLProvider;
 import com.liferay.site.provider.helper.SitemapURLProviderHelper;
@@ -58,6 +61,19 @@ public class JournalArticleSitemapURLProvider implements SitemapURLProvider {
 	@Override
 	public String getClassName() {
 		return JournalArticle.class.getName();
+	}
+
+	@Override
+	public boolean isInclude(long companyId, long groupId)
+		throws PortalException {
+
+		if (_sitemapConfigurationManager.includeWebContentGroupEnabled(
+				companyId, groupId)) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -283,8 +299,7 @@ public class JournalArticleSitemapURLProvider implements SitemapURLProvider {
 				sb.append(JournalArticleConstants.CANONICAL_URL_SEPARATOR);
 			}
 			else {
-				sb.append(
-					FriendlyURLResolverConstants.URL_SEPARATOR_JOURNAL_ARTICLE);
+				sb.append(_getFriendlyURLSeparator());
 			}
 
 			sb.append(journalArticle.getUrlTitle());
@@ -338,6 +353,19 @@ public class JournalArticleSitemapURLProvider implements SitemapURLProvider {
 			groupId, layoutUuid, start, end);
 	}
 
+	private String _getFriendlyURLSeparator() {
+		FriendlyURLResolver friendlyURLResolver =
+			FriendlyURLResolverRegistryUtil.
+				getFriendlyURLResolverByDefaultURLSeparator(
+					FriendlyURLResolverConstants.URL_SEPARATOR_JOURNAL_ARTICLE);
+
+		if (friendlyURLResolver != null) {
+			return friendlyURLResolver.getURLSeparator();
+		}
+
+		return FriendlyURLResolverConstants.URL_SEPARATOR_JOURNAL_ARTICLE;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		JournalArticleSitemapURLProvider.class);
 
@@ -363,6 +391,9 @@ public class JournalArticleSitemapURLProvider implements SitemapURLProvider {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private SitemapConfigurationManager _sitemapConfigurationManager;
 
 	@Reference
 	private SitemapManager _sitemapManager;

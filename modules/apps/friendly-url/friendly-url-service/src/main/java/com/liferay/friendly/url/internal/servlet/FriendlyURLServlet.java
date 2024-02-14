@@ -353,19 +353,8 @@ public class FriendlyURLServlet extends HttpServlet {
 					redirectLayout = defaultLayout;
 				}
 				else {
-					List<Layout> layouts = layoutLocalService.getLayouts(
-						group.getGroupId(), _private,
-						LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
-
-					for (Layout layout : layouts) {
-						if (layout.matches(
-								httpServletRequest, layoutFriendlyURL)) {
-
-							redirectLayout = layout;
-
-							break;
-						}
-					}
+					redirectLayout = _getLayoutFriendlyURLLayout(
+						group.getGroupId(), layoutFriendlyURL);
 				}
 			}
 
@@ -816,6 +805,27 @@ public class FriendlyURLServlet extends HttpServlet {
 			_friendlyURLPathPrefix, pathInfo,
 			HttpComponentsUtil.parameterMapToString(
 				httpServletRequest.getParameterMap()));
+	}
+
+	private Layout _getLayoutFriendlyURLLayout(
+		long groupId, String friendlyURL) {
+
+		LayoutFriendlyURL layoutFriendlyURL =
+			layoutFriendlyURLLocalService.fetchFirstLayoutFriendlyURL(
+				groupId, _private, friendlyURL);
+
+		if (layoutFriendlyURL == null) {
+			return null;
+		}
+
+		Layout layout = layoutLocalService.fetchLayout(
+			layoutFriendlyURL.getPlid());
+
+		if ((layout != null) && !layout.isSystem()) {
+			return layout;
+		}
+
+		return null;
 	}
 
 	private String _getPathInfo(HttpServletRequest httpServletRequest) {

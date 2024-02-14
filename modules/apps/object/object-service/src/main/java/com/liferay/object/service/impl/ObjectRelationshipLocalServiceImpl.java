@@ -911,9 +911,10 @@ public class ObjectRelationshipLocalServiceImpl
 			objectDefinition2.getObjectDefinitionId());
 		_objectFieldLocalService.validateReadOnlyAndReadOnlyConditionExpression(
 			ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP, readOnly,
-			readOnlyConditionExpression);
+			readOnlyConditionExpression, required);
 		_objectFieldLocalService.validateRequired(
-			0, ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP, required);
+			ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP,
+			objectDefinition2.isApproved(), null, required);
 
 		ObjectField objectField = _objectFieldPersistence.create(
 			counterLocalService.increment());
@@ -972,7 +973,8 @@ public class ObjectRelationshipLocalServiceImpl
 
 		runSQL(
 			DynamicObjectDefinitionTableUtil.getAlterTableAddColumnSQL(
-				dbTableName, objectField.getDBColumnName(), "Long"));
+				dbTableName, objectField.getBusinessType(),
+				objectField.getDBColumnName(), "Long"));
 
 		ObjectDBManagerUtil.createIndexMetadata(
 			_currentConnection.getConnection(

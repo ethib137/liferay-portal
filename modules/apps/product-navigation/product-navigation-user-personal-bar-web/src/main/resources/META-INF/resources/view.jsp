@@ -29,6 +29,7 @@
 
 				<a
 					aria-label='<%= notificationsCount + StringPool.SPACE + LanguageUtil.get(request, "new-notification") %>'
+					data-qa-id="notificationsCount"
 					class="panel-notifications-count"
 					href="<%= (notificationsURL != null) ? notificationsURL : null %>"
 					title='<%= notificationsCount + StringPool.SPACE + LanguageUtil.get(request, "new-notification") %>'
@@ -55,7 +56,7 @@
 				displayType="unstyled"
 				icon="user"
 				label="sign-in"
-				propsTransformer="js/signInButtonPropsTransformer"
+				propsTransformer="{signInButtonPropsTransformer} from product-navigation-user-personal-bar-web"
 				small="<%= true %>"
 			/>
 		</span>

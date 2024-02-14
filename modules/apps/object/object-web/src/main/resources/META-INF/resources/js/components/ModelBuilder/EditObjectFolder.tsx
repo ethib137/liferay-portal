@@ -3,6 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {
+	API,
+	ModalEditObjectDefinitionExternalReferenceCode,
+	openToast,
+} from '@liferay/object-js-components-web';
+import {createResourceURL} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 import {
 	Edge,
@@ -13,10 +19,17 @@ import {
 	isNode,
 } from 'react-flow-renderer';
 
+import {formatActionURL} from '../../utils/fds';
 import {Scope} from '../ObjectDetails/EditObjectDetails';
+import {ModalAddObjectField} from '../ObjectField/ModalAddObjectField';
+import {ModalAddObjectRelationship} from '../ObjectRelationship/ModalAddObjectRelationship';
 import {ModalAddObjectDefinition} from '../ViewObjectDefinitions/ModalAddObjectDefinition';
+import {ModalDeleteObjectDefinition} from '../ViewObjectDefinitions/ModalDeleteObjectDefinition';
 import {ModalEditObjectFolder} from '../ViewObjectDefinitions/ModalEditObjectFolder';
-import {getUpdatedModelBuilderStructurePayload} from '../ViewObjectDefinitions/objectDefinitionUtil';
+import {
+	getDbTableName,
+	getUpdatedModelBuilderStructurePayload,
+} from '../ViewObjectDefinitions/objectDefinitionUtil';
 import Diagram from './Diagram/Diagram';
 import EditObjectFolderHeader from './EditObjectFolderHeader/EditObjectFolderHeader';
 import {ModalPublishObjectDefinitions} from './EditObjectFolderHeader/ModalPublishObjectDefinitions';
@@ -24,23 +37,13 @@ import EmptyObjectFolderCard from './EmptyObjectFolderCard/EmptyObjectFolderCard
 import LeftSidebar from './LeftSidebar/LeftSidebar';
 import {useObjectFolderContext} from './ModelBuilderContext/objectFolderContext';
 import {TYPES} from './ModelBuilderContext/typesEnum';
+import {RedirectToEditObjectDetailsModal} from './ObjectDefinitionNode/RedirectToEditObjectDetailsModal';
 import {RightSideBar} from './RightSidebar/index';
+import {LeftSidebarItem, ObjectRelationshipEdgeData} from './types';
+import {updatePreviousURLParam} from './utils';
 
 import './EditObjectFolder.scss';
-
-import {
-	API,
-	ModalEditObjectDefinitionExternalReferenceCode,
-	openToast,
-} from '@liferay/object-js-components-web';
-import {createResourceURL} from 'frontend-js-web';
-
-import {formatActionURL} from '../../utils/fds';
-import {ModalAddObjectField} from '../ObjectField/ModalAddObjectField';
-import {ModalAddObjectRelationship} from '../ObjectRelationship/ModalAddObjectRelationship';
-import {ModalDeleteObjectDefinition} from '../ViewObjectDefinitions/ModalDeleteObjectDefinition';
-import {RedirectToEditObjectDetailsModal} from './ObjectDefinitionNode/RedirectToEditObjectDetailsModal';
-import {ObjectRelationshipEdgeData} from './types';
+import {ModalMoveObjectDefinition} from '../ViewObjectDefinitions/ModalMoveObjectDefinition';
 
 interface EditObjectFolder {
 	companies: Scope[];
@@ -56,13 +59,17 @@ export default function EditObjectFolder({
 	const [
 		{
 			baseResourceURL,
-			deleteObjectDefinition,
+			deletedObjectDefinition,
 			editObjectDefinitionURL,
 			elements,
 			isLoadingObjectFolder,
+			learnResourceContext,
+			leftSidebarItems,
 			modelBuilderModals,
+			movedObjectDefinitionId,
 			objectDefinitionsStorageTypes,
 			objectFolderName,
+			objectFolders,
 			rightSidebarType,
 			selectedObjectDefinitionNode,
 			selectedObjectFolder,
@@ -77,7 +84,7 @@ export default function EditObjectFolder({
 	] = useState(false);
 
 	const edges = elements.filter((element) => isEdge(element)) as Edge<
-		ObjectRelationshipEdgeData
+		ObjectRelationshipEdgeData[]
 	>[];
 
 	const nodes = elements.filter((element) => isNode(element)) as Node<
@@ -85,35 +92,69 @@ export default function EditObjectFolder({
 	>[];
 
 	const handleDeleteObjectDefinition = (
-		deleteObjectDefinition: DeletedObjectDefinition
+		deletedObjectDefinition: DeletedObjectDefinition
 	) => {
 		dispatch({
 			payload: {
-				newDeleteObjectDefinition: deleteObjectDefinition,
+				deletedObjectDefinition,
 			},
 			type: TYPES.SET_DELETE_OBJECT_DEFINITION,
 		});
 	};
 
-	const updateModelBuilderStructure = async (
-		newObjectRelationshipId: number
+	const onAfterAddObjectRelationship = async (
+		newObjectRelationship: ObjectRelationship
 	) => {
 		const payload = await getUpdatedModelBuilderStructurePayload(
+			baseResourceURL,
 			selectedObjectFolder.name
 		);
+
+		if (
+			newObjectRelationship.objectDefinitionExternalReferenceCode1 !==
+			newObjectRelationship.objectDefinitionExternalReferenceCode2
+		) {
+			const objectDefinition2 = nodes.find(
+				({data}) =>
+					data?.externalReferenceCode ===
+					newObjectRelationship.objectDefinitionExternalReferenceCode2
+			);
+
+			if (objectDefinition2 && objectDefinition2.isHidden) {
+				const selectedSidebarItem = leftSidebarItems.find(
+					({objectFolderName}) =>
+						objectFolderName === selectedObjectFolder.name
+				) as LeftSidebarItem;
+
+				dispatch({
+					payload: {
+						hiddenObjectDefinitionNode: objectDefinition2.isHidden,
+						objectDefinitionId: objectDefinition2.data
+							?.id as number,
+						objectDefinitionName: objectDefinition2.data
+							?.name as string,
+						objectDefinitionNodes: nodes,
+						objectRelationshipEdges: edges,
+						selectedSidebarItem,
+					},
+					type: TYPES.CHANGE_NODE_VIEW,
+				});
+			}
+		}
 
 		dispatch({
 			payload: {
 				...payload,
+				dispatch,
 				rightSidebarType: 'objectRelationshipDetails',
-				selectedObjectRelationshipId: newObjectRelationshipId,
+				selectedObjectRelationshipId: newObjectRelationship.id,
 			},
 			type: TYPES.UPDATE_MODEL_BUILDER_STRUCTURE,
 		});
 
 		dispatch({
 			payload: {
-				selectedObjectRelationshipId: newObjectRelationshipId,
+				selectedObjectRelationshipId: newObjectRelationship.id,
 			},
 			type: TYPES.SET_SELECTED_OBJECT_RELATIONSHIP_EDGE,
 		});
@@ -147,13 +188,14 @@ export default function EditObjectFolder({
 			type: TYPES.SET_LOADING_OBJECT_FOLDER,
 		});
 
-		const updateModelBuilderStructure = async () => {
+		const makeFetch = async () => {
 			const payload = await getUpdatedModelBuilderStructurePayload(
+				baseResourceURL,
 				objectFolderName
 			);
 
 			dispatch({
-				payload,
+				payload: {...payload, dispatch},
 				type: TYPES.UPDATE_MODEL_BUILDER_STRUCTURE,
 			});
 
@@ -165,7 +207,7 @@ export default function EditObjectFolder({
 			});
 		};
 
-		updateModelBuilderStructure();
+		makeFetch();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [objectFolderName]);
@@ -183,6 +225,32 @@ export default function EditObjectFolder({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [showChangesSaved]);
 
+	useEffect(() => {
+		if (Object.keys(selectedObjectFolder).length) {
+			const makeFetch = async () =>
+				await API.putObjectFolderByExternalReferenceCode({
+					externalReferenceCode:
+						selectedObjectFolder.externalReferenceCode,
+					id: selectedObjectFolder.id,
+					label: selectedObjectFolder.label,
+					name: selectedObjectFolder.name,
+					objectFolderItems: selectedObjectFolder.objectFolderItems,
+				});
+
+			makeFetch();
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedObjectFolder.objectFolderItems?.length]);
+
+	Liferay.on('beforeNavigate', () => {
+		updatePreviousURLParam('objectFolderName', objectFolderName);
+	});
+
+	window.addEventListener('popstate', () => {
+		updatePreviousURLParam('objectFolderName', objectFolderName);
+	});
+
 	return (
 		<>
 			{modelBuilderModals.addObjectDefinition && (
@@ -190,27 +258,38 @@ export default function EditObjectFolder({
 					handleOnClose={() =>
 						dispatch({
 							payload: {
-								modelBuilderModals: {
-									...modelBuilderModals,
+								updatedModelBuilderModals: {
 									addObjectDefinition: false,
 								},
 							},
 							type: TYPES.UPDATE_VISIBILITY_MODEL_BUILDER_MODALS,
 						})
 					}
+					learnResourceContext={learnResourceContext}
 					objectDefinitionsStorageTypes={
 						objectDefinitionsStorageTypes
 					}
 					objectFolderExternalReferenceCode={
 						selectedObjectFolder.externalReferenceCode
 					}
-					onAfterSubmit={(newObjectDefinition) => {
+					onAfterSubmit={async (newObjectDefinition) => {
+						const dbTableName = await getDbTableName({
+							baseResourceURL,
+							objectDefinitionId: newObjectDefinition.id,
+						} as {
+							baseResourceURL: string;
+							objectDefinitionId: number;
+						});
+
 						dispatch({
 							payload: {
+								dbTableName,
+								dispatch,
+								elements,
+								leftSidebarItems,
 								newObjectDefinition,
-								objectDefinitionNodes: nodes,
-								selectedObjectFolderName:
-									selectedObjectFolder.name,
+								objectFolders,
+								selectedObjectFolder,
 							},
 							type: TYPES.ADD_OBJECT_DEFINITION_TO_OBJECT_FOLDER,
 						});
@@ -255,8 +334,7 @@ export default function EditObjectFolder({
 
 							dispatch({
 								payload: {
-									modelBuilderModals: {
-										...modelBuilderModals,
+									updatedModelBuilderModals: {
 										addObjectField: false,
 									},
 								},
@@ -277,8 +355,7 @@ export default function EditObjectFolder({
 						setVisibility={() =>
 							dispatch({
 								payload: {
-									modelBuilderModals: {
-										...modelBuilderModals,
+									updatedModelBuilderModals: {
 										addObjectField: false,
 									},
 								},
@@ -296,8 +373,7 @@ export default function EditObjectFolder({
 						handleOnClose={() => {
 							dispatch({
 								payload: {
-									modelBuilderModals: {
-										...modelBuilderModals,
+									updatedModelBuilderModals: {
 										addObjectRelationship: false,
 									},
 								},
@@ -312,15 +388,15 @@ export default function EditObjectFolder({
 						objectRelationshipParameterRequired={
 							objectRelationshipParameterRequired
 						}
-						onAfterSubmit={(newObjectRelationshipId: number) =>
-							updateModelBuilderStructure(newObjectRelationshipId)
+						onAfterAddObjectRelationship={(newObjectRelationship) =>
+							onAfterAddObjectRelationship(newObjectRelationship)
 						}
 						reload={false}
 					/>
 				)}
 
 			{modelBuilderModals.deleteObjectDefinition &&
-				deleteObjectDefinition && (
+				deletedObjectDefinition && (
 					<ModalDeleteObjectDefinition
 						handleDeleteObjectDefinition={() =>
 							handleDeleteObjectDefinition
@@ -328,8 +404,7 @@ export default function EditObjectFolder({
 						handleOnClose={() => {
 							dispatch({
 								payload: {
-									modelBuilderModals: {
-										...modelBuilderModals,
+									updatedModelBuilderModals: {
 										deleteObjectDefinition: false,
 									},
 								},
@@ -337,7 +412,7 @@ export default function EditObjectFolder({
 									TYPES.UPDATE_VISIBILITY_MODEL_BUILDER_MODALS,
 							});
 						}}
-						objectDefinition={deleteObjectDefinition}
+						objectDefinition={deletedObjectDefinition}
 					/>
 				)}
 
@@ -347,8 +422,7 @@ export default function EditObjectFolder({
 						handleOnClose={() => {
 							dispatch({
 								payload: {
-									modelBuilderModals: {
-										...modelBuilderModals,
+									updatedModelBuilderModals: {
 										editObjectDefinitionExternalReferenceCode: false,
 									},
 								},
@@ -409,8 +483,7 @@ export default function EditObjectFolder({
 					handleOnClose={() => {
 						dispatch({
 							payload: {
-								modelBuilderModals: {
-									...modelBuilderModals,
+								updatedModelBuilderModals: {
 									editObjectFolder: false,
 								},
 							},
@@ -423,6 +496,44 @@ export default function EditObjectFolder({
 				/>
 			)}
 
+			{modelBuilderModals.moveObjectDefinition &&
+				movedObjectDefinitionId && (
+					<ModalMoveObjectDefinition
+						handleOnClose={() => {
+							dispatch({
+								payload: {
+									updatedModelBuilderModals: {
+										moveObjectDefinition: false,
+									},
+								},
+								type:
+									TYPES.UPDATE_VISIBILITY_MODEL_BUILDER_MODALS,
+							});
+						}}
+						objectDefinitionId={movedObjectDefinitionId}
+						objectFolders={objectFolders}
+						onAfterMoveObjectDefinition={() => {
+							setTimeout(async () => {
+								const payload = await getUpdatedModelBuilderStructurePayload(
+									baseResourceURL,
+									selectedObjectFolder.name
+								);
+
+								dispatch({
+									payload: {...payload, dispatch},
+									type: TYPES.UPDATE_MODEL_BUILDER_STRUCTURE,
+								});
+							}, 200);
+						}}
+						setMoveObjectDefinition={() => {
+							dispatch({
+								payload: {movedObjectDefinitionId: undefined},
+								type: TYPES.SET_MOVED_OBJECT_DEFINITION,
+							});
+						}}
+					/>
+				)}
+
 			{modelBuilderModals.publishObjectDefinitions && (
 				<ModalPublishObjectDefinitions
 					disableAutoClose={true}
@@ -431,8 +542,7 @@ export default function EditObjectFolder({
 					handleOnClose={() => {
 						dispatch({
 							payload: {
-								modelBuilderModals: {
-									...modelBuilderModals,
+								updatedModelBuilderModals: {
 									publishObjectDefinitions: false,
 								},
 							},
@@ -448,8 +558,7 @@ export default function EditObjectFolder({
 						handleOnClose={() => {
 							dispatch({
 								payload: {
-									modelBuilderModals: {
-										...modelBuilderModals,
+									updatedModelBuilderModals: {
 										redirectToEditObjectDefinitionDetails: false,
 									},
 								},

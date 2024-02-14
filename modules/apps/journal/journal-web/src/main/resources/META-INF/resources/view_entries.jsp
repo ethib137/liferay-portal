@@ -64,8 +64,8 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 				if (JournalArticlePermission.contains(permissionChecker, curArticle, ActionKeys.UPDATE)) {
 					editURL = PortletURLBuilder.createRenderURL(
 						liferayPortletResponse
-					).setMVCPath(
-						"/edit_article.jsp"
+					).setMVCRenderCommandName(
+						"/journal/edit_article"
 					).setRedirect(
 						currentURL
 					).setParameter(
@@ -94,13 +94,6 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 						<liferay-ui:search-container-column-text
 							colspan="<%= 2 %>"
 						>
-
-							<%
-							Date createDate = curArticle.getModifiedDate();
-
-							String modifiedDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - createDate.getTime(), true);
-							%>
-
 							<div class="d-flex">
 								<c:choose>
 									<c:when test="<%= editURL != StringPool.BLANK %>">
@@ -120,7 +113,28 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 							</div>
 
 							<span class="c-pt-1 text-secondary">
-								<liferay-ui:message arguments="<%= new String[] {modifiedDateDescription, HtmlUtil.escape(curArticle.getStatusByUserName())} %>" key="modified-x-ago-by-x" />
+								<c:choose>
+									<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPS-202534") && journalDisplayContext.isNavigationMine() %>'>
+
+										<%
+										Date createDate = curArticle.getCreateDate();
+
+										String modifiedDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - createDate.getTime(), true);
+										%>
+
+										<liferay-ui:message arguments="<%= new String[] {modifiedDateDescription, HtmlUtil.escape(curArticle.getUserName())} %>" key="created-x-ago-by-x" />
+									</c:when>
+									<c:otherwise>
+
+										<%
+										Date modifiedDate = curArticle.getModifiedDate();
+
+										String modifiedDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - modifiedDate.getTime(), true);
+										%>
+
+										<liferay-ui:message arguments="<%= new String[] {modifiedDateDescription, HtmlUtil.escape(curArticle.getStatusByUserName())} %>" key="modified-x-ago-by-x" />
+									</c:otherwise>
+								</c:choose>
 							</span>
 
 							<c:if test="<%= journalDisplayContext.isSearch() && ((curArticle.getFolderId() <= 0) || JournalFolderPermission.contains(permissionChecker, curArticle.getFolder(), ActionKeys.VIEW)) %>">
@@ -140,7 +154,7 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 								</c:choose>
 							</c:if>
 
-							<span class="text-default">
+							<span class="align-items-center d-flex text-default">
 								<c:if test="<%= !curArticle.isApproved() && curArticle.hasApprovedVersion() %>">
 									<clay:label
 										displayType="success"
@@ -152,7 +166,24 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 									displayType="<%= WorkflowConstants.getStatusStyle(curArticle.getStatus()) %>"
 									label="<%= WorkflowConstants.getStatusLabel(curArticle.getStatus()) %>"
 								/>
-							</span>
+
+							<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-15596") && curArticle.isScheduled() %>'>
+
+								<%
+								String scheduledArticleMessage = journalDisplayContext.getScheduledArticleMessage(curArticle);
+								%>
+
+									<span
+										aria-label='<%= scheduledArticleMessage %>'
+										class="icon-tooltip lfr-portal-tooltip"
+										title='<%= scheduledArticleMessage %>'
+									>
+										<clay:icon
+											cssClass="mt-0"
+											symbol="question-circle-full"
+										/>
+								</span>
+							</c:if>
 						</liferay-ui:search-container-column-text>
 
 						<liferay-ui:search-container-column-text>
@@ -177,7 +208,7 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 									).build()
 								%>'
 								propsTransformer="js/ElementsDefaultPropsTransformer"
-								verticalCard="<%= new JournalArticleVerticalCard(curArticle, renderRequest, renderResponse, searchContainer.getRowChecker(), assetDisplayPageFriendlyURLProvider, trashHelper) %>"
+								verticalCard="<%= new JournalArticleVerticalCard(curArticle, renderRequest, renderResponse, searchContainer.getRowChecker(), assetDisplayPageFriendlyURLProvider, trashHelper, journalDisplayContext.isNavigationMine()) %>"
 							/>
 						</liferay-ui:search-container-column-text>
 					</c:when>
@@ -268,7 +299,7 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 
 						<c:choose>
 							<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPS-194763") %>'>
-								<c:if test="<%= journalDisplayContext.getHighlightedDDMStructureId() <= 0 %>">
+								<c:if test="<%= !journalDisplayContext.isHighlightedDDMStructure() %>">
 
 									<%
 									DDMStructure ddmStructure = curArticle.getDDMStructure();
@@ -289,9 +320,17 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 
 								<liferay-ui:search-container-column-date
 									cssClass="table-cell-expand-smallest table-cell-ws-nowrap"
-									name="create-date"
-									value="<%= curArticle.getCreateDate() %>"
+									name="display-date"
+									value="<%= curArticle.getDisplayDate() %>"
 								/>
+
+								<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPS-202534") %>'>
+									<liferay-ui:search-container-column-date
+										cssClass="table-cell-expand-smallest table-cell-ws-nowrap"
+										name="create-date"
+										value="<%= curArticle.getCreateDate() %>"
+									/>
+								</c:if>
 							</c:when>
 							<c:otherwise>
 								<liferay-ui:search-container-column-text
@@ -300,9 +339,9 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 								>
 
 									<%
-									Date createDate = curArticle.getModifiedDate();
+									Date modifiedDate = curArticle.getModifiedDate();
 
-									String modifiedDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - createDate.getTime(), true);
+									String modifiedDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - modifiedDate.getTime(), true);
 									%>
 
 									<liferay-ui:message arguments="<%= new String[] {modifiedDateDescription, HtmlUtil.escape(curArticle.getStatusByUserName())} %>" key="modified-x-ago-by-x" />
@@ -313,6 +352,14 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 									name="display-date"
 									value="<%= curArticle.getDisplayDate() %>"
 								/>
+
+								<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPS-202534") %>'>
+									<liferay-ui:search-container-column-date
+										cssClass="table-cell-expand-smallest table-cell-ws-nowrap"
+										name="create-date"
+										value="<%= curArticle.getCreateDate() %>"
+									/>
+								</c:if>
 
 								<%
 								DDMStructure ddmStructure = curArticle.getDDMStructure();
@@ -521,6 +568,14 @@ Map<String, Object> componentContext = journalDisplayContext.getComponentContext
 							name="display-date"
 							value="--"
 						/>
+
+						<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPS-202534") %>'>
+							<liferay-ui:search-container-column-date
+								cssClass="table-cell-expand-smallest table-cell-ws-nowrap"
+								name="create-date"
+								value="<%= curFolder.getCreateDate() %>"
+							/>
+						</c:if>
 
 						<liferay-ui:search-container-column-text
 							cssClass="table-cell-expand-smallest table-cell-minw-150"

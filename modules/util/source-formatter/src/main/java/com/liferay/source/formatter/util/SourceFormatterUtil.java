@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
+import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.source.formatter.ExcludeSyntax;
 import com.liferay.source.formatter.ExcludeSyntaxPattern;
@@ -54,7 +55,7 @@ import java.util.regex.Pattern;
 public class SourceFormatterUtil {
 
 	public static final String CHECKSTYLE_DOCUMENTATION_URL_BASE =
-		"https://checkstyle.sourceforge.io/";
+		"https://checkstyle.sourceforge.io/checks/";
 
 	public static final String GIT_LIFERAY_PORTAL_BRANCH =
 		"git.liferay.portal.branch";
@@ -222,7 +223,7 @@ public class SourceFormatterUtil {
 		}
 
 		try {
-			return StringUtil.read(url.openStream());
+			return URLUtil.toString(url);
 		}
 		catch (IOException ioException) {
 			if (_log.isDebugEnabled()) {
@@ -328,6 +329,20 @@ public class SourceFormatterUtil {
 		return suppressionsFiles;
 	}
 
+	public static List<String> matchFileContentsForFileNames(
+		List<String> args, String baseDirName, String[] includes) {
+
+		List<String> allArgs = new ArrayList<>();
+
+		allArgs.add("grep");
+		allArgs.add("--untracked");
+		allArgs.add("-l");
+
+		allArgs.addAll(args);
+
+		return _matchFileContentsForFileNames(allArgs, baseDirName, includes);
+	}
+
 	public static void printError(String fileName, File file) {
 		printError(fileName, file.toString());
 	}
@@ -354,7 +369,9 @@ public class SourceFormatterUtil {
 			new String[0], includes, new SourceFormatterExcludes());
 
 		for (String untrackedFileName : _getUntrackedFileNames()) {
-			if (fileNames.contains(untrackedFileName)) {
+			if (!untrackedFileName.startsWith(baseDirName) ||
+				fileNames.contains(untrackedFileName)) {
+
 				continue;
 			}
 
@@ -654,6 +671,31 @@ public class SourceFormatterUtil {
 			});
 
 		return _untrackedFileNames;
+	}
+
+	private static List<String> _matchFileContentsForFileNames(
+		List<String> args, String baseDirName, String[] includes) {
+
+		List<String> allArgs = new ArrayList<>(args);
+
+		List<String> filters = new ArrayList<>();
+
+		ArrayUtil.isNotEmptyForEach(
+			includes, includeGlob -> filters.add(":(glob)" + includeGlob));
+
+		if (ListUtil.isNotEmpty(filters)) {
+			allArgs.add("--");
+
+			allArgs.addAll(filters);
+		}
+
+		List<String> fileNames = new ArrayList<>();
+
+		_executeGitCommand(
+			allArgs, baseDirName,
+			line -> fileNames.add(baseDirName + StringPool.SLASH + line));
+
+		return fileNames;
 	}
 
 	private static List<String> _scanForFileNames(

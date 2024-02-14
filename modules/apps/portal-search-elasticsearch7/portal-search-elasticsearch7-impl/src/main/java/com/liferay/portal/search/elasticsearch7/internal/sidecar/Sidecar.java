@@ -18,6 +18,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.JavaDetector;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -27,6 +28,7 @@ import com.liferay.portal.search.elasticsearch7.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch7.internal.connection.HttpPortRange;
 import com.liferay.portal.search.elasticsearch7.internal.index.constants.SidecarVersionConstants;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
+import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +40,7 @@ import java.net.URLClassLoader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
@@ -64,17 +67,13 @@ public class Sidecar {
 	public Sidecar(
 		ElasticsearchConfigurationWrapper elasticsearchConfigurationWrapper,
 		ElasticsearchInstancePaths elasticsearchInstancePaths,
-		ProcessExecutor processExecutor,
-		ProcessExecutorPaths processExecutorPaths,
-		SidecarManager sidecarManager) {
+		ProcessExecutor processExecutor, SidecarManager sidecarManager) {
 
 		_elasticsearchConfigurationWrapper = elasticsearchConfigurationWrapper;
 		_elasticsearchInstancePaths = elasticsearchInstancePaths;
 		_processExecutor = processExecutor;
-		_processExecutorPaths = processExecutorPaths;
 		_sidecarManager = sidecarManager;
 
-		_dataHomePath = elasticsearchInstancePaths.getDataPath();
 		_sidecarHomePath = elasticsearchInstancePaths.getHomePath();
 	}
 
@@ -220,6 +219,8 @@ public class Sidecar {
 			_getBootstrapClassPath()
 		).setEnvironment(
 			_getEnvironment()
+		).setJavaExecutable(
+			System.getProperty("java.home") + "/bin/java"
 		).setProcessLogConsumer(
 			this::_consumeProcessLog
 		).setReactClassLoader(
@@ -268,7 +269,7 @@ public class Sidecar {
 
 	private String _getBootstrapClassPath() {
 		return _createClasspath(
-			_processExecutorPaths.getLibPath(),
+			Paths.get(PropsValues.LIFERAY_SHIELDED_CONTAINER_LIB_PORTAL_DIR),
 			path -> _fileNameContains(path, "petra"));
 	}
 
@@ -372,11 +373,18 @@ public class Sidecar {
 		arguments.add("-Dfile.encoding=UTF-8");
 		arguments.add("-Djava.io.tmpdir=" + _sidecarTempDirPath);
 
+		if (JavaDetector.isJDK21()) {
+			arguments.add("-Djava.security.manager=allow");
+		}
+
 		arguments.add(
 			"-Djava.security.policy=" +
 				String.valueOf(_getSecurityPolicyURL(bundleURL)));
-
 		arguments.add("-Djna.nosys=true");
+
+		if (JavaDetector.isJDK21()) {
+			arguments.add("-XX:-UseContainerSupport");
+		}
 
 		return arguments;
 	}
@@ -582,13 +590,11 @@ public class Sidecar {
 	private static final Log _log = LogFactoryUtil.getLog(Sidecar.class);
 
 	private String _address;
-	private final Path _dataHomePath;
 	private final ElasticsearchConfigurationWrapper
 		_elasticsearchConfigurationWrapper;
 	private final ElasticsearchInstancePaths _elasticsearchInstancePaths;
 	private ProcessChannel<Serializable> _processChannel;
 	private final ProcessExecutor _processExecutor;
-	private final ProcessExecutorPaths _processExecutorPaths;
 	private FutureListener<Serializable> _restartFutureListener;
 	private final Path _sidecarHomePath;
 	private SidecarManager _sidecarManager;

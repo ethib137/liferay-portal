@@ -3,6 +3,7 @@
 		"date-fns": "2.29.3",
 		"frontend-js-web": "*"
 	},
+	"main": "js/index.js",
 	"name": "portal-reports-engine-console-web",
 	"private": true,
 	"scripts": {
@@ -10,5 +11,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "5.0.51"
+	"version": "5.0.53"
 }

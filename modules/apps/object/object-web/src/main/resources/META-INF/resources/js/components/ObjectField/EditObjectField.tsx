@@ -10,6 +10,7 @@ import {
 	openToast,
 	saveAndReload,
 } from '@liferay/object-js-components-web';
+import {ILearnResourceContext} from 'frontend-js-components-web';
 import React, {useEffect} from 'react';
 
 import {EditObjectFieldContent} from './EditObjectFieldContent';
@@ -26,7 +27,8 @@ export interface EditObjectFieldProps {
 	forbiddenNames: string[];
 	isApproved: boolean;
 	isDefaultStorageType: boolean;
-	learnResources: ObjectWebLearnResources;
+	isRootDescendantNode: boolean;
+	learnResources: ILearnResourceContext;
 	objectDefinitionExternalReferenceCode: string;
 	objectFieldId: number;
 	readOnly: boolean;
@@ -61,6 +63,7 @@ export default function EditObjectField({
 	forbiddenNames,
 	isApproved,
 	isDefaultStorageType,
+	isRootDescendantNode,
 	learnResources,
 	objectDefinitionExternalReferenceCode,
 	objectFieldId,
@@ -142,6 +145,7 @@ export default function EditObjectField({
 				handleChange={handleChange}
 				isApproved={isApproved}
 				isDefaultStorageType={isDefaultStorageType}
+				isRootDescendantNode={isRootDescendantNode}
 				learnResources={learnResources}
 				objectDefinitionExternalReferenceCode={
 					objectDefinitionExternalReferenceCode

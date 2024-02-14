@@ -2177,6 +2177,16 @@ public interface UserLocalService
 			long userId, boolean emailAddressVerified)
 		throws PortalException;
 
+	@Indexable(type = IndexableType.REINDEX)
+	public User updateExternalReferenceCode(
+			long userId, String externalReferenceCode)
+		throws PortalException;
+
+	@Indexable(type = IndexableType.REINDEX)
+	public User updateExternalReferenceCode(
+			User user, String externalReferenceCode)
+		throws PortalException;
+
 	/**
 	 * Updates the user's Facebook ID.
 	 *
@@ -2266,6 +2276,9 @@ public interface UserLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public User updateJobTitle(long userId, String jobTitle)
+		throws PortalException;
+
+	public User updateLanguageId(long userId, String languageId)
 		throws PortalException;
 
 	/**

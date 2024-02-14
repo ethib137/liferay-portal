@@ -105,6 +105,7 @@ import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -123,6 +124,8 @@ import com.liferay.staging.StagingGroupHelperUtil;
 import com.liferay.trash.TrashHelper;
 
 import java.io.Serializable;
+
+import java.text.Format;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -298,6 +301,12 @@ public class JournalDisplayContext {
 				permissionChecker, article, ActionKeys.DELETE)) {
 
 			availableActions.add("deleteEntries");
+		}
+
+		if (JournalArticlePermission.contains(
+				permissionChecker, article, ActionKeys.PERMISSIONS)) {
+
+			availableActions.add("changePermissions");
 		}
 
 		long scopeGroupId = _themeDisplay.getScopeGroupId();
@@ -870,7 +879,9 @@ public class JournalDisplayContext {
 		if (Validator.isNull(_orderByType)) {
 			String defaultOrderByType = "asc";
 
-			if (Objects.equals(getOrderByCol(), "modified-date")) {
+			if (Objects.equals(getOrderByCol(), "create-date") ||
+				Objects.equals(getOrderByCol(), "modified-date")) {
+
 				defaultOrderByType = "desc";
 			}
 
@@ -888,6 +899,12 @@ public class JournalDisplayContext {
 
 	public String[] getOrderColumns() {
 		String[] orderColumns = {"display-date", "modified-date", "title"};
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-202534")) {
+			orderColumns = new String[] {
+				"display-date", "modified-date", "create-date", "title"
+			};
+		}
 
 		if (isSearch()) {
 			orderColumns = ArrayUtil.append(orderColumns, "relevance");
@@ -927,71 +944,7 @@ public class JournalDisplayContext {
 	}
 
 	public PortletURL getPortletURL(String tab) {
-		PortletURL portletURL = _liferayPortletResponse.createRenderURL();
-
-		String navigation = ParamUtil.getString(
-			_httpServletRequest, "navigation");
-
-		if (Validator.isNotNull(navigation)) {
-			portletURL.setParameter(
-				"navigation", HtmlUtil.escapeJS(getNavigation()));
-		}
-
-		portletURL.setParameter(
-			"navigationMine", String.valueOf(isNavigationMine()));
-		portletURL.setParameter(
-			"navigationRecent", String.valueOf(isNavigationRecent()));
-
-		portletURL.setParameter("folderId", String.valueOf(getFolderId()));
-
-		if (isNavigationStructure()) {
-			portletURL.setParameter(
-				"ddmStructureId", String.valueOf(getDDMStructureId()));
-		}
-
-		String status = ParamUtil.getString(_httpServletRequest, "status");
-
-		if (Validator.isNotNull(status)) {
-			portletURL.setParameter("status", String.valueOf(getStatus()));
-		}
-
-		String delta = ParamUtil.getString(_httpServletRequest, "delta");
-
-		if (Validator.isNotNull(delta)) {
-			portletURL.setParameter("delta", delta);
-		}
-
-		String deltaEntry = ParamUtil.getString(
-			_httpServletRequest, "deltaEntry");
-
-		if (Validator.isNotNull(deltaEntry)) {
-			portletURL.setParameter("deltaEntry", deltaEntry);
-		}
-
-		String displayStyle = ParamUtil.getString(
-			_httpServletRequest, "displayStyle");
-
-		if (Validator.isNotNull(displayStyle)) {
-			portletURL.setParameter("displayStyle", getDisplayStyle());
-		}
-
-		String keywords = ParamUtil.getString(_httpServletRequest, "keywords");
-
-		if (Validator.isNotNull(keywords)) {
-			portletURL.setParameter("keywords", keywords);
-		}
-
-		String orderByCol = getOrderByCol();
-
-		if (Validator.isNotNull(orderByCol)) {
-			portletURL.setParameter("orderByCol", orderByCol);
-		}
-
-		String orderByType = getOrderByType();
-
-		if (Validator.isNotNull(orderByType)) {
-			portletURL.setParameter("orderByType", orderByType);
-		}
+		PortletURL portletURL = _getBasePortletURL(tab);
 
 		String searchIn = _getSearchIn();
 
@@ -1003,10 +956,6 @@ public class JournalDisplayContext {
 
 		if (Validator.isNotNull(searchLocation)) {
 			portletURL.setParameter("searchLocation", searchLocation);
-		}
-
-		if (Validator.isNotNull(tab)) {
-			portletURL.setParameter("tab", tab);
 		}
 
 		return portletURL;
@@ -1029,25 +978,33 @@ public class JournalDisplayContext {
 		return _restrictionType;
 	}
 
+	public String getScheduledArticleMessage(JournalArticle journalArticle) {
+		int count = JournalArticleServiceUtil.getArticlesCountByArticleId(
+			journalArticle.getGroupId(), journalArticle.getArticleId(),
+			WorkflowConstants.STATUS_SCHEDULED);
+
+		if (count > 1) {
+			return LanguageUtil.get(
+				_themeDisplay.getLocale(),
+				"multiple-publications-were-scheduled");
+		}
+
+		return _dateTimeFormat.format(journalArticle.getDisplayDate());
+	}
+
 	public SearchContainer<?> getSearchContainer() throws PortalException {
 		if (_searchContainer != null) {
 			return _searchContainer;
 		}
 
-		if (!isSearch() || isWebContentTabSelected()) {
-			_searchContainer = _getArticlesSearchContainer();
-
-			return _searchContainer;
-		}
-
-		if (isIndexAllArticleVersions() && isVersionsTabSelected()) {
-			_searchContainer = _getVersionsSearchContainer();
-
-			return _searchContainer;
-		}
-
-		if (isCommentsTabSelected()) {
+		if (isShowComments()) {
 			_searchContainer = _getCommentsSearchContainer();
+
+			return _searchContainer;
+		}
+
+		if (isIndexAllArticleVersions() && isShowVersions()) {
+			_searchContainer = _getVersionsSearchContainer();
 
 			return _searchContainer;
 		}
@@ -1062,6 +1019,10 @@ public class JournalDisplayContext {
 			return LanguageUtil.get(_themeDisplay.getLocale(), "title-only");
 		}
 
+		if (Objects.equals(_getSearchIn(), "comments")) {
+			return LanguageUtil.get(_themeDisplay.getLocale(), "comments");
+		}
+
 		return LanguageUtil.get(_themeDisplay.getLocale(), "all-fields");
 	}
 
@@ -1070,7 +1031,7 @@ public class JournalDisplayContext {
 			return null;
 		}
 
-		if (Objects.equals(_getSearchLocation(), "current-folder")) {
+		if (_isSearchLocationCurrentFolder()) {
 			JournalFolder folder = getFolder();
 
 			return folder.getName();
@@ -1083,27 +1044,25 @@ public class JournalDisplayContext {
 		return HashMapBuilder.<String, Object>put(
 			"searchIn", _getSearchIn()
 		).put(
+			"searchInCommentsURL",
+			String.valueOf(_getSearchInCommentsPortletURL())
+		).put(
 			"searchInOptions",
-			JSONUtil.putAll(
-				JSONUtil.put(
-					"label",
-					LanguageUtil.get(_themeDisplay.getLocale(), "all-fields")
-				).put(
-					"value", "all-fields"
-				),
-				JSONUtil.put(
-					"label",
-					LanguageUtil.get(_themeDisplay.getLocale(), "title-only")
-				).put(
-					"value", "title"
-				))
+			() -> {
+				if (isSearch()) {
+					return _getSearchInOptionsJSONArray();
+				}
+
+				return null;
+			}
 		).put(
 			"searchLocation", _getSearchLocation()
 		).put(
 			"searchLocationOptions",
 			() -> {
-				if (getFolderId() ==
-						JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+				if ((getFolderId() ==
+						JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) ||
+					!isSearch()) {
 
 					return null;
 				}
@@ -1129,16 +1088,7 @@ public class JournalDisplayContext {
 		).put(
 			"searchResultsOptions", _getSearchResultsOptionsJSONArray()
 		).put(
-			"searchURL",
-			PortletURLBuilder.createRenderURL(
-				_liferayPortletResponse
-			).setKeywords(
-				getKeywords()
-			).setParameter(
-				"folderId", getFolderId()
-			).setParameter(
-				"status", getStatus()
-			).buildString()
+			"searchURL", String.valueOf(_getBasePortletURL(getTab()))
 		).build();
 	}
 
@@ -1186,6 +1136,14 @@ public class JournalDisplayContext {
 	}
 
 	public String getTab() throws PortalException {
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+			if (Objects.equals(_getSearchIn(), "comments")) {
+				return "comments";
+			}
+
+			return getType();
+		}
+
 		if (_tab != null) {
 			return _tab;
 		}
@@ -1225,6 +1183,24 @@ public class JournalDisplayContext {
 		return articleSearchContainer.getTotal();
 	}
 
+	public String getType() {
+		if (_type != null) {
+			return _type;
+		}
+
+		_type = ParamUtil.getString(_httpServletRequest, "type", "web-content");
+
+		return _type;
+	}
+
+	public String getVersionsEmptyResultsMessage() {
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+			return "no-version-was-found";
+		}
+
+		return "no-web-content-was-found";
+	}
+
 	public int getVersionsTotal() throws PortalException {
 		SearchContainer<JournalArticle> articleSearchContainer =
 			_getVersionsSearchContainer();
@@ -1235,7 +1211,7 @@ public class JournalDisplayContext {
 	public VerticalNavItemList getVerticalNavItemList() {
 		return VerticalNavItemListBuilder.add(
 			verticalNavItem -> {
-				verticalNavItem.setActive(getHighlightedDDMStructureId() == 0);
+				verticalNavItem.setActive(!isHighlightedDDMStructure());
 				verticalNavItem.setHref(
 					PortletURLBuilder.createRenderURL(
 						_liferayPortletResponse
@@ -1248,6 +1224,16 @@ public class JournalDisplayContext {
 				verticalNavItem.setLabel(name);
 			}
 		).build();
+	}
+
+	public boolean hasAssetFilter() {
+		if (ArrayUtil.isEmpty(_getAssetCategoryIds()) &&
+			ArrayUtil.isEmpty(_getAssetTagNames())) {
+
+			return false;
+		}
+
+		return true;
 	}
 
 	public boolean hasCommentsResults() throws PortalException {
@@ -1284,7 +1270,7 @@ public class JournalDisplayContext {
 
 	public boolean isFilterApplied() {
 		if ((getStatus() != WorkflowConstants.STATUS_ANY) ||
-			isNavigationMine() || isNavigationRecent()) {
+			isNavigationMine() || isNavigationRecent() || isTypeVersions()) {
 
 			return true;
 		}
@@ -1295,6 +1281,14 @@ public class JournalDisplayContext {
 
 				return true;
 			}
+		}
+
+		return false;
+	}
+
+	public boolean isHighlightedDDMStructure() {
+		if (getHighlightedDDMStructureId() > 0) {
+			return true;
 		}
 
 		return false;
@@ -1363,10 +1357,6 @@ public class JournalDisplayContext {
 	}
 
 	public boolean isSearch() {
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
-			return _isSearch();
-		}
-
 		if (Validator.isNotNull(getKeywords())) {
 			return true;
 		}
@@ -1374,15 +1364,87 @@ public class JournalDisplayContext {
 		return false;
 	}
 
-	public boolean isShowInfoButton() {
-		if (isNavigationMine() || isNavigationRecent() || isSearch() ||
-			ArrayUtil.isNotEmpty(_getAssetCategoryIds()) ||
-			ArrayUtil.isNotEmpty(_getAssetTagNames())) {
+	public boolean isShowComments() throws PortalException {
+		if ((!FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isCommentsTabSelected()) ||
+			(FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 Objects.equals(_getSearchIn(), "comments"))) {
+
+			return true;
+		}
+
+		if ((FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isTypeWebContent() && !hasResults() && !hasVersionsResults() &&
+			 hasCommentsResults()) ||
+			(FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isTypeVersions() && !hasVersionsResults() &&
+			 hasCommentsResults())) {
+
+			_searchIn = "comments";
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isShowInfoButton() throws PortalException {
+		if (hasAssetFilter() || isNavigationMine() || isNavigationRecent() ||
+			isSearch() || isTypeVersions()) {
 
 			return false;
 		}
 
 		return true;
+	}
+
+	public boolean isShowVersions() throws PortalException {
+		if ((!FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isVersionsTabSelected()) ||
+			(FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isTypeVersions())) {
+
+			return true;
+		}
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			isIndexAllArticleVersions() && isTypeWebContent() &&
+			!hasResults() && hasVersionsResults()) {
+
+			_type = "versions";
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isShowWebContent() throws PortalException {
+		if ((!FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isWebContentTabSelected()) ||
+			(FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			 isTypeWebContent() && !isShowComments() && !isShowVersions())) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isTypeVersions() {
+		if (Objects.equals(getType(), "versions")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isTypeWebContent() {
+		if (Objects.equals(getType(), "web-content")) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public boolean isVersionsTabSelected() throws PortalException {
@@ -1424,8 +1486,12 @@ public class JournalDisplayContext {
 				JournalWebConfiguration.class.getName());
 		_portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(
 			httpServletRequest);
+
 		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+
+		_dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(
+			_themeDisplay.getLocale(), _themeDisplay.getTimeZone());
 	}
 
 	private SearchContainer<Object> _getArticleAndFolderSearchContainer()
@@ -1489,9 +1555,9 @@ public class JournalDisplayContext {
 		}
 
 		if (!FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
-			if (!isSearch() && !isNavigationMine() && !isNavigationRecent() &&
-				(getDDMStructureId() <= 0) &&
-				(getHighlightedDDMStructureId() <= 0)) {
+			if (!hasAssetFilter() && !isHighlightedDDMStructure() &&
+				!isSearch() && !isNavigationMine() && !isNavigationRecent() &&
+				(getDDMStructureId() <= 0)) {
 
 				SearchContainer<Object> articleAndFolderSearchContainer =
 					_getArticleAndFolderSearchContainer();
@@ -1512,7 +1578,9 @@ public class JournalDisplayContext {
 				return _articleSearchContainer;
 			}
 
-			if (!isSearch() && (isNavigationMine() || isNavigationRecent())) {
+			if (!hasAssetFilter() && !isSearch() &&
+				(isNavigationMine() || isNavigationRecent())) {
+
 				SearchContainer<JournalArticle> articleSearchContainer =
 					_getArticleSearchContainer();
 
@@ -1533,7 +1601,7 @@ public class JournalDisplayContext {
 				return _articleSearchContainer;
 			}
 
-			if (!isSearch() && (getDDMStructureId() > 0)) {
+			if (!hasAssetFilter() && !isSearch() && (getDDMStructureId() > 0)) {
 				SearchContainer<JournalArticle> articleSearchContainer =
 					_getArticleSearchContainer();
 
@@ -1555,7 +1623,9 @@ public class JournalDisplayContext {
 				return _articleSearchContainer;
 			}
 
-			if (!isSearch() && (getHighlightedDDMStructureId() > 0)) {
+			if (!hasAssetFilter() && isHighlightedDDMStructure() &&
+				!isSearch()) {
+
 				SearchContainer<JournalArticle> articleSearchContainer =
 					_getArticleSearchContainer();
 
@@ -1578,13 +1648,11 @@ public class JournalDisplayContext {
 			}
 		}
 
-		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") && !isSearch() &&
-			!isNavigationMine() && !isNavigationRecent() &&
-			(getDDMStructureId() <= 0) &&
-			(getHighlightedDDMStructureId() <= 0) &&
-			(getStatus() == WorkflowConstants.STATUS_ANY) &&
-			ArrayUtil.isEmpty(_getAssetCategoryIds()) &&
-			ArrayUtil.isEmpty(_getAssetTagNames())) {
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			!hasAssetFilter() && !isHighlightedDDMStructure() &&
+			!isNavigationMine() && !isNavigationRecent() && !isSearch() &&
+			!isTypeVersions() && (getDDMStructureId() <= 0) &&
+			(getStatus() == WorkflowConstants.STATUS_ANY)) {
 
 			SearchContainer<Object> articleAndFolderSearchContainer =
 				_getArticleAndFolderSearchContainer();
@@ -1601,6 +1669,29 @@ public class JournalDisplayContext {
 					WorkflowConstants.STATUS_ANY));
 
 			_articleSearchContainer = articleAndFolderSearchContainer;
+
+			return _articleSearchContainer;
+		}
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			!hasAssetFilter() &&
+			(isHighlightedDDMStructure() || isNavigationStructure())) {
+
+			SearchContainer<JournalArticle> articleSearchContainer =
+				_getArticleSearchContainer();
+
+			SearchResponse searchResponse =
+				JournalSearcherUtil.searchJournalArticles(
+					searchContext -> _populateSearchContext(
+						articleSearchContainer.getStart(),
+						articleSearchContainer.getEnd(), searchContext, false));
+
+			articleSearchContainer.setResultsAndTotal(
+				() -> JournalSearcherUtil.transformJournalArticles(
+					searchResponse.getDocuments71()),
+				searchResponse.getTotalHits());
+
+			_articleSearchContainer = articleSearchContainer;
 
 			return _articleSearchContainer;
 		}
@@ -1671,6 +1762,97 @@ public class JournalDisplayContext {
 		return booleanFilter;
 	}
 
+	private PortletURL _getBasePortletURL(String tab) {
+		PortletURL portletURL = _liferayPortletResponse.createRenderURL();
+
+		if (ArrayUtil.isNotEmpty(_getAssetCategoryIds())) {
+			for (long assetCategoryId : _getAssetCategoryIds()) {
+				portletURL.setParameter(
+					"assetCategoryId", String.valueOf(assetCategoryId));
+			}
+		}
+
+		if (ArrayUtil.isNotEmpty(_getAssetTagNames())) {
+			for (String assetTagName : _getAssetTagNames()) {
+				portletURL.setParameter("assetTagId", assetTagName);
+			}
+		}
+
+		String navigation = ParamUtil.getString(
+			_httpServletRequest, "navigation");
+
+		if (Validator.isNotNull(navigation)) {
+			portletURL.setParameter(
+				"navigation", HtmlUtil.escapeJS(getNavigation()));
+		}
+
+		portletURL.setParameter(
+			"navigationMine", String.valueOf(isNavigationMine()));
+		portletURL.setParameter(
+			"navigationRecent", String.valueOf(isNavigationRecent()));
+
+		portletURL.setParameter("folderId", String.valueOf(getFolderId()));
+
+		if (isNavigationStructure()) {
+			portletURL.setParameter(
+				"ddmStructureId", String.valueOf(getDDMStructureId()));
+		}
+
+		String status = ParamUtil.getString(_httpServletRequest, "status");
+
+		if (Validator.isNotNull(status)) {
+			portletURL.setParameter("status", String.valueOf(getStatus()));
+		}
+
+		String delta = ParamUtil.getString(_httpServletRequest, "delta");
+
+		if (Validator.isNotNull(delta)) {
+			portletURL.setParameter("delta", delta);
+		}
+
+		String deltaEntry = ParamUtil.getString(
+			_httpServletRequest, "deltaEntry");
+
+		if (Validator.isNotNull(deltaEntry)) {
+			portletURL.setParameter("deltaEntry", deltaEntry);
+		}
+
+		String displayStyle = ParamUtil.getString(
+			_httpServletRequest, "displayStyle");
+
+		if (Validator.isNotNull(displayStyle)) {
+			portletURL.setParameter("displayStyle", getDisplayStyle());
+		}
+
+		String keywords = ParamUtil.getString(_httpServletRequest, "keywords");
+
+		if (Validator.isNotNull(keywords)) {
+			portletURL.setParameter("keywords", keywords);
+		}
+
+		String orderByCol = getOrderByCol();
+
+		if (Validator.isNotNull(orderByCol)) {
+			portletURL.setParameter("orderByCol", orderByCol);
+		}
+
+		String orderByType = getOrderByType();
+
+		if (Validator.isNotNull(orderByType)) {
+			portletURL.setParameter("orderByType", orderByType);
+		}
+
+		if (Validator.isNotNull(tab)) {
+			portletURL.setParameter("tab", tab);
+		}
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+			portletURL.setParameter("type", getType());
+		}
+
+		return portletURL;
+	}
+
 	private BooleanClause<Query>[] _getBooleanClauses() {
 		BooleanQuery booleanQuery = new BooleanQueryImpl();
 
@@ -1687,12 +1869,12 @@ public class JournalDisplayContext {
 		}
 
 		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
-			if (Objects.equals(_getSearchLocation(), "current-folder")) {
+			if (_isSearchLocationCurrentFolder()) {
 				booleanFilter.add(
 					_getCurrentFolderFilter(), BooleanClauseOccur.MUST_NOT);
 			}
 
-			if (!isSearch()) {
+			if (!isHighlightedDDMStructure() && !isSearch()) {
 				booleanFilter.addTerm(
 					Field.FOLDER_ID, String.valueOf(getFolderId()),
 					BooleanClauseOccur.MUST);
@@ -1857,6 +2039,53 @@ public class JournalDisplayContext {
 		return _searchIn;
 	}
 
+	private PortletURL _getSearchInCommentsPortletURL() {
+		return PortletURLBuilder.createRenderURL(
+			_liferayPortletResponse
+		).setKeywords(
+			() -> {
+				String keywords = ParamUtil.getString(
+					_httpServletRequest, "keywords");
+
+				if (Validator.isNotNull(keywords)) {
+					return keywords;
+				}
+
+				return null;
+			}
+		).buildPortletURL();
+	}
+
+	private JSONArray _getSearchInOptionsJSONArray() {
+		JSONArray jsonArray = JSONUtil.put(
+			JSONUtil.put(
+				"label",
+				LanguageUtil.get(_themeDisplay.getLocale(), "all-fields")
+			).put(
+				"value", "all-fields"
+			));
+
+		jsonArray.put(
+			JSONUtil.put(
+				"label",
+				LanguageUtil.get(_themeDisplay.getLocale(), "title-only")
+			).put(
+				"value", "title"
+			));
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
+			jsonArray.put(
+				JSONUtil.put(
+					"label",
+					LanguageUtil.get(_themeDisplay.getLocale(), "comments")
+				).put(
+					"value", "comments"
+				));
+		}
+
+		return jsonArray;
+	}
+
 	private String _getSearchLocation() {
 		if (_searchLocation != null) {
 			return _searchLocation;
@@ -1948,9 +2177,7 @@ public class JournalDisplayContext {
 		return "web-content";
 	}
 
-	private SearchContainer<JournalArticle> _getVersionsSearchContainer()
-		throws PortalException {
-
+	private SearchContainer<JournalArticle> _getVersionsSearchContainer() {
 		if (_articleVersionsSearchContainer != null) {
 			return _articleVersionsSearchContainer;
 		}
@@ -1998,11 +2225,16 @@ public class JournalDisplayContext {
 		return false;
 	}
 
-	private boolean _isSearch() {
-		if (Validator.isNotNull(getKeywords()) ||
-			ArrayUtil.isNotEmpty(_getAssetCategoryIds()) ||
-			ArrayUtil.isNotEmpty(_getAssetTagNames())) {
+	private boolean _isSearchInAllFields() {
+		if (Objects.equals(_getSearchIn(), "all-fields")) {
+			return true;
+		}
 
+		return false;
+	}
+
+	private boolean _isSearchLocationCurrentFolder() {
+		if (Objects.equals(_getSearchLocation(), "current-folder")) {
 			return true;
 		}
 
@@ -2016,7 +2248,7 @@ public class JournalDisplayContext {
 
 		Map<String, Serializable> attributes = searchContext.getAttributes();
 
-		if (Objects.equals(_getSearchIn(), "all-fields")) {
+		if (_isSearchInAllFields()) {
 			attributes.put(Field.ARTICLE_ID, getKeywords());
 			attributes.put(Field.CONTENT, getKeywords());
 			attributes.put(Field.DESCRIPTION, getKeywords());
@@ -2033,9 +2265,15 @@ public class JournalDisplayContext {
 			Field.CLASS_NAME_ID, JournalArticleConstants.CLASS_NAME_ID_DEFAULT);
 		attributes.put(Field.STATUS, getStatus());
 		attributes.put(Field.TITLE, getKeywords());
-		attributes.put("head", !showVersions);
-		attributes.put("latest", !showVersions);
-		attributes.put("showNonindexable", !showVersions);
+
+		if (isIndexAllArticleVersions()) {
+			attributes.put("head", !showVersions);
+			attributes.put("latest", !showVersions);
+			attributes.put("showNonindexable", !showVersions);
+		}
+		else {
+			attributes.put("head", false);
+		}
 
 		searchContext.setAttributes(attributes);
 
@@ -2044,14 +2282,11 @@ public class JournalDisplayContext {
 		long ddmStructureId = ParamUtil.getLong(
 			_httpServletRequest, "ddmStructureId");
 
-		long highlightedDDMStructureId = ParamUtil.getLong(
-			_httpServletRequest, "highlightedDDMStructureId");
-
 		if (FeatureFlagManagerUtil.isEnabled("LPS-194763") &&
-			(highlightedDDMStructureId > 0)) {
+			isHighlightedDDMStructure()) {
 
 			searchContext.setClassTypeIds(
-				new long[] {highlightedDDMStructureId});
+				new long[] {getHighlightedDDMStructureId()});
 		}
 		else if (ddmStructureId > 0) {
 			searchContext.setClassTypeIds(new long[] {ddmStructureId});
@@ -2061,13 +2296,13 @@ public class JournalDisplayContext {
 		searchContext.setEnd(end);
 
 		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
-			isNavigationStructure()) {
+			(isHighlightedDDMStructure() || isNavigationStructure())) {
 
 			searchContext.setEntryClassNames(
 				new String[] {JournalArticle.class.getName()});
 		}
 
-		if (Objects.equals(_getSearchLocation(), "current-folder")) {
+		if (!isHighlightedDDMStructure() && _isSearchLocationCurrentFolder()) {
 			searchContext.setFolderIds(
 				Collections.singletonList(getFolderId()));
 		}
@@ -2075,7 +2310,7 @@ public class JournalDisplayContext {
 		searchContext.setGroupIds(new long[] {_themeDisplay.getScopeGroupId()});
 		searchContext.setIncludeInternalAssetCategories(true);
 
-		if (Objects.equals(_getSearchIn(), "all-fields")) {
+		if (_isSearchInAllFields()) {
 			searchContext.setKeywords(getKeywords());
 		}
 
@@ -2109,6 +2344,7 @@ public class JournalDisplayContext {
 	private final AssetDisplayPageFriendlyURLProvider
 		_assetDisplayPageFriendlyURLProvider;
 	private String[] _assetTagNames;
+	private final Format _dateTimeFormat;
 	private Long _ddmStructureId;
 	private String _ddmStructureName;
 	private List<DDMStructure> _ddmStructures;
@@ -2139,5 +2375,6 @@ public class JournalDisplayContext {
 	private String _tab;
 	private final ThemeDisplay _themeDisplay;
 	private final TrashHelper _trashHelper;
+	private String _type;
 
 }

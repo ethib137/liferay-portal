@@ -12,28 +12,29 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.object.constants.ObjectActionExecutorConstants;
 import com.liferay.object.constants.ObjectActionTriggerConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectRelationship;
-import com.liferay.object.rest.test.util.ObjectDefinitionTestUtil;
 import com.liferay.object.rest.test.util.ObjectRelationshipTestUtil;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
-import com.liferay.portal.kernel.test.util.CompanyTestUtil;
 import com.liferay.portal.kernel.test.util.HTTPTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
@@ -56,7 +57,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,7 +74,19 @@ public class OpenAPIResourceTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		_company = CompanyTestUtil.addCompany(true);
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				"domain", "able.com"
+			).put(
+				"portalInstanceId", "able.com"
+			).put(
+				"virtualHost", "www.able.com"
+			).toString(),
+			"headless-portal-instances/v1.0/portal-instances",
+			Http.Method.POST);
+
+		_company = _companyLocalService.getCompany(
+			jsonObject.getLong("companyId"));
 
 		_originalName = PrincipalThreadLocal.getName();
 
@@ -93,7 +105,8 @@ public class OpenAPIResourceTest {
 		_objectDefinition1 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Collections.singletonList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME, false)));
 	}
 
@@ -171,7 +184,8 @@ public class OpenAPIResourceTest {
 		_objectDefinition2 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Collections.singletonList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME, false)),
 			ObjectDefinitionConstants.SCOPE_COMPANY, _user.getUserId());
 
@@ -181,16 +195,69 @@ public class OpenAPIResourceTest {
 			ObjectDefinitionTestUtil.publishObjectDefinition(
 				Collections.singletonList(
 					ObjectFieldUtil.createObjectField(
-						"Text", "String", true, true, null,
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 						RandomTestUtil.randomString(), _OBJECT_FIELD_NAME,
 						false)),
-				ObjectDefinitionConstants.SCOPE_SITE,
-				TestPropsValues.getUserId());
+				ObjectDefinitionConstants.SCOPE_SITE);
 
 		_testGetOpenAPI(_siteScopedObjectDefinition, _objectDefinition2);
 	}
 
-	@Ignore
+	@Test
+	public void testGetOpenAPIMultipleCompanies() throws Exception {
+		String randomString = RandomTestUtil.randomString() + "abc";
+
+		_objectDefinition1 = ObjectDefinitionTestUtil.publishObjectDefinition(
+			"A" + StringUtil.toLowerCase(randomString),
+			Collections.singletonList(
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME, false)),
+			ObjectDefinitionConstants.SCOPE_COMPANY,
+			TestPropsValues.getUserId());
+
+		_user = UserTestUtil.addUser(_company);
+
+		_objectDefinition2 = ObjectDefinitionTestUtil.publishObjectDefinition(
+			"A" + StringUtil.toUpperCase(randomString),
+			Collections.singletonList(
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME, false)),
+			ObjectDefinitionConstants.SCOPE_COMPANY, _user.getUserId());
+
+		HTTPTestUtil.customize(
+		).withBaseURL(
+			"http://www.able.com:8080"
+		).withCredentials(
+			"test@able.com", "test"
+		).apply(
+			() -> {
+				Assert.assertEquals(
+					200,
+					HTTPTestUtil.invokeToHttpCode(
+						null, _objectDefinition2.getRESTContextPath(),
+						Http.Method.GET));
+
+				JSONObject openAPIJSONObject = HTTPTestUtil.invokeToJSONObject(
+					null, "/openapi", Http.Method.GET);
+
+				JSONArray jsonArray = openAPIJSONObject.getJSONArray(
+					_objectDefinition2.getRESTContextPath());
+
+				Assert.assertEquals(1, jsonArray.length());
+				Assert.assertEquals(
+					"http://www.able.com:8080/o" +
+						_objectDefinition2.getRESTContextPath() +
+							"/openapi.yaml",
+					jsonArray.get(0));
+			}
+		);
+	}
+
 	@Test
 	public void testGetOpenAPIWithCategorizationDisabled() throws Exception {
 		_objectDefinition1.setEnableCategorization(false);
@@ -393,7 +460,8 @@ public class OpenAPIResourceTest {
 		_objectDefinition2 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Collections.singletonList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME, false)));
 
 		ObjectRelationship objectRelationship =
@@ -433,18 +501,20 @@ public class OpenAPIResourceTest {
 				ObjectDefinitionTestUtil.publishObjectDefinition(
 					Collections.singletonList(
 						ObjectFieldUtil.createObjectField(
-							"Text", "String", true, true, null,
-							RandomTestUtil.randomString(), _OBJECT_FIELD_NAME,
-							false)));
+							ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+							ObjectFieldConstants.DB_TYPE_STRING, true, true,
+							null, RandomTestUtil.randomString(),
+							_OBJECT_FIELD_NAME, false)));
 		}
 		else {
 			_objectDefinition2 =
 				ObjectDefinitionTestUtil.addCustomObjectDefinition(
 					Collections.singletonList(
 						ObjectFieldUtil.createObjectField(
-							"Text", "String", true, true, null,
-							RandomTestUtil.randomString(), _OBJECT_FIELD_NAME,
-							false)));
+							ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+							ObjectFieldConstants.DB_TYPE_STRING, true, true,
+							null, RandomTestUtil.randomString(),
+							_OBJECT_FIELD_NAME, false)));
 		}
 
 		ObjectRelationship objectRelationship =

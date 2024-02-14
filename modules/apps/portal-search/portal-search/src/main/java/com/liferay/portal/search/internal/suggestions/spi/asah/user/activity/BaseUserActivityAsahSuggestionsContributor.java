@@ -61,10 +61,12 @@ public abstract class BaseUserActivityAsahSuggestionsContributor
 		SuggestionsContributorConfiguration
 			suggestionsContributorConfiguration) {
 
-		String contentType = _getContentType(attributes);
+		String contentTypes = _getContentTypes(attributes);
 		String displayLanguageId = getDisplayLanguageId(
 			attributes, searchContext.getLocale());
 		long groupId = getGroupId(searchContext);
+		String hashedEmailAddress = _getHashedEmailAddress(
+			searchContext.getUserId());
 		int minCounts = getMinCounts(attributes, 0);
 		int page = _getPage(attributes);
 		int rangeKey = _getRangeKey(attributes);
@@ -76,16 +78,19 @@ public abstract class BaseUserActivityAsahSuggestionsContributor
 			_getURL(
 				analyticsConfiguration,
 				StringBundler.concat(
-					basePath, StringPool.FORWARD_SLASH,
-					_getHashedEmailAddress(searchContext.getUserId())),
-				contentType, displayLanguageId, groupId, minCounts, page, path,
-				rangeKey, size, sort),
+					basePath, StringPool.FORWARD_SLASH, hashedEmailAddress),
+				contentTypes,
+				GetterUtil.getLong(
+					analyticsConfiguration.liferayAnalyticsDataSourceId()),
+				displayLanguageId, groupId, minCounts, page, path, rangeKey,
+				size, sort),
 			StringBundler.concat(
-				StringPool.POUND, searchContext.getCompanyId(),
-				StringPool.POUND, contentType, StringPool.POUND,
+				StringPool.POUND, contentTypes, StringPool.POUND,
 				displayLanguageId, StringPool.POUND, groupId, StringPool.POUND,
-				minCounts, StringPool.POUND, page, StringPool.POUND, rangeKey,
-				StringPool.POUND, size, StringPool.POUND, sort));
+				hashedEmailAddress, StringPool.POUND, minCounts,
+				StringPool.POUND, page, StringPool.POUND, path,
+				StringPool.POUND, rangeKey, StringPool.POUND, size,
+				StringPool.POUND, sort));
 	}
 
 	@Override
@@ -109,12 +114,12 @@ public abstract class BaseUserActivityAsahSuggestionsContributor
 	@Reference
 	protected Portal portal;
 
-	private String _getContentType(Map<String, Object> attributes) {
+	private String _getContentTypes(Map<String, Object> attributes) {
 		if (attributes == null) {
 			return StringPool.BLANK;
 		}
 
-		return MapUtil.getString(attributes, "contentType", StringPool.BLANK);
+		return MapUtil.getString(attributes, "contentTypes", StringPool.BLANK);
 	}
 
 	private String _getHashedEmailAddress(long userId) {
@@ -123,10 +128,9 @@ public abstract class BaseUserActivityAsahSuggestionsContributor
 
 			MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 
-			messageDigest.update(
-				portal.getUserEmailAddress(
-					userId
-				).getBytes());
+			String userEmailAddress = portal.getUserEmailAddress(userId);
+
+			messageDigest.update(userEmailAddress.getBytes());
 
 			byte[] digest = messageDigest.digest();
 
@@ -161,11 +165,11 @@ public abstract class BaseUserActivityAsahSuggestionsContributor
 
 	private String _getURL(
 		AnalyticsConfiguration analyticsConfiguration, String basePath,
-		String contentType, String displayLanguageId, long groupId,
-		long minCounts, int page, String path, int rangeKey, int size,
-		String sort) {
+		String contentTypes, long dataSourceId, String displayLanguageId,
+		long groupId, long minCounts, int page, String path, int rangeKey,
+		int size, String sort) {
 
-		StringBundler sb = new StringBundler(28);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append(analyticsConfiguration.liferayAnalyticsFaroBackendURL());
 		sb.append("/api/1.0/");
@@ -174,11 +178,15 @@ public abstract class BaseUserActivityAsahSuggestionsContributor
 		sb.append(path);
 		sb.append("?");
 
-		if (!Validator.isBlank(contentType)) {
-			sb.append("contentType=");
-			sb.append(contentType);
+		if (!Validator.isBlank(contentTypes)) {
+			sb.append("contentTypes=");
+			sb.append(contentTypes);
 			sb.append("&");
 		}
+
+		sb.append("dataSourceId=");
+		sb.append(dataSourceId);
+		sb.append("&");
 
 		if (!Validator.isBlank(displayLanguageId)) {
 			sb.append("displayLanguageId=");

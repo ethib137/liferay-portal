@@ -26,7 +26,7 @@ export default function EditObjectFolderHeader({
 	selectedObjectFolder,
 }: EditObjectFolderHeaderProps) {
 	const [
-		{modelBuilderModals, showChangesSaved, showSidebars},
+		{showChangesSaved, showSidebars},
 		dispatch,
 	] = useObjectFolderContext();
 
@@ -97,8 +97,7 @@ export default function EditObjectFolderHeader({
 						</span>
 					</ClayTooltipProvider>
 
-					{selectedObjectFolder.externalReferenceCode !==
-						'uncategorized' &&
+					{selectedObjectFolder.externalReferenceCode !== 'default' &&
 						selectedObjectFolder.actions?.update && (
 							<ClayButtonWithIcon
 								aria-label={Liferay.Language.get(
@@ -108,8 +107,7 @@ export default function EditObjectFolderHeader({
 								onClick={() =>
 									dispatch({
 										payload: {
-											modelBuilderModals: {
-												...modelBuilderModals,
+											updatedModelBuilderModals: {
 												editObjectFolder: true,
 											},
 										},
@@ -152,8 +150,7 @@ export default function EditObjectFolderHeader({
 						onClick={() => {
 							dispatch({
 								payload: {
-									modelBuilderModals: {
-										...modelBuilderModals,
+									updatedModelBuilderModals: {
 										publishObjectDefinitions: true,
 									},
 								},

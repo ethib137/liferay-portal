@@ -406,6 +406,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PLUS_BUTTON</td>
+	<td>//a[contains(@class,'btn')][contains(@href,'new') or contains(@href,'redirect') or contains(@href,'mvc') or contains(@href,'javascript')][.//*[name()='svg'][contains(@class,'icon-plus')]][not(contains(@class,'borderless'))] | //button[not(contains(@class,'borderless'))][not(contains(@class,'btn-unstyled'))][*[contains(@class,'icon-plus')]]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PLUS_MENU</td>
 	<td>//div[contains (@class, 'dropdown')]//li/a[contains (.,'${key_plusMenu}')]</td>
 	<td></td>
@@ -782,7 +787,7 @@
 </tr>
 <tr>
 	<td>ENTRY_CONTENT_ROW_NUMBER_DATASET</td>
-	<td>//table[@class='table table-autofit']/tbody/tr[${key_rowNumber}]/td[text()="${key_entry}"]</td>
+	<td>//table/tbody/tr[${key_rowNumber}]/td[text()="${key_entry}"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -977,7 +982,7 @@
 </tr>
 <tr>
 	<td>ANY_FRAGMENT_DROP_TARGET_N</td>
-	<td>//div[@aria-label='${key_targetFragmentName}'][${key_index}]/div[contains(@class,'page-editor__topper__content')]</td>
+	<td>//div[@data-name='${key_targetFragmentName}'][${key_index}]/div[contains(@class,'page-editor__topper__content')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -1419,6 +1424,16 @@
 <tr>
 	<td>OPTION_CATEGORY</td>
 	<td>//div[contains(@class,'form-group')]/label[contains(.,'Category')]/..//span[contains(@class,'label label-secondary')]/span[contains(.,'${key_category}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>GENERIC_SELECT_FIELD_N</td>
+	<td>xpath=(//div[label[normalize-space(text())='${key_fieldLabel}']]/select)[${key_index}]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>INPUT_INDEX</td>
+	<td>xpath=(//input[contains(@class,'form-control')])[${key_index}]</td>
 	<td></td>
 </tr>
 <tr>

@@ -7,6 +7,7 @@ package com.liferay.layout.admin.web.internal.exportimport.data.handler;
 
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
+import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
 import com.liferay.client.extension.model.ClientExtensionEntryRel;
 import com.liferay.client.extension.service.ClientExtensionEntryRelLocalService;
 import com.liferay.counter.kernel.service.CounterLocalService;
@@ -928,7 +929,8 @@ public class LayoutStagedModelDataHandler
 		_importFaviconFileEntry(
 			layout, layoutElement, importedLayout, portletDataContext);
 
-		_importClientExtensionEntryRels(layout, portletDataContext);
+		_importClientExtensionEntryRels(
+			importedLayout, layout, portletDataContext);
 
 		_importLayoutLocalizations(layout, portletDataContext);
 
@@ -946,6 +948,15 @@ public class LayoutStagedModelDataHandler
 
 		_importLayoutFriendlyURLs(importedLayout, layout, portletDataContext);
 
+		_importAssets(importedLayout, layout, portletDataContext);
+
+		_importLayoutPageTemplateStructures(
+			importedLayout, layout, portletDataContext);
+
+		// Import layout portlets after layout page template structures
+		// have been imported to ensure portlet preferences are not deleted.
+		// See LPD-16349.
+
 		if ((layout.isTypePortlet() &&
 			 Validator.isNotNull(layout.getTypeSettings())) ||
 			layout.isTypeAssetDisplay() || layout.isTypeContent()) {
@@ -953,11 +964,6 @@ public class LayoutStagedModelDataHandler
 			_importLayoutPortlets(
 				importedLayout, layoutElement, portletDataContext);
 		}
-
-		_importAssets(importedLayout, layout, portletDataContext);
-
-		_importLayoutPageTemplateStructures(
-			importedLayout, layout, portletDataContext);
 
 		_importLayoutSEOEntries(layout, portletDataContext);
 
@@ -2032,8 +2038,16 @@ public class LayoutStagedModelDataHandler
 	}
 
 	private void _importClientExtensionEntryRels(
-			Layout layout, PortletDataContext portletDataContext)
+			Layout importedLayout, Layout layout,
+			PortletDataContext portletDataContext)
 		throws Exception {
+
+		_clientExtensionEntryRelLocalService.deleteClientExtensionEntryRels(
+			_portal.getClassNameId(Layout.class), importedLayout.getPlid(),
+			ClientExtensionEntryConstants.TYPE_GLOBAL_CSS);
+		_clientExtensionEntryRelLocalService.deleteClientExtensionEntryRels(
+			_portal.getClassNameId(Layout.class), importedLayout.getPlid(),
+			ClientExtensionEntryConstants.TYPE_GLOBAL_JS);
 
 		List<Element> clientExtensionEntryRelsElements =
 			portletDataContext.getReferenceDataElements(

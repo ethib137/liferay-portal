@@ -9,8 +9,8 @@ import {useParams} from 'react-router-dom';
 import useSWR from 'swr';
 
 import RadioCardList from '../../../components/RadioCardList/RadioCardList';
+import useMarketplaceSpringBootOAuth2 from '../../../hooks/useMarketplaceSpringBootOAuth2';
 import i18n from '../../../i18n';
-import useProvisioningKoroneikiOAuth2 from '../../GetAppPage/hooks/useProvisioningKoroneikiOAuth2';
 import {formatDate} from '../../PublishedAppsDashboard/PublishedDashboardPageUtil';
 
 type SubscriptionSelectionProps = {
@@ -26,13 +26,13 @@ const SelectSubscription = ({
 
 	const orderId = Number(params.orderId);
 
-	const provisioningKoroneikiOAuth2 = useProvisioningKoroneikiOAuth2();
+	const marketplaceSpringBootOAuth2 = useMarketplaceSpringBootOAuth2();
 
 	const {
 		data: subscriptions = [],
 		isLoading,
 	} = useSWR(`/subcriptions/${orderId}`, () =>
-		provisioningKoroneikiOAuth2.getSubscriptions(orderId)
+		marketplaceSpringBootOAuth2.getSubscriptions(orderId)
 	);
 
 	return (
@@ -42,7 +42,7 @@ const SelectSubscription = ({
 			{isLoading && <ClayLoadingIndicator />}
 
 			<RadioCardList
-				contentList={subscriptions.map((licenseKey) => {
+				contentList={subscriptions.map((licenseKey, index) => {
 					const availableKeys = Math.abs(
 						licenseKey.provisionedCount - licenseKey.purchasedCount
 					);
@@ -62,6 +62,7 @@ const SelectSubscription = ({
 							</small>
 						),
 						disabled: availableKeys <= 0,
+						id: index,
 						label: `${formatDate(licenseKey.startDate)} - ${
 							licenseKey?.endDate
 								? formatDate(

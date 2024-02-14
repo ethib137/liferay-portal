@@ -3,71 +3,88 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useEffect, useState} from 'react';
-import {UseFormSetValue} from 'react-hook-form';
+import {useCallback, useEffect} from 'react';
 
 import {Liferay} from '../liferay/liferay';
-import {GetAppForm} from '../pages/GetAppPage/GetAppPage';
+import {useGetAppContext} from '../pages/GetApp/GetAppContextProvider';
 import fetcher from '../services/fetcher';
-import {createCart, deleteCart, updateCart} from '../utils/api';
+import headlessCommerceDeliveryCart from '../services/rest/HeadlessCommerceDeliveryCart';
+import {createCart} from '../utils/api';
 
-type CartItem = {
-	productId: number;
-	quantity: number;
-	skuId: number;
-};
+const channelId = Liferay.CommerceContext.commerceChannelId;
 
 const useCart = ({
 	accountId,
 	orderType,
 	product,
-	setValue,
 }: {
 	accountId: number;
-	channelId?: number;
 	orderType?: OrderType;
 	product: DeliveryProduct;
-	setValue: UseFormSetValue<GetAppForm>;
 }) => {
-	const channelId = Liferay.CommerceContext.commerceChannelId;
-	const [cart, setCart] = useState<Cart>();
+	const [
+		{
+			license: {cart, cartItems},
+		},
+		dispatch,
+	] = useGetAppContext();
 
-	const [cartItems, setCartItems] = useState<CartItem[]>([]);
+	const cartId = cart?.id;
+
+	const setCart = useCallback(
+		(payload?: Cart) => dispatch({payload, type: 'SET_CART'}),
+		[dispatch]
+	);
+
+	const setCartItems = useCallback(
+		(payload: CartItem[]) =>
+			dispatch({payload: payload as any, type: 'SET_CART_ITEMS'}),
+		[dispatch]
+	);
 
 	const addCart = async (productId: number, skuId: number) => {
-		if (!cart?.id) {
+		if (!cartId) {
 			const response = await createCart({
 				accountId,
-				channelId: Number(channelId),
+				channelId,
 				orderTypeExternalReferenceCode: orderType?.externalReferenceCode as string,
 			});
 
 			setCart(response);
 		}
 
-		const existingItem = cartItems.find(
-			(item: CartItem) => item?.skuId === skuId
-		);
+		const existingItem = cartItems.find((item) => item?.skuId === skuId);
 
 		if (existingItem) {
-			return setCartItems((prevCart: CartItem[]) =>
-				prevCart.map((item) =>
-					item.skuId === skuId
-						? {...item, quantity: item.quantity + 1}
-						: item
-				)
+			const newCartItems = cartItems.map((item) =>
+				item.skuId === skuId
+					? {...item, quantity: item.quantity + 1}
+					: item
 			);
+
+			return setCartItems(newCartItems);
 		}
 
-		setCartItems((prevCart: CartItem[]) => [
-			...prevCart,
-			{productId, quantity: 1, skuId},
+		setCartItems([
+			...cartItems,
+			{productId, quantity: 1, skuId} as CartItem,
 		]);
 	};
 
-	const removeFromCart = (skuId: number) => {
-		setCartItems((prevCart: CartItem[]) =>
-			prevCart
+	useEffect(() => {
+		if (cartId && cartItems.length) {
+			headlessCommerceDeliveryCart
+				.updateCart(cartId, {
+					cartItems,
+				})
+				.then(setCart)
+				.catch(console.error);
+		}
+	}, [cartId, cartItems, setCart]);
+
+	const removeFromCart = (skuId: number) =>
+		setCartItems(
+			cartItems
 				.map((item) =>
 					item.skuId === skuId
 						? {...item, quantity: item.quantity - 1}
@@ -75,33 +92,22 @@ const useCart = ({
 				)
 				.filter((item) => item.quantity > 0)
 		);
-	};
 
-	const updateCartItems = async (cartId: number, data: any) => {
-		return updateCart(cartId, data);
-	};
-
-	const removeCart = (cartId: number) => {
-		deleteCart(cartId);
-		setCart(undefined);
-		setCartItems([]);
-	};
-
-	useEffect(() => {
-		(async () => {
-			if (cart?.id && cartItems.length) {
-				const response = await updateCartItems(cart?.id, {
-					cartItems,
-				});
-
-				setCart(response);
-			}
-		})();
-	}, [cart?.id, cartItems]);
+	const removeCart = useCallback(
+		(id: number) =>
+			headlessCommerceDeliveryCart
+				.deleteCart(id)
+				.then(() => {
+					setCart(undefined);
+					setCartItems([]);
+				})
+				.catch(console.error),
+		[setCart, setCartItems]
+	);
 
 	useEffect(() => {
 		(async () => {
-			if (!accountId || !product) {
+			if (!accountId || !product?.id) {
 				return;
 			}
 
@@ -109,7 +115,7 @@ const useCart = ({
 				`o/headless-commerce-delivery-cart/v1.0/channels/${channelId}/account/${accountId}/carts`
 			);
 
-			if (!orders?.length || !product.id) {
+			if (!orders?.length) {
 				return;
 			}
 
@@ -133,24 +139,23 @@ const useCart = ({
 				(cartItem: CartItem) => cartItem.productId === product.id + 1
 			);
 
-			if (hasCartItem) {
-				const cartItemsList = await cartItemsResponse?.items?.map(
-					(item: CartItem) => ({
-						productId: item.productId,
-						quantity: item.quantity,
-						skuId: item.skuId,
-					})
-				);
-
-				setCartItems(cartItemsList);
-				setValue('selectedTimeline', 'paid');
-
-				return;
+			if (!hasCartItem) {
+				return removeCart(order.id);
 			}
 
-			removeCart(order.id);
+			const cartItemsList = await cartItemsResponse?.items?.map(
+				(item: CartItem) => ({
+					productId: item.productId,
+					quantity: item.quantity,
+					skuId: item.skuId,
+				})
+			);
+
+			dispatch({payload: 'PAID', type: 'SET_LICENSE_TYPE'});
+
+			setCartItems(cartItemsList);
 		})();
-	}, [accountId, channelId, product, setValue]);
+	}, [accountId, dispatch, product?.id, removeCart, setCart, setCartItems]);
 
 	return {
 		addCart,
@@ -159,8 +164,9 @@ const useCart = ({
 		removeCart,
 		removeFromCart,
 		setCart,
-		updateCart,
-		updateCartItems,
+		updateCart: headlessCommerceDeliveryCart.updateCart.bind(
+			headlessCommerceDeliveryCart
+		),
 	};
 };
 

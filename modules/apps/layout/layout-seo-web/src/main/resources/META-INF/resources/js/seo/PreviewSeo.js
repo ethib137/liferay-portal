@@ -10,7 +10,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 
 import {previewSeoOnChange} from './PreviewSeoEvents';
 
-const MAX_LENGTH_DESCIPTION = 160;
+const MAX_LENGTH_DESCRIPTION = 160;
 
 const PreviewSeo = ({
 	description = '',
@@ -27,10 +27,15 @@ const PreviewSeo = ({
 
 			{titleSuffix && ` - ${titleSuffix}`}
 		</div>,
-		<div className="preview-seo-url text-truncate" key="url">
-			{decodeURIComponent(url)}
-		</div>,
 	];
+
+	if (url) {
+		titleUrl.push(
+			<div className="preview-seo-url text-truncate" key="url">
+				{decodeURIComponent(url)}
+			</div>
+		);
+	}
 
 	return (
 		<div
@@ -50,9 +55,9 @@ const PreviewSeo = ({
 			{displayType === 'og' ? titleUrl.reverse() : titleUrl}
 
 			<div className="preview-seo-description">
-				{description.length < MAX_LENGTH_DESCIPTION
+				{description.length < MAX_LENGTH_DESCRIPTION
 					? description
-					: `${description.slice(0, MAX_LENGTH_DESCIPTION)}\u2026`}
+					: `${description.slice(0, MAX_LENGTH_DESCRIPTION)}\u2026`}
 			</div>
 		</div>
 	);
@@ -129,9 +134,15 @@ const PreviewSeoContainer = ({
 					const input = document.getElementById(
 						`${portletNamespace}${id}`
 					);
+
+					if (!input) {
+						return acc;
+					}
+
 					const defaultLanguageInput = document.getElementById(
 						`${portletNamespace}${id}_${defaultLanguage}`
 					);
+
 					acc[type] = {
 						defaultLanguageInput,
 						input,

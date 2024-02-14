@@ -14,14 +14,11 @@ import {
 } from '../../utils/api';
 
 const useNextSteps = (orderId: string) => {
-	const {data = [], isLoading: cartLoading} = useSWR(
-		`/next-steps/cart/${orderId}`,
-		() => {
-			return Promise.all([
-				getCart(Number(orderId)),
-				getCartItems(Number(orderId)),
-			]);
-		}
+	const {
+		data = [],
+		isLoading: cartLoading,
+	} = useSWR(`/next-steps/cart/${orderId}`, () =>
+		Promise.all([getCart(orderId), getCartItems(orderId)])
 	);
 
 	const [cart, cartItems] = data ?? [];
@@ -32,15 +29,18 @@ const useNextSteps = (orderId: string) => {
 
 	const {data: product, isLoading: productLoading} = useSWR(
 		productId
-			? `/next-steps/product/${productId}_${firstCartItem.id}`
+			? `/next-steps/product/${productId}/${firstCartItem.id}`
 			: null,
 		() =>
 			HeadlessCommerceDeliveryCatalogImpl.getProduct(
 				Liferay.CommerceContext.commerceChannelId,
 				productId,
 				new URLSearchParams({
-					accountId,
-					nestedFields: 'attachments,images,productSpecifications',
+					'accountId': '-1',
+					'attachments.accountId': '-1',
+					'images.accountId': '-1',
+					'nestedFields': 'attachments,images,productSpecifications',
+					'skus.accountId': '-1',
 				})
 			)
 	);

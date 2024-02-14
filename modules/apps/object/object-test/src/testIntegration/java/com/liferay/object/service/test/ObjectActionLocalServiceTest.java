@@ -133,7 +133,7 @@ import org.osgi.framework.FrameworkUtil;
 /**
  * @author Brian Wing Shun Chan
  */
-@FeatureFlags({"LPS-173537", "LPS-181663", "LPS-187142", "LPS-196724"})
+@FeatureFlags({"LPS-173537", "LPS-187142", "LPS-196724"})
 @RunWith(Arquillian.class)
 public class ObjectActionLocalServiceTest {
 
@@ -655,7 +655,7 @@ public class ObjectActionLocalServiceTest {
 
 			ObjectDefinition objectDefinitionAA =
 				ObjectDefinitionTestUtil.addCustomObjectDefinition(
-					"A" + RandomTestUtil.randomString(),
+					ObjectDefinitionTestUtil.getRandomName(),
 					_objectDefinitionLocalService);
 
 			ObjectRelationship objectRelationshipA_AA =
@@ -665,7 +665,7 @@ public class ObjectActionLocalServiceTest {
 
 			ObjectDefinition objectDefinitionAAA =
 				ObjectDefinitionTestUtil.addCustomObjectDefinition(
-					"A" + RandomTestUtil.randomString(),
+					ObjectDefinitionTestUtil.getRandomName(),
 					_objectDefinitionLocalService);
 
 			ObjectRelationship objectRelationshipAA_AAA =
@@ -698,13 +698,14 @@ public class ObjectActionLocalServiceTest {
 				TestPropsValues.getUserId(),
 				objectDefinitionA.getObjectDefinitionId());
 
-			objectEntry = _objectEntryLocalService.addObjectEntry(
-				TestPropsValues.getUserId(), 0,
-				objectDefinitionA.getObjectDefinitionId(),
-				HashMapBuilder.<String, Serializable>put(
-					"firstName", "John"
-				).build(),
-				ServiceContextTestUtil.getServiceContext());
+			ObjectEntry rootObjectEntry =
+				_objectEntryLocalService.addObjectEntry(
+					TestPropsValues.getUserId(), 0,
+					objectDefinitionA.getObjectDefinitionId(),
+					HashMapBuilder.<String, Serializable>put(
+						"firstName", "John"
+					).build(),
+					ServiceContextTestUtil.getServiceContext());
 
 			// Hierarchy, add object entry in a child node
 
@@ -719,7 +720,7 @@ public class ObjectActionLocalServiceTest {
 					"able", RandomTestUtil.randomString()
 				).put(
 					relationshipObjectField.getName(),
-					objectEntry.getObjectEntryId()
+					rootObjectEntry.getObjectEntryId()
 				).build(),
 				ServiceContextTestUtil.getServiceContext());
 
@@ -754,6 +755,9 @@ public class ObjectActionLocalServiceTest {
 				ObjectActionTriggerConstants.KEY_ON_AFTER_ROOT_UPDATE,
 				objectDefinitionA, null, null,
 				WorkflowConstants.STATUS_APPROVED);
+
+			_objectEntryLocalService.deleteObjectEntry(
+				rootObjectEntry.getObjectEntryId());
 
 			_objectDefinitionLocalService.unbindObjectDefinition(
 				objectDefinitionA.getObjectDefinitionId());
@@ -2003,7 +2007,7 @@ public class ObjectActionLocalServiceTest {
 						com.liferay.object.rest.dto.v1_0.ObjectEntry.class.
 							getName(),
 						StringPool.POUND,
-						_objectDefinition.getOSGiJaxRsName()));
+						StringUtil.toLowerCase(_objectDefinition.getName())));
 
 			objectEntryResource.setContextAcceptLanguage(
 				new AcceptLanguage() {

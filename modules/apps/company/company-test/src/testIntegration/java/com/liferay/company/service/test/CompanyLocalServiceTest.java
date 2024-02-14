@@ -22,7 +22,7 @@ import com.liferay.expando.model.adapter.StagedExpandoTable;
 import com.liferay.exportimport.kernel.service.StagingLocalService;
 import com.liferay.layout.friendly.url.LayoutFriendlyURLEntryHelper;
 import com.liferay.layout.set.model.adapter.StagedLayoutSet;
-import com.liferay.petra.reflect.ReflectionUtil;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -73,6 +73,7 @@ import com.liferay.portal.kernel.test.randomizerbumpers.NumericStringRandomizerB
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.PropsValuesTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserGroupTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
@@ -307,7 +308,7 @@ public class CompanyLocalServiceTest {
 			_dlAppLocalService.addFileEntry(
 				null, userId, guestGroup.getGroupId(), 0, "test.xml",
 				"text/xml", "test.xml", "", "", "", "test".getBytes(), null,
-				null, serviceContext);
+				null, null, serviceContext);
 		}
 		finally {
 			_companyLocalService.deleteCompany(companyId);
@@ -795,7 +796,7 @@ public class CompanyLocalServiceTest {
 	}
 
 	@Test
-	public void testextractDBPartitionCompanyDefaultCompany() {
+	public void testExtractDBPartitionCompanyDefaultCompany() {
 		try {
 			_companyLocalService.extractDBPartitionCompany(
 				PortalInstances.getDefaultCompanyId());
@@ -911,6 +912,42 @@ public class CompanyLocalServiceTest {
 				languageIds,
 				groupTypeSettingsUnicodeProperties.getProperty(
 					PropsKeys.LOCALES));
+		}
+		finally {
+			_companyLocalService.deleteCompany(company);
+		}
+	}
+
+	@Test
+	public void testUpdateCompanyLocalesWithLayoutSetPrototype()
+		throws Exception {
+
+		Company company = addCompany();
+
+		long companyId = company.getCompanyId();
+
+		String languageId = "ca_ES";
+
+		try {
+			long userId = _userLocalService.getGuestUserId(companyId);
+
+			addLayoutSetPrototype(
+				companyId, userId, RandomTestUtil.randomString());
+
+			TimeZone timeZone = company.getTimeZone();
+
+			_companyLocalService.updateDisplay(
+				company.getCompanyId(), languageId, timeZone.getID());
+
+			_companyLocalService.updatePreferences(
+				company.getCompanyId(),
+				UnicodePropertiesBuilder.put(
+					PropsKeys.LOCALES, languageId
+				).build());
+
+			Assert.assertEquals(
+				Collections.singleton(LocaleUtil.fromLanguageId(languageId)),
+				_language.getAvailableLocales());
 		}
 		finally {
 			_companyLocalService.deleteCompany(company);
@@ -1117,22 +1154,9 @@ public class CompanyLocalServiceTest {
 
 		String originalMx = company.getMx();
 
-		Field field = null;
-
-		Object value = null;
-
-		try {
-			field = ReflectionUtil.getDeclaredField(
-				PropsValues.class, "MAIL_MX_UPDATE");
-
-			value = field.get(null);
-
-			if (mailMxUpdate) {
-				field.set(null, Boolean.TRUE);
-			}
-			else {
-				field.set(null, Boolean.FALSE);
-			}
+		try (SafeCloseable safeCloseable =
+				PropsValuesTestUtil.swapWithSafeCloseable(
+					"MAIL_MX_UPDATE", mailMxUpdate)) {
 
 			_companyLocalService.updateCompany(
 				company.getCompanyId(), company.getVirtualHostname(), mx,
@@ -1159,10 +1183,6 @@ public class CompanyLocalServiceTest {
 		}
 		finally {
 			_companyLocalService.deleteCompany(company.getCompanyId());
-
-			if (field != null) {
-				field.set(null, value);
-			}
 		}
 	}
 
@@ -1238,7 +1258,9 @@ public class CompanyLocalServiceTest {
 	}
 
 	private void _verifyRandomCompanyId(long companyId, long counterCompanyId) {
-		Assert.assertTrue(companyId >= (long)Math.pow(10, 15));
+		Assert.assertTrue(
+			(companyId >= (long)Math.pow(10, 13)) &&
+			(companyId < (long)Math.pow(10, 14)));
 		Assert.assertNotEquals(counterCompanyId, companyId);
 	}
 

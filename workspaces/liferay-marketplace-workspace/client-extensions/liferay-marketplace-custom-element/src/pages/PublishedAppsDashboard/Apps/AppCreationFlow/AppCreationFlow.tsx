@@ -29,8 +29,14 @@ type SetAppFlowListStateProps = {
 	selectedItem: string;
 };
 
-export function AppCreationFlow() {
-	const [{appERC, appProductId, priceModel}] = useAppContext();
+type AppCreationFlowProps = {
+	catalogId: string;
+};
+
+export function AppCreationFlow({catalogId}: AppCreationFlowProps) {
+	const [
+		{appERC, appLogo, appName, appProductId, priceModel},
+	] = useAppContext();
 	const [appFlowListItems, setAppFlowListItems] = useState(
 		initialFLowListItems
 	);
@@ -73,7 +79,8 @@ export function AppCreationFlow() {
 			<NewAppToolBar
 				accountImage={supplierAccount?.logoURL}
 				accountName={supplierAccount?.name as string}
-				enableDropdown={currentFlow === 'submit'}
+				appImage={appLogo?.preview}
+				appName={appName}
 			/>
 
 			<div className="app-creation-flow-body">
@@ -81,6 +88,7 @@ export function AppCreationFlow() {
 
 				{currentFlow === 'create' && (
 					<CreateNewAppPage
+						catalogId={catalogId}
 						onClickContinue={() => {
 							setAppFlowListState({
 								checkedItems: ['create'],

@@ -5,7 +5,9 @@
 
 package com.liferay.address.internal.util;
 
+import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -16,11 +18,19 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.Region;
+import com.liferay.portal.kernel.model.RegionLocalization;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.CountryLocalService;
-import com.liferay.portal.kernel.service.RegionLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
+
+import java.io.InputStream;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -32,9 +42,9 @@ import java.util.Map;
 public class CompanyCountriesUtil {
 
 	public static void addCountry(
-		Company company, JSONObject countryJSONObject,
-		CountryLocalService countryLocalService,
-		RegionLocalService regionLocalService) {
+			Company company, JSONObject countryJSONObject,
+			CountryLocalService countryLocalService, Connection connection)
+		throws Exception {
 
 		try {
 			ServiceContext serviceContext = new ServiceContext();
@@ -66,7 +76,7 @@ public class CompanyCountriesUtil {
 
 			countryLocalService.updateCountryLocalizations(country, titleMap);
 
-			processCountryRegions(country, regionLocalService);
+			processCountryRegions(country, connection);
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException);
@@ -74,14 +84,21 @@ public class CompanyCountriesUtil {
 	}
 
 	public static JSONArray getJSONArray(String path) throws Exception {
-		return JSONFactoryUtil.createJSONArray(
-			StringUtil.read(
-				CompanyCountriesUtil.class.getClassLoader(), path, false));
+		ClassLoader classLoader = CompanyCountriesUtil.class.getClassLoader();
+
+		try (InputStream inputStream = classLoader.getResourceAsStream(path)) {
+			if (inputStream == null) {
+				return null;
+			}
+
+			return JSONFactoryUtil.createJSONArray(
+				StringUtil.read(inputStream));
+		}
 	}
 
 	public static void populateCompanyCountries(
 			Company company, CountryLocalService countryLocalService,
-			RegionLocalService regionLocalService)
+			Connection connection)
 		throws Exception {
 
 		int count = countryLocalService.getCompanyCountriesCount(
@@ -113,7 +130,7 @@ public class CompanyCountriesUtil {
 			try {
 				addCountry(
 					company, countryJSONObject, countryLocalService,
-					regionLocalService);
+					connection);
 			}
 			catch (Exception exception) {
 				_log.error(exception);
@@ -122,79 +139,125 @@ public class CompanyCountriesUtil {
 	}
 
 	public static void processCountryRegions(
-		Country country, RegionLocalService regionLocalService) {
+			Country country, Connection connection)
+		throws Exception {
 
 		String a2 = country.getA2();
 
-		try {
-			String path =
-				"com/liferay/address/dependencies/regions/" + a2 + ".json";
+		String path =
+			"com/liferay/address/dependencies/regions/" + a2 + ".json";
 
-			ClassLoader classLoader =
-				CompanyCountriesUtil.class.getClassLoader();
+		JSONArray regionsJSONArray = getJSONArray(path);
 
-			if (classLoader.getResource(path) == null) {
-				return;
-			}
+		if (regionsJSONArray == null) {
+			return;
+		}
 
-			JSONArray regionsJSONArray = getJSONArray(path);
+		if (_log.isDebugEnabled()) {
+			_log.debug("Regions found for country " + a2);
+		}
 
-			if (_log.isDebugEnabled()) {
-				_log.debug("Regions found for country " + a2);
-			}
+		if (regionsJSONArray.length() == 0) {
+			return;
+		}
+
+		try (PreparedStatement regionPreparedStatement =
+				AutoBatchPreparedStatementUtil.autoBatch(
+					connection,
+					StringBundler.concat(
+						"INSERT INTO Region (mvccVersion, ctCollectionId",
+						", uuid_, regionId, companyId, userId, createDate",
+						", modifiedDate, countryId, active_, name",
+						", position, regionCode) VALUES (0, 0, ?, ?, ?, ?, ?, ",
+						"?, ?, ?, ?, 0, ?)"));
+			PreparedStatement regionLocalizationPreparedStatement =
+				AutoBatchPreparedStatementUtil.autoBatch(
+					connection,
+					StringBundler.concat(
+						"INSERT INTO RegionLocalization (mvccVersion, ",
+						"ctCollectionId, regionLocalizationId, companyId",
+						", regionId, languageId, title) VALUES (0, 0, ?, ?, ",
+						"?, ?, ?)"))) {
 
 			for (int i = 0; i < regionsJSONArray.length(); i++) {
-				try {
-					JSONObject regionJSONObject =
-						regionsJSONArray.getJSONObject(i);
+				JSONObject regionJSONObject = regionsJSONArray.getJSONObject(i);
 
-					ServiceContext serviceContext = new ServiceContext();
+				long regionId = CounterLocalServiceUtil.increment(
+					Region.class.getName());
 
-					serviceContext.setCompanyId(country.getCompanyId());
-					serviceContext.setUserId(country.getUserId());
+				_addRegionBatch(
+					regionPreparedStatement, country.getCompanyId(),
+					country.getCountryId(), regionJSONObject.getString("name"),
+					regionJSONObject.getString("regionCode"), regionId,
+					country.getUserId());
 
-					Region region = regionLocalService.addRegion(
-						country.getCountryId(), true,
-						regionJSONObject.getString("name"), 0,
-						regionJSONObject.getString("regionCode"),
-						serviceContext);
+				JSONObject localizationsJSONObject =
+					regionJSONObject.getJSONObject("localizations");
 
-					JSONObject localizationsJSONObject =
-						regionJSONObject.getJSONObject("localizations");
+				if (localizationsJSONObject == null) {
+					for (Locale locale :
+							LanguageUtil.getCompanyAvailableLocales(
+								country.getCompanyId())) {
 
-					if (localizationsJSONObject == null) {
-						Map<String, String> titleMap = new HashMap<>();
-
-						for (Locale locale :
-								LanguageUtil.getCompanyAvailableLocales(
-									country.getCompanyId())) {
-
-							titleMap.put(
-								LanguageUtil.getLanguageId(locale),
-								region.getName());
-						}
-
-						regionLocalService.updateRegionLocalizations(
-							region, titleMap);
-					}
-					else {
-						for (String key : localizationsJSONObject.keySet()) {
-							regionLocalService.updateRegionLocalization(
-								region, key,
-								localizationsJSONObject.getString(key));
-						}
+						_addRegionLocalizationBatch(
+							regionLocalizationPreparedStatement,
+							country.getCountryId(),
+							LanguageUtil.getLanguageId(locale), regionId,
+							regionJSONObject.getString("name"));
 					}
 				}
-				catch (PortalException portalException) {
-					_log.error(portalException);
+				else {
+					for (String key : localizationsJSONObject.keySet()) {
+						_addRegionLocalizationBatch(
+							regionLocalizationPreparedStatement,
+							country.getCountryId(), key, regionId,
+							localizationsJSONObject.getString(key));
+					}
 				}
 			}
+
+			regionPreparedStatement.executeBatch();
+			regionLocalizationPreparedStatement.executeBatch();
 		}
 		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("No regions found for country " + a2, exception);
-			}
+			_log.error(exception);
 		}
+	}
+
+	private static void _addRegionBatch(
+			PreparedStatement preparedStatement, long companyId, long countryId,
+			String name, String regionCode, long regionId, long userId)
+		throws SQLException {
+
+		preparedStatement.setString(1, PortalUUIDUtil.generate());
+		preparedStatement.setLong(2, regionId);
+		preparedStatement.setLong(3, companyId);
+		preparedStatement.setLong(4, userId);
+		preparedStatement.setDate(5, new Date(System.currentTimeMillis()));
+		preparedStatement.setDate(6, new Date(System.currentTimeMillis()));
+		preparedStatement.setLong(7, countryId);
+		preparedStatement.setBoolean(8, true);
+		preparedStatement.setString(9, name);
+		preparedStatement.setString(10, regionCode);
+
+		preparedStatement.addBatch();
+	}
+
+	private static void _addRegionLocalizationBatch(
+			PreparedStatement preparedStatement, long countryId,
+			String languageId, long regionId, String title)
+		throws SQLException {
+
+		preparedStatement.setLong(
+			1,
+			CounterLocalServiceUtil.increment(
+				RegionLocalization.class.getName()));
+		preparedStatement.setLong(2, countryId);
+		preparedStatement.setLong(3, regionId);
+		preparedStatement.setString(4, languageId);
+		preparedStatement.setString(5, title);
+
+		preparedStatement.addBatch();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

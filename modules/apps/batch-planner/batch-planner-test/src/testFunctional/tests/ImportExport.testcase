@@ -140,7 +140,6 @@ definition {
 	@ignore = "true"
 	@priority = 3
 	test CanExcludeCSVFieldsFromExport {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given several channels") {
@@ -298,7 +297,6 @@ definition {
 	@ignore = "true"
 	@priority = 3
 	test CanExportCSVFiles {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given several accounts") {
@@ -339,7 +337,6 @@ definition {
 	@ignore = "true"
 	@priority = 3
 	test CanExportCSVFileWithoutHeaders {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given several accounts") {
@@ -666,17 +663,17 @@ definition {
 		task ("When I go to the Import/Export Center and order by create date") {
 			ImportExport.openImportExportAdmin();
 
-			ManagementBar.setFilterAndOrder(orderBy = "Create Date");
+			Click(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
 		}
 
-		task ("Then the executions should be ordered by create date in descending order") {
+		task ("Then the executions should be ordered by create date in ascending order") {
 			AssertTextEquals.assertPartialText(
-				key_rowNumber = 1,
+				key_rowNumber = 2,
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER",
 				value1 = "ObjectDefinition Plan Execution");
 
 			AssertTextEquals.assertPartialText(
-				key_rowNumber = 2,
+				key_rowNumber = 1,
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER",
 				value1 = "json_objectDefinition_import_approved");
 		}
@@ -685,12 +682,12 @@ definition {
 			ManagementBar.toggleViewOrder();
 
 			AssertTextEquals.assertPartialText(
-				key_rowNumber = 1,
+				key_rowNumber = 2,
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER",
 				value1 = "json_objectDefinition_import_approved");
 
 			AssertTextEquals.assertPartialText(
-				key_rowNumber = 2,
+				key_rowNumber = 1,
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER",
 				value1 = "ObjectDefinition Plan Execution");
 		}
@@ -1119,7 +1116,9 @@ definition {
 
 			PortletEntry.selectAll();
 
-			ClickNoError(locator1 = "Icon#DELETE");
+			ClickNoError(
+				key_text = "times-circle",
+				locator1 = "ManagementBar#ANY_ICON");
 		}
 	}
 
@@ -1236,7 +1235,9 @@ definition {
 
 			PortletEntry.selectAll();
 
-			ClickNoError(locator1 = "Icon#DELETE");
+			ClickNoError(
+				key_text = "times-circle",
+				locator1 = "ManagementBar#ANY_ICON");
 		}
 	}
 
@@ -1326,6 +1327,11 @@ definition {
 
 		task ("When new export file") {
 			ImportExport.gotoExport();
+
+			Select(
+				key_selectFieldLabel = "Export File Format",
+				locator1 = "ImportExport#SELECT",
+				value1 = "JSON");
 		}
 
 		task ("Then I can see all available entity types to export") {

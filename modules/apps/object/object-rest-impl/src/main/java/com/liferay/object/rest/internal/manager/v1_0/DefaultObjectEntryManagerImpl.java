@@ -57,6 +57,7 @@ import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
@@ -158,7 +159,7 @@ public class DefaultObjectEntryManagerImpl
 			_addOrUpdateNestedObjectEntries(
 				dtoConverterContext, objectDefinition, objectEntry,
 				_getObjectRelationships(objectDefinition, objectEntry),
-				serviceBuilderObjectEntry.getPrimaryKey()));
+				serviceBuilderObjectEntry.getPrimaryKey(), scopeKey));
 	}
 
 	@Override
@@ -738,6 +739,11 @@ public class DefaultObjectEntryManagerImpl
 			existingObjectEntry.setDateModified(objectEntry.getDateModified());
 		}
 
+		if (objectEntry.getExternalReferenceCode() != null) {
+			existingObjectEntry.setExternalReferenceCode(
+				objectEntry.getExternalReferenceCode());
+		}
+
 		if (objectEntry.getKeywords() != null) {
 			existingObjectEntry.setKeywords(objectEntry.getKeywords());
 		}
@@ -798,7 +804,8 @@ public class DefaultObjectEntryManagerImpl
 			_addOrUpdateNestedObjectEntries(
 				dtoConverterContext, objectDefinition, objectEntry,
 				_getObjectRelationships(objectDefinition, objectEntry),
-				serviceBuilderObjectEntry.getPrimaryKey()));
+				serviceBuilderObjectEntry.getPrimaryKey(),
+				objectEntry.getScopeKey()));
 	}
 
 	@Override
@@ -830,7 +837,7 @@ public class DefaultObjectEntryManagerImpl
 			_addOrUpdateNestedObjectEntries(
 				dtoConverterContext, objectDefinition, objectEntry,
 				_getObjectRelationships(objectDefinition, objectEntry),
-				serviceBuilderObjectEntry.getPrimaryKey()));
+				serviceBuilderObjectEntry.getPrimaryKey(), scopeKey));
 	}
 
 	private Map<String, String> _addAction(
@@ -862,7 +869,7 @@ public class DefaultObjectEntryManagerImpl
 				DTOConverterContext dtoConverterContext,
 				ObjectDefinition objectDefinition, ObjectEntry objectEntry,
 				Map<String, ObjectRelationship> objectRelationships,
-				long primaryKey)
+				long primaryKey, String scopeKey)
 		throws Exception {
 
 		Map<String, Object> properties = objectEntry.getProperties();
@@ -945,8 +952,7 @@ public class DefaultObjectEntryManagerImpl
 					nestedObjectEntry = objectEntryManager.updateObjectEntry(
 						objectDefinition.getCompanyId(), dtoConverterContext,
 						nestedObjectEntry.getExternalReferenceCode(),
-						relatedObjectDefinition, nestedObjectEntry,
-						relatedObjectDefinition.getScope());
+						relatedObjectDefinition, nestedObjectEntry, scopeKey);
 
 					if (!manyToOneObjectRelationship) {
 						_relateNestedObjectEntry(
@@ -1381,21 +1387,6 @@ public class DefaultObjectEntryManagerImpl
 				"File source " + fileSource + " is not supported");
 		}
 
-		if (StringUtil.equals(
-				fileSource, ObjectFieldSettingConstants.VALUE_USER_COMPUTER) &&
-			GetterUtil.getBoolean(
-				ObjectFieldSettingUtil.getValue(
-					ObjectFieldSettingConstants.
-						NAME_SHOW_FILES_IN_DOCS_AND_MEDIA,
-					objectField))) {
-
-			throw new UnsupportedOperationException(
-				"Object field setting \"" +
-					ObjectFieldSettingConstants.
-						NAME_SHOW_FILES_IN_DOCS_AND_MEDIA +
-							"\" is not supported");
-		}
-
 		com.liferay.portal.kernel.repository.model.FileEntry
 			serviceBuilderFileEntry = null;
 
@@ -1670,15 +1661,21 @@ public class DefaultObjectEntryManagerImpl
 			}
 
 			if (objectField.isLocalized()) {
-				value = objectEntry.getPropertyValue(
+				Object localizedValue = objectEntry.getPropertyValue(
 					objectField.getI18nObjectFieldName());
 
-				if (value == null) {
-					continue;
+				if (localizedValue != null) {
+					values.put(
+						objectField.getI18nObjectFieldName(),
+						(Serializable)localizedValue);
 				}
-
-				values.put(
-					objectField.getI18nObjectFieldName(), (Serializable)value);
+				else if (value != null) {
+					values.put(
+						objectField.getI18nObjectFieldName(),
+						HashMapBuilder.put(
+							_language.getLanguageId(locale), value
+						).build());
+				}
 
 				continue;
 			}
@@ -1725,6 +1722,9 @@ public class DefaultObjectEntryManagerImpl
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private Language _language;
 
 	@Reference
 	private ObjectActionEngine _objectActionEngine;

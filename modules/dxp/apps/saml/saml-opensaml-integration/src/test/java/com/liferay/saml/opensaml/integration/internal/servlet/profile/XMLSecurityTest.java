@@ -13,6 +13,7 @@ import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.saml.constants.SamlWebKeys;
 import com.liferay.saml.opensaml.integration.internal.BaseSamlTestCase;
 import com.liferay.saml.opensaml.integration.internal.helper.RelayStateHelperImpl;
+import com.liferay.saml.opensaml.integration.internal.provider.CachingChainingMetadataResolver;
 import com.liferay.saml.opensaml.integration.internal.util.OpenSamlUtil;
 import com.liferay.saml.persistence.model.SamlSpIdpConnection;
 import com.liferay.saml.persistence.model.impl.SamlSpIdpConnectionImpl;
@@ -26,6 +27,7 @@ import com.liferay.saml.persistence.service.SamlSpSessionLocalServiceUtil;
 import java.io.ByteArrayOutputStream;
 
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
@@ -103,10 +105,10 @@ public class XMLSecurityTest extends BaseSamlTestCase {
 		);
 
 		ReflectionTestUtil.setFieldValue(
-			_webSsoProfileImpl, "identifierGenerationStrategyFactory",
-			identifierGenerationStrategyFactory);
+			_webSsoProfileImpl, "credentialResolver", credentialResolver);
 		ReflectionTestUtil.setFieldValue(
-			_webSsoProfileImpl, "metadataManager", metadataManagerImpl);
+			_webSsoProfileImpl, "localEntityManager",
+			keyStoreLocalEntityManager);
 		ReflectionTestUtil.setFieldValue(_webSsoProfileImpl, "portal", portal);
 		ReflectionTestUtil.setFieldValue(
 			_webSsoProfileImpl, "_relayStateHelper", _relayStateHelperImpl);
@@ -119,7 +121,7 @@ public class XMLSecurityTest extends BaseSamlTestCase {
 			_webSsoProfileImpl, "_samlSpAuthRequestLocalService",
 			samlSpAuthRequestLocalService);
 		ReflectionTestUtil.setFieldValue(
-			_webSsoProfileImpl, "_samlSpIdpConnectionLocalService",
+			_webSsoProfileImpl, "samlSpIdpConnectionLocalService",
 			samlSpIdpConnectionLocalService);
 		ReflectionTestUtil.setFieldValue(
 			_webSsoProfileImpl, "samlSpSessionLocalService",
@@ -127,6 +129,20 @@ public class XMLSecurityTest extends BaseSamlTestCase {
 
 		ReflectionTestUtil.invoke(
 			_relayStateHelperImpl, "activate", new Class<?>[0]);
+
+		_webSsoProfileImpl.activate(
+			SystemBundleUtil.getBundleContext(), new HashMap<String, Object>());
+
+		ReflectionTestUtil.invoke(
+			_webSsoProfileImpl.getMetadataResolver(), "doDestroy",
+			new Class<?>[0]);
+
+		CachingChainingMetadataResolver cachingChainingMetadataResolver =
+			(CachingChainingMetadataResolver)
+				_webSsoProfileImpl.getMetadataResolver();
+
+		cachingChainingMetadataResolver.addMetadataResolver(
+			new MockMetadataResolver());
 
 		prepareServiceProvider(SP_ENTITY_ID);
 	}
@@ -258,7 +274,7 @@ public class XMLSecurityTest extends BaseSamlTestCase {
 			String authnRequestXML, String redirectURL)
 		throws Exception {
 
-		Credential credential = metadataManagerImpl.getSigningCredential();
+		Credential credential = _webSsoProfileImpl.getSigningCredential();
 
 		String encodedAuthnRequest = _encodeRequest(authnRequestXML);
 

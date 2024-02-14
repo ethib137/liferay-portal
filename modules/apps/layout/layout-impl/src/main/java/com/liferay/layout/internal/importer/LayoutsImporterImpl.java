@@ -379,7 +379,7 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 		PageTemplateCollection pageTemplateCollection =
 			new PageTemplateCollection() {
 				{
-					name = _PAGE_TEMPLATE_COLLECTION_KEY_DEFAULT;
+					setName(() -> _PAGE_TEMPLATE_COLLECTION_KEY_DEFAULT);
 				}
 			};
 
@@ -1908,6 +1908,18 @@ public class LayoutsImporterImpl implements LayoutsImporter {
 				themeCSSClientExtension.getExternalReferenceCode(), layout,
 				serviceContext, ClientExtensionEntryConstants.TYPE_THEME_CSS,
 				themeCSSClientExtension.getClientExtensionConfig(), userId);
+		}
+
+		ClientExtension themeSpritemapClientExtension =
+			settings.getThemeSpritemapClientExtension();
+
+		if (themeSpritemapClientExtension != null) {
+			_addClientExtensionEntryRel(
+				themeSpritemapClientExtension.getExternalReferenceCode(),
+				layout, serviceContext,
+				ClientExtensionEntryConstants.TYPE_THEME_SPRITEMAP,
+				themeSpritemapClientExtension.getClientExtensionConfig(),
+				userId);
 		}
 
 		return _layoutLocalService.updateLayout(layout);

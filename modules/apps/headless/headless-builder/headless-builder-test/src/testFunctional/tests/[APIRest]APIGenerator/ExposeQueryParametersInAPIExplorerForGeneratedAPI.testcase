@@ -65,10 +65,6 @@ definition {
 				status = "published",
 				title = "My-app");
 
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "My-app_testendpoint",
-				requestSchemaErc = "My-app_testSchema");
-
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
 				endpointErc = "My-app_testendpoint",
 				responseSchemaErc = "My-app_testSchema");
@@ -114,10 +110,6 @@ definition {
 				schemaName = "testSchema",
 				status = "published",
 				title = "My-app");
-
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "My-app_testendpoint",
-				requestSchemaErc = "My-app_testSchema");
 
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
 				endpointErc = "My-app_testendpoint",
@@ -203,10 +195,6 @@ definition {
 				status = "published",
 				title = "My-app");
 
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "My-app_testendpoint",
-				requestSchemaErc = "My-app_testSchema");
-
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
 				endpointErc = "My-app_testendpoint",
 				responseSchemaErc = "My-app_testSchema");
@@ -266,10 +254,6 @@ definition {
 				status = "published",
 				title = "My-app");
 
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "My-app_testendpoint",
-				requestSchemaErc = "My-app_testSchema");
-
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
 				endpointErc = "My-app_testendpoint",
 				responseSchemaErc = "My-app_testSchema");
@@ -316,10 +300,6 @@ definition {
 				status = "published",
 				title = "My-app");
 
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "My-app_testendpoint",
-				requestSchemaErc = "My-app_testSchema");
-
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
 				endpointErc = "My-app_testendpoint",
 				responseSchemaErc = "My-app_testSchema");
@@ -353,43 +333,6 @@ definition {
 				locator1 = "OpenAPI#RESPONSE_BODY",
 				method = "getTestendpointPage",
 				value1 = "\"items\": [     {       \"entryName\": \"Tom\"     },     {       \"entryName\": \"Test\"     },     {       \"entryName\": \"Able\"     }   ]");
-		}
-	}
-
-	@priority = 4
-	test CannotSeeFilterAndSortParametersForSingleElementEndpoint {
-		property portal.acceptance = "true";
-
-		task ("Given an published API application with singleElement endpoint") {
-			ApplicationAPI.createAPIApplication(
-				baseURL = "my-app",
-				endpointName = "testendpoint",
-				endpointPath = "/testendpoint/{id}",
-				pathParameter = "ID",
-				relatedEndpoint = "true",
-				retrieveType = "singleElement",
-				status = "published",
-				title = "My-app");
-		}
-
-		task ("When I expand get{EndpointPath} in /o/c/{aPIApplication}") {
-			APIExplorer.navigateToOpenAPI(customObjectPlural = "my-app");
-
-			APIExplorer.expandAPIMethod(
-				method = "getTestendpointId",
-				service = "default");
-		}
-
-		task ("Then filter and sort parameters are not present") {
-			AssertElementNotPresent(
-				locator1 = "OpenAPI#PARAMETER_UNDER_METHOD",
-				method = "getTestendpointId",
-				parameter = "filter");
-
-			AssertElementNotPresent(
-				locator1 = "OpenAPI#PARAMETER_UNDER_METHOD",
-				method = "getTestendpointId",
-				parameter = "sort");
 		}
 	}
 

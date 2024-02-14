@@ -362,6 +362,11 @@ components:
                     format: uri
                     readOnly: true
                     type: string
+                imageId:
+                    description:
+                        The organization's image id.
+                    format: int64
+                    type: integer
                 keywords:
                     description:
                         A list of keywords describing the organization.
@@ -378,6 +383,11 @@ components:
                                 The organization's country. This follows the
                                 [`addressCountry`](https://schema.org/addressCountry) specification.
                             type: string
+                        addressCountryCode:
+                            description:
+                                The organization's country isocode.
+                            readOnly: true
+                            type: string
                         addressCountry_i18n:
                             additionalProperties:
                                 type: string
@@ -386,6 +396,11 @@ components:
                             description:
                                 The organization's region. This follows the
                                 [`addressRegion`](https://schema.org/addressRegion) specification.
+                            type: string
+                        addressRegionCode:
+                            description:
+                                The organization's region code.
+                            readOnly: true
                             type: string
                         id:
                             description:
@@ -653,7 +668,7 @@ components:
                 externalReferenceCode:
                     # @review
                     description:
-                        The portable ID of this role.
+                        The optional external key of this role.
                     type: string
                 id:
                     description:
@@ -994,7 +1009,6 @@ components:
                     # @review
                     description:
                         The optional external key of this user account.
-                    readOnly: true
                     type: string
                 familyName:
                     description:
@@ -1250,7 +1264,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.user.client', and version '4.0.51'."
+        'com.liferay.headless.admin.user.client', and version '4.0.57'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -4297,6 +4311,35 @@ paths:
                                 $ref: "#/components/schemas/Role"
                     description:
                         "Roles successfully created"
+            tags: ["Role"]
+    "/roles/by-external-reference-code/{externalReferenceCode}":
+        put:
+            description:
+                update the given Role
+            operationId: putRoleByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Role"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Role"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Role"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Role"
             tags: ["Role"]
     "/roles/{roleId}":
         get:

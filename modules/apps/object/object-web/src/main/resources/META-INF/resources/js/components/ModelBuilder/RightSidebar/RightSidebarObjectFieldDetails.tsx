@@ -43,7 +43,8 @@ export function RightSidebarObjectFieldDetails() {
 			forbiddenChars,
 			forbiddenLastChars,
 			forbiddenNames,
-			objectWebLearnResources,
+			isRootDescendantNode,
+			learnResourceContext,
 			selectedObjectDefinitionNode,
 			selectedObjectField,
 			workflowStatuses,
@@ -86,15 +87,14 @@ export function RightSidebarObjectFieldDetails() {
 			let objectField: Partial<ObjectField>;
 
 			if (!editedObjectField) {
-				objectField = values;
+				objectField = {...values};
 			}
 			else {
-				objectField = editedObjectField;
+				objectField = {...editedObjectField};
 			}
 
 			delete objectField.defaultValue;
 			delete objectField.listTypeDefinitionId;
-			delete objectField.system;
 
 			try {
 				const updatedObjectFieldResponse = await API.save<ObjectField>({
@@ -228,7 +228,8 @@ export function RightSidebarObjectFieldDetails() {
 							selectedObjectDefinitionNode?.data?.storageType ===
 								'default' ?? true
 						}
-						learnResources={objectWebLearnResources}
+						isRootDescendantNode={isRootDescendantNode}
+						learnResources={learnResourceContext}
 						modelBuilder
 						objectDefinitionExternalReferenceCode={
 							selectedObjectDefinitionNode?.data

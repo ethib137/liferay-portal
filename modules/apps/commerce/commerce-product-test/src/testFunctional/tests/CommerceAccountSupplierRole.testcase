@@ -1,7 +1,7 @@
 @component-name = "portal-commerce"
 definition {
 
-	property custom.properties = "company.security.strangers.verify=false${line.separator}feature.flag.COMMERCE-10890=true${line.separator}feature.flag.COMMERCE-11026=true${line.separator}jsonws.web.service.paths.excludes=";
+	property custom.properties = "company.security.strangers.verify=false${line.separator}jsonws.web.service.paths.excludes=";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
@@ -2087,6 +2087,12 @@ definition {
 
 				CommerceNavigator.gotoEntry(entryName = ${sku});
 
+				SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+				CommerceEntry.gotoMenuTab(menuTab = "Price");
+
+				CommerceNavigator.gotoEntry(entryName = "Minium Base Price List");
+
 				CommerceEntry.editSkuPricingAndInventory(
 					basePrice = ${priceAndQuantity},
 					italyQuantity = ${priceAndQuantity},
@@ -3351,6 +3357,12 @@ definition {
 			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
 			CommerceNavigator.gotoEntry(entryName = "default");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Price");
+
+			CommerceNavigator.gotoEntry(entryName = "Minium Base Price List");
 
 			CommerceEntry.editSkuPricingAndInventory(
 				basePrice = "20.00",

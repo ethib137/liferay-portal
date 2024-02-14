@@ -982,7 +982,9 @@ definition {
 		task ("and an SKU is created and made Purchasable") {
 			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
-			CommerceSKUs.addSKU(optionValuesList = "Black:10.0");
+			CommerceSKUs.addSKU(
+				optionValuesList = "Black:10.0",
+				priceList = "Minium Base Price List");
 		}
 
 		task ("Then the user is unable to add the Dynamic Price Bundled Product to cart as an admin and a buyer") {
@@ -1095,7 +1097,9 @@ definition {
 		task ("and an SKU is created and made Purchasable") {
 			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
-			CommerceSKUs.addSKU(optionValuesList = "Black:10.0");
+			CommerceSKUs.addSKU(
+				optionValuesList = "Black:10.0",
+				priceList = "Minium Base Price List");
 		}
 
 		task ("Then the user is unable to add the Static Price Bundled Product to cart as an admin and a buyer") {
@@ -1216,7 +1220,9 @@ definition {
 			for (var skuInfo : list "Black:10.0,Blue:20.0") {
 				CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
-				CommerceSKUs.addSKU(optionValuesList = ${skuInfo});
+				CommerceSKUs.addSKU(
+					optionValuesList = ${skuInfo},
+					priceList = "Minium Base Price List");
 			}
 		}
 
@@ -1344,7 +1350,9 @@ definition {
 			for (var skuInfo : list "Black:10.0,Blue:20.0") {
 				CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
-				CommerceSKUs.addSKU(optionValuesList = ${skuInfo});
+				CommerceSKUs.addSKU(
+					optionValuesList = ${skuInfo},
+					priceList = "Minium Base Price List");
 			}
 		}
 
@@ -2002,12 +2010,12 @@ definition {
 		}
 
 		task ("Then the barred list price and promotion price is shown on the product card") {
-			AssertTextEquals(
+			AssertTextEquals.assertPartialText(
 				key_productName = "Brake Pads",
 				locator1 = "CommerceFrontStore#FS_PRODUCT_VALUE_PROMO_PRICE",
 				value1 = ${promoPrice});
 
-			AssertTextEquals(
+			AssertTextEquals.assertPartialText(
 				key_productName = "Brake Pads",
 				locator1 = "CommerceFrontStore#FS_PRODUCT_VALUE_INACTIVE_PRICE",
 				value1 = ${basePrice});
@@ -2098,12 +2106,18 @@ definition {
 
 				SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
 
+				CommerceEntry.gotoMenuTab(menuTab = "Price");
+
+				CommerceNavigator.gotoEntry(entryName = "Minium Base Price List");
+
+				SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
 				Type(
-					key_text = "Base Price",
+					key_text = "Price List Price",
 					locator1 = "TextInput#ANY",
 					value1 = ${basePrice});
 
-				Button.clickPublish();
+				Button.clickSave();
 
 				Refresh();
 			}

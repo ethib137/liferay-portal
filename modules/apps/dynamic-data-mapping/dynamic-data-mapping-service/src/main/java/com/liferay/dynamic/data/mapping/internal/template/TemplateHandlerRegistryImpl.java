@@ -13,6 +13,7 @@ import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.db.partition.util.DBPartitionUtil;
 import com.liferay.portal.instance.lifecycle.BasePortalInstanceLifecycleListener;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
 import com.liferay.portal.kernel.language.Language;
@@ -22,7 +23,6 @@ import com.liferay.portal.kernel.resource.bundle.AggregateResourceBundleLoader;
 import com.liferay.portal.kernel.resource.bundle.ClassResourceBundleLoader;
 import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoader;
 import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoaderUtil;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -96,10 +96,18 @@ public class TemplateHandlerRegistryImpl implements TemplateHandlerRegistry {
 					TemplateHandler templateHandler = bundleContext.getService(
 						serviceReference);
 
-					emitter.emit(
-						_portal.getClassNameId(templateHandler.getClassName()));
-
-					bundleContext.ungetService(serviceReference);
+					try {
+						DBPartitionUtil.forEachCompanyId(
+							companyId -> emitter.emit(
+								_portal.getClassNameId(
+									templateHandler.getClassName())));
+					}
+					catch (Exception exception) {
+						throw new RuntimeException(exception);
+					}
+					finally {
+						bundleContext.ungetService(serviceReference);
+					}
 				});
 
 		_classNameTemplateHandlersServiceTrackerMap =
@@ -139,11 +147,6 @@ public class TemplateHandlerRegistryImpl implements TemplateHandlerRegistry {
 
 	@Reference
 	private Language _language;
-
-	@Reference(
-		target = "(model.class.name=com.liferay.dynamic.data.mapping.model.DDMTemplate)"
-	)
-	private ModelResourcePermission<DDMTemplate> _modelResourcePermission;
 
 	@Reference
 	private Portal _portal;

@@ -5,6 +5,11 @@
 
 package com.liferay.jenkins.results.parser.test.clazz.group;
 
+import com.liferay.jenkins.results.parser.job.property.JobProperty;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONObject;
 
 /**
@@ -12,15 +17,57 @@ import org.json.JSONObject;
  */
 public class PlaywrightSegmentTestClassGroup extends SegmentTestClassGroup {
 
+	public String getProjectName() {
+		return _projectName;
+	}
+
 	@Override
 	public String getTestCasePropertiesContent() {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(super.getTestCasePropertiesContent());
 
+		PlaywrightBatchTestClassGroup playwrightBatchTestClassGroup =
+			(PlaywrightBatchTestClassGroup)getBatchTestClassGroup();
+
+		String playwrightTestProjectPropertyName =
+			PlaywrightBatchTestClassGroup.PLAYWRIGHT_TEST_PROJECT_PROPERTY_NAME;
+
+		if (playwrightBatchTestClassGroup.testRelevantChanges) {
+			List<JobProperty> jobProperties =
+				playwrightBatchTestClassGroup.
+					getRelevantPlaywrightJobProperties();
+
+			List<JobProperty> playwrightTestProjectJobProperties =
+				_getJobProperties(
+					playwrightTestProjectPropertyName, jobProperties);
+
+			String playwrightTestProjectProperty = _concatPropertyValues(
+				playwrightTestProjectJobProperties, " ");
+
+			if (playwrightTestProjectProperty != null) {
+				sb.append(playwrightTestProjectProperty);
+				sb.append("\n");
+			}
+		}
+		else {
+			JobProperty jobProperty =
+				playwrightBatchTestClassGroup.getJobProperty(
+					playwrightTestProjectPropertyName,
+					playwrightBatchTestClassGroup.testSuiteName,
+					playwrightBatchTestClassGroup.batchName);
+
+			if (jobProperty.getValue() != null) {
+				sb.append(jobProperty.getBasePropertyName());
+				sb.append("=");
+				sb.append(jobProperty.getValue());
+				sb.append("\n");
+			}
+		}
+
 		int axisCount = getAxisCount();
 
-		if (axisCount > 1) {
+		if (axisCount >= 1) {
 			for (int axisIndex = 0; axisIndex < getAxisCount(); axisIndex++) {
 				sb.append("PLAYWRIGHT_ARGS_");
 				sb.append(axisIndex);
@@ -32,7 +79,14 @@ public class PlaywrightSegmentTestClassGroup extends SegmentTestClassGroup {
 			}
 		}
 
+		sb.append("PLAYWRIGHT_PROJECT_NAME=");
+		sb.append(getProjectName());
+
 		return sb.toString();
+	}
+
+	public void setProjectName(String projectName) {
+		_projectName = projectName;
 	}
 
 	protected PlaywrightSegmentTestClassGroup(
@@ -46,5 +100,49 @@ public class PlaywrightSegmentTestClassGroup extends SegmentTestClassGroup {
 
 		super(parentBatchTestClassGroup, jsonObject);
 	}
+
+	private String _concatPropertyValues(
+		List<JobProperty> jobProperties, String delimiter) {
+
+		if (jobProperties.isEmpty()) {
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		for (JobProperty jobProperty : jobProperties) {
+			if (jobProperty.getValue() != null) {
+				sb.append(jobProperty.getValue());
+				sb.append(delimiter);
+			}
+		}
+
+		if (sb.length() > 0) {
+			JobProperty jobProperty = jobProperties.get(0);
+
+			sb.insert(0, "=");
+			sb.insert(0, jobProperty.getBasePropertyName());
+
+			sb.setLength(sb.length() - delimiter.length());
+		}
+
+		return sb.toString();
+	}
+
+	private List<JobProperty> _getJobProperties(
+		String propertyName, List<JobProperty> jobProperties) {
+
+		List<JobProperty> filteredJobProperties = new ArrayList<>();
+
+		for (JobProperty jobProperty : jobProperties) {
+			if (propertyName.equals(jobProperty.getBasePropertyName())) {
+				filteredJobProperties.add(jobProperty);
+			}
+		}
+
+		return filteredJobProperties;
+	}
+
+	private String _projectName;
 
 }

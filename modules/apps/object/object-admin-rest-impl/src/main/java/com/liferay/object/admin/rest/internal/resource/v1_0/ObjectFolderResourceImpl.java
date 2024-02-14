@@ -13,11 +13,13 @@ import com.liferay.object.admin.rest.resource.v1_0.ObjectFolderResource;
 import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.constants.ObjectConstants;
 import com.liferay.object.constants.ObjectFolderConstants;
+import com.liferay.object.exception.ObjectFolderItemObjectDefinitionIdException;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFolderItemLocalService;
 import com.liferay.object.service.ObjectFolderLocalService;
 import com.liferay.object.service.ObjectFolderService;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -48,19 +50,11 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 
 	@Override
 	public void deleteObjectFolder(Long objectFolderId) throws Exception {
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
-			throw new UnsupportedOperationException();
-		}
-
 		_objectFolderService.deleteObjectFolder(objectFolderId);
 	}
 
 	@Override
 	public ObjectFolder getObjectFolder(Long objectFolderId) throws Exception {
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
-			throw new UnsupportedOperationException();
-		}
-
 		return _toObjectFolder(
 			_objectFolderService.getObjectFolder(objectFolderId));
 	}
@@ -69,10 +63,6 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 	public ObjectFolder getObjectFolderByExternalReferenceCode(
 			String externalReferenceCode)
 		throws Exception {
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
-			throw new UnsupportedOperationException();
-		}
 
 		return _toObjectFolder(
 			_objectFolderService.getObjectFolderByExternalReferenceCode(
@@ -83,10 +73,6 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 	public Page<ObjectFolder> getObjectFoldersPage(
 			String search, Pagination pagination)
 		throws Exception {
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
-			throw new UnsupportedOperationException();
-		}
 
 		return SearchUtil.search(
 			HashMapBuilder.put(
@@ -137,10 +123,6 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 	public ObjectFolder postObjectFolder(ObjectFolder objectFolder)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
-			throw new UnsupportedOperationException();
-		}
-
 		com.liferay.object.model.ObjectFolder serviceBuilderObjectFolder =
 			_objectFolderService.addObjectFolder(
 				objectFolder.getExternalReferenceCode(),
@@ -160,10 +142,6 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 	public ObjectFolder putObjectFolder(
 			Long objectFolderId, ObjectFolder objectFolder)
 		throws Exception {
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
-			throw new UnsupportedOperationException();
-		}
 
 		com.liferay.object.model.ObjectFolder serviceBuilderObjectFolder =
 			_objectFolderService.updateObjectFolder(
@@ -187,10 +165,6 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 	public ObjectFolder putObjectFolderByExternalReferenceCode(
 			String externalReferenceCode, ObjectFolder objectFolder)
 		throws Exception {
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
-			throw new UnsupportedOperationException();
-		}
 
 		objectFolder.setExternalReferenceCode(externalReferenceCode);
 
@@ -233,90 +207,130 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 			objectFolderItems,
 			objectFolderItem -> !objectFolderItem.getLinkedObjectDefinition());
 
+		List<String> failedObjectDefinitionNames = new ArrayList<>();
+
 		for (ObjectFolderItem unlinkedObjectFolderItem :
 				unlinkedObjectFolderItems) {
 
 			ObjectDefinition objectDefinition =
 				unlinkedObjectFolderItem.getObjectDefinition();
 
+			com.liferay.object.model.ObjectDefinition
+				serviceBuilderObjectDefinition = null;
+
 			if (objectDefinition != null) {
 				objectDefinition.setObjectFolderExternalReferenceCode(
 					objectFolderExternalReferenceCode);
 
-				objectDefinition =
-					objectDefinitionResource.
-						putObjectDefinitionByExternalReferenceCode(
-							objectDefinition.getExternalReferenceCode(),
-							objectDefinition);
+				try {
+					objectDefinition =
+						objectDefinitionResource.
+							putObjectDefinitionByExternalReferenceCode(
+								objectDefinition.getExternalReferenceCode(),
+								objectDefinition);
 
-				_objectFolderItemLocalService.updateObjectFolderItem(
-					objectDefinition.getId(), objectFolderId,
-					unlinkedObjectFolderItem.getPositionX(),
-					unlinkedObjectFolderItem.getPositionY());
+					_objectFolderItemLocalService.updateObjectFolderItem(
+						objectDefinition.getId(), objectFolderId,
+						unlinkedObjectFolderItem.getPositionX(),
+						unlinkedObjectFolderItem.getPositionY());
 
-				serviceBuilderObjectDefinitionIds.remove(
-					objectDefinition.getId());
+					serviceBuilderObjectDefinitionIds.remove(
+						objectDefinition.getId());
+				}
+				catch (Exception exception) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(exception);
+					}
+
+					failedObjectDefinitionNames.add(objectDefinition.getName());
+
+					serviceBuilderObjectDefinition =
+						_objectDefinitionLocalService.
+							fetchObjectDefinitionByExternalReferenceCode(
+								objectDefinition.getExternalReferenceCode(),
+								contextCompany.getCompanyId());
+
+					if (serviceBuilderObjectDefinition != null) {
+						serviceBuilderObjectDefinitionIds.remove(
+							serviceBuilderObjectDefinition.
+								getObjectDefinitionId());
+					}
+				}
 
 				continue;
 			}
 
-			objectDefinition =
-				objectDefinitionResource.
-					getObjectDefinitionByExternalReferenceCode(
+			serviceBuilderObjectDefinition =
+				_objectDefinitionLocalService.
+					fetchObjectDefinitionByExternalReferenceCode(
 						unlinkedObjectFolderItem.
-							getObjectDefinitionExternalReferenceCode());
+							getObjectDefinitionExternalReferenceCode(),
+						contextCompany.getCompanyId());
 
-			if (objectDefinition == null) {
+			if (serviceBuilderObjectDefinition == null) {
 				continue;
 			}
 
 			_objectDefinitionLocalService.updateObjectFolderId(
-				objectDefinition.getId(), objectFolderId);
+				serviceBuilderObjectDefinition.getObjectDefinitionId(),
+				objectFolderId);
 
 			_objectFolderItemLocalService.updateObjectFolderItem(
-				objectDefinition.getId(), objectFolderId,
-				unlinkedObjectFolderItem.getPositionX(),
+				serviceBuilderObjectDefinition.getObjectDefinitionId(),
+				objectFolderId, unlinkedObjectFolderItem.getPositionX(),
 				unlinkedObjectFolderItem.getPositionY());
 
-			serviceBuilderObjectDefinitionIds.remove(objectDefinition.getId());
+			serviceBuilderObjectDefinitionIds.remove(
+				serviceBuilderObjectDefinition.getObjectDefinitionId());
 		}
 
-		com.liferay.object.model.ObjectFolder uncategorizedObjectFolder =
-			_objectFolderService.getObjectFolderByExternalReferenceCode(
-				ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_UNCATEGORIZED,
-				contextCompany.getCompanyId());
+		com.liferay.object.model.ObjectFolder
+			defaultServiceBuilderObjectFolder =
+				_objectFolderService.getObjectFolderByExternalReferenceCode(
+					ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_DEFAULT,
+					contextCompany.getCompanyId());
 
 		for (Long objectDefinitionId : serviceBuilderObjectDefinitionIds) {
-			com.liferay.object.model.ObjectDefinition objectDefinition =
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					objectDefinitionId);
+			com.liferay.object.model.ObjectDefinition
+				serviceBuilderObjectDefinition =
+					_objectDefinitionLocalService.fetchObjectDefinition(
+						objectDefinitionId);
 
-			if (objectDefinition.isLinkedToObjectFolder(objectFolderId)) {
+			if (serviceBuilderObjectDefinition.isLinkedToObjectFolder(
+					objectFolderId)) {
+
 				continue;
 			}
 
 			_objectDefinitionLocalService.updateObjectFolderId(
 				objectDefinitionId,
-				uncategorizedObjectFolder.getObjectFolderId());
+				defaultServiceBuilderObjectFolder.getObjectFolderId());
 		}
 
 		objectFolderItems.removeAll(unlinkedObjectFolderItems);
 
 		for (ObjectFolderItem objectFolderItem : objectFolderItems) {
-			ObjectDefinition objectDefinition =
-				objectDefinitionResource.
-					getObjectDefinitionByExternalReferenceCode(
-						objectFolderItem.
-							getObjectDefinitionExternalReferenceCode());
+			com.liferay.object.model.ObjectDefinition
+				serviceBuilderObjectDefinition =
+					_objectDefinitionLocalService.
+						fetchObjectDefinitionByExternalReferenceCode(
+							objectFolderItem.
+								getObjectDefinitionExternalReferenceCode(),
+							contextCompany.getCompanyId());
 
-			if (objectDefinition == null) {
+			if (serviceBuilderObjectDefinition == null) {
 				continue;
 			}
 
 			_objectFolderItemLocalService.updateObjectFolderItem(
-				objectDefinition.getId(), objectFolderId,
-				objectFolderItem.getPositionX(),
+				serviceBuilderObjectDefinition.getObjectDefinitionId(),
+				objectFolderId, objectFolderItem.getPositionX(),
 				objectFolderItem.getPositionY());
+		}
+
+		if (!failedObjectDefinitionNames.isEmpty()) {
+			throw new ObjectFolderItemObjectDefinitionIdException(
+				failedObjectDefinitionNames);
 		}
 	}
 
@@ -328,54 +342,60 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 
 		return new ObjectFolder() {
 			{
-				actions = HashMapBuilder.put(
-					"delete",
-					() -> {
-						if (objectFolder.isUncategorized()) {
-							return null;
-						}
+				setActions(
+					() -> HashMapBuilder.put(
+						"delete",
+						() -> {
+							if (objectFolder.isDefault()) {
+								return null;
+							}
 
-						return addAction(
-							ActionKeys.DELETE, "deleteObjectFolder",
-							permissionName, objectFolder.getObjectFolderId());
-					}
-				).put(
-					"get",
-					addAction(
-						ActionKeys.VIEW, "getObjectFolder", permissionName,
-						objectFolder.getObjectFolderId())
-				).put(
-					"permissions",
-					addAction(
-						ActionKeys.PERMISSIONS, "patchObjectFolder",
-						permissionName, objectFolder.getObjectFolderId())
-				).put(
-					"update",
-					() -> {
-						if (objectFolder.isUncategorized()) {
-							return null;
+							return addAction(
+								ActionKeys.DELETE, "deleteObjectFolder",
+								permissionName,
+								objectFolder.getObjectFolderId());
 						}
+					).put(
+						"get",
+						addAction(
+							ActionKeys.VIEW, "getObjectFolder", permissionName,
+							objectFolder.getObjectFolderId())
+					).put(
+						"permissions",
+						addAction(
+							ActionKeys.PERMISSIONS, "patchObjectFolder",
+							permissionName, objectFolder.getObjectFolderId())
+					).put(
+						"update",
+						() -> {
+							if (objectFolder.isDefault()) {
+								return null;
+							}
 
-						return addAction(
-							ActionKeys.UPDATE, "putObjectFolder",
-							permissionName, objectFolder.getObjectFolderId());
-					}
-				).build();
-				dateCreated = objectFolder.getCreateDate();
-				dateModified = objectFolder.getModifiedDate();
-				externalReferenceCode = objectFolder.getExternalReferenceCode();
-				id = objectFolder.getObjectFolderId();
-				label = LocalizedMapUtil.getLanguageIdMap(
-					objectFolder.getLabelMap());
-				name = objectFolder.getName();
-				objectFolderItems = transformToArray(
-					_objectFolderItemLocalService.
-						getObjectFolderItemsByObjectFolderId(
-							objectFolder.getObjectFolderId()),
-					objectFolderItem -> _toObjectFolderItem(
-						objectFolder.getExternalReferenceCode(),
-						objectFolderItem),
-					ObjectFolderItem.class);
+							return addAction(
+								ActionKeys.UPDATE, "putObjectFolder",
+								permissionName,
+								objectFolder.getObjectFolderId());
+						}
+					).build());
+				setDateCreated(objectFolder::getCreateDate);
+				setDateModified(objectFolder::getModifiedDate);
+				setExternalReferenceCode(
+					objectFolder::getExternalReferenceCode);
+				setId(objectFolder::getObjectFolderId);
+				setLabel(
+					() -> LocalizedMapUtil.getLanguageIdMap(
+						objectFolder.getLabelMap()));
+				setName(objectFolder::getName);
+				setObjectFolderItems(
+					() -> transformToArray(
+						_objectFolderItemLocalService.
+							getObjectFolderItemsByObjectFolderId(
+								objectFolder.getObjectFolderId()),
+						objectFolderItem -> _toObjectFolderItem(
+							objectFolder.getExternalReferenceCode(),
+							objectFolderItem),
+						ObjectFolderItem.class));
 			}
 		};
 	}
@@ -400,27 +420,31 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 			objectDefinitionResource.getObjectDefinition(
 				objectFolderItem.getObjectDefinitionId());
 
+		boolean finalLinkedObjectDefinition = !Objects.equals(
+			dtoObjectDefinition.getObjectFolderExternalReferenceCode(),
+			objectFolderExternalReferenceCode);
+
 		return new ObjectFolderItem() {
 			{
-				linkedObjectDefinition = !Objects.equals(
-					dtoObjectDefinition.getObjectFolderExternalReferenceCode(),
-					objectFolderExternalReferenceCode);
-				objectDefinitionExternalReferenceCode =
-					dtoObjectDefinition.getExternalReferenceCode();
-				positionX = objectFolderItem.getPositionX();
-				positionY = objectFolderItem.getPositionY();
-
+				setLinkedObjectDefinition(() -> finalLinkedObjectDefinition);
 				setObjectDefinition(
 					() -> {
-						if (linkedObjectDefinition) {
+						if (finalLinkedObjectDefinition) {
 							return null;
 						}
 
 						return dtoObjectDefinition;
 					});
+				setObjectDefinitionExternalReferenceCode(
+					dtoObjectDefinition::getExternalReferenceCode);
+				setPositionX(objectFolderItem::getPositionX);
+				setPositionY(objectFolderItem::getPositionY);
 			}
 		};
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ObjectFolderResourceImpl.class);
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;

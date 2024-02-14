@@ -32,7 +32,6 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.portlet.SearchOrderByUtil;
@@ -66,8 +65,6 @@ import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Leonardo Barros
@@ -116,9 +113,7 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 				dropdownItem.putData("action", "deleteRecords");
 				dropdownItem.setIcon("times-circle");
 				dropdownItem.setLabel(
-					LanguageUtil.get(
-						PortalUtil.getHttpServletRequest(_renderRequest),
-						"delete"));
+					getLocalizedMessage(_renderRequest.getLocale(), "delete"));
 				dropdownItem.setQuickAction(true);
 			}
 		).build();
@@ -233,6 +228,13 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 		return _ddmFormInstance;
 	}
 
+	public List<Long> getDDMFormInstanceRecordIds() {
+		return TransformUtil.transform(
+			_ddmFormInstanceRecordLocalService.getFormInstanceRecords(
+				_ddmFormInstance.getFormInstanceId()),
+			DDMFormInstanceRecord::getFormInstanceRecordId);
+	}
+
 	public Locale getDefaultLocale(DDMFormInstanceRecord ddmFormInstanceRecord)
 		throws Exception {
 
@@ -245,24 +247,6 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 		return "list";
 	}
 
-	public List<DropdownItem> getFilterItemsDropdownItems() {
-		if (FeatureFlagManagerUtil.isEnabled("LPS-144527")) {
-			return null;
-		}
-
-		HttpServletRequest httpServletRequest =
-			PortalUtil.getHttpServletRequest(_renderRequest);
-
-		return DropdownItemListBuilder.addGroup(
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(
-					getOrderItemsDropdownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(httpServletRequest, "order-by"));
-			}
-		).build();
-	}
-
 	public String getLocalizedColumnValues(String columnValues) {
 		ThemeDisplay themeDisplay = (ThemeDisplay)_renderRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -271,10 +255,14 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 			TransformUtil.transformToArray(
 				Arrays.asList(
 					StringUtil.split(columnValues, StringPool.COMMA_AND_SPACE)),
-				value -> LanguageUtil.get(
+				value -> getLocalizedMessage(
 					themeDisplay.getLocale(), value.toLowerCase()),
 				String.class),
 			StringPool.COMMA_AND_SPACE);
+	}
+
+	public String getLocalizedMessage(Locale locale, String key) {
+		return LanguageUtil.get(locale, key);
 	}
 
 	public List<NavigationItem> getNavigationItems() {
@@ -323,9 +311,8 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 				dropdownItem.setActive(orderByCol.equals(getOrderByCol()));
 				dropdownItem.setHref(getPortletURL(), "orderByCol", orderByCol);
 				dropdownItem.setLabel(
-					LanguageUtil.get(
-						PortalUtil.getHttpServletRequest(_renderRequest),
-						orderByCol));
+					getLocalizedMessage(
+						_renderRequest.getLocale(), orderByCol));
 			}
 		).build();
 	}

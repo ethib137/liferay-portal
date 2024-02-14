@@ -206,6 +206,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -4469,6 +4470,33 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		return userPersistence.update(user);
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
+	public User updateExternalReferenceCode(
+			long userId, String externalReferenceCode)
+		throws PortalException {
+
+		return updateExternalReferenceCode(
+			getUserById(userId), externalReferenceCode);
+	}
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
+	public User updateExternalReferenceCode(
+			User user, String externalReferenceCode)
+		throws PortalException {
+
+		if (Objects.equals(
+				user.getExternalReferenceCode(), externalReferenceCode)) {
+
+			return user;
+		}
+
+		user.setExternalReferenceCode(externalReferenceCode);
+
+		return updateUser(user);
+	}
+
 	/**
 	 * Updates the user's Facebook ID.
 	 *
@@ -4726,6 +4754,17 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 		_contactPersistence.update(contact);
 
 		return user;
+	}
+
+	@Override
+	public User updateLanguageId(long userId, String languageId)
+		throws PortalException {
+
+		User user = userPersistence.findByPrimaryKey(userId);
+
+		user.setLanguageId(languageId);
+
+		return userPersistence.update(user);
 	}
 
 	/**

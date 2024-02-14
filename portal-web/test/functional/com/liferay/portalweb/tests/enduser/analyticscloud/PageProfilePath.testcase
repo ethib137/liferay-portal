@@ -188,7 +188,7 @@ definition {
 		}
 
 		task ("Check if the page name is displayed correctly") {
-			Click.clickNoMouseOver(
+			MouseOver(
 				key_pageName = "Snúið Vinsælar",
 				locator1 = "ACSites#PATH_PAGE_NAME_SANKEY");
 
@@ -267,6 +267,8 @@ definition {
 
 		task ("Go to the Path tab") {
 			ACNavigation.switchTab(tabName = "Path");
+
+			ACUtils.waitForLoading();
 		}
 
 		task ("Click Filter button") {
@@ -274,7 +276,7 @@ definition {
 		}
 
 		task ("Search for segment on the list") {
-			ACUtils.searchBar(searchItem = "Dynamic Segment Test");
+			ACPagePath.searchSegmentFilterBar(searchItem = "Dynamic Segment Test");
 
 			ACPagePath.viewSegmentDropdown(nameList = "Dynamic Segment Test");
 		}
@@ -303,6 +305,8 @@ definition {
 
 		task ("Go to the Path tab") {
 			ACNavigation.switchTab(tabName = "Path");
+
+			ACUtils.waitForLoading();
 		}
 
 		task ("Click Filter button") {
@@ -310,7 +314,7 @@ definition {
 		}
 
 		task ("Search for segment not on list") {
-			ACUtils.searchBar(searchItem = "Dynamic Segment Test");
+			ACPagePath.searchSegmentFilterBar(searchItem = "Dynamic Segment Test");
 
 			ACUtils.viewNoResultsMessage(noResultMessage = "There are no segments.");
 		}
@@ -385,6 +389,8 @@ definition {
 
 		task ("Go to the Path tab") {
 			ACNavigation.switchTab(tabName = "Path");
+
+			ACUtils.waitForLoading();
 		}
 
 		task ("Observe page total") {
@@ -474,11 +480,13 @@ definition {
 		task ("Navigate to page report entry") {
 			var dataSourceName = StringUtil.extractFirst(${assignedPropertyName}, " ");
 
-			ACNavigation.openItem(itemName = "AC Page - Site Name - ${dataSourceName}");
+			ACNavigation.openItem(itemName = "Blog test - Site Name - ${dataSourceName}");
 		}
 
 		task ("Go to the Path tab") {
 			ACNavigation.switchTab(tabName = "Path");
+
+			ACUtils.waitForLoading();
 		}
 
 		task ("Click Filter button") {

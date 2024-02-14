@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@clayui/form": "3.107.0",
+		"@clayui/form": "3.109.0",
 		"@clayui/icon": "3.106.1",
 		"@liferay/frontend-js-react-web": "*",
 		"@liferay/frontend-js-state-web": "*",
@@ -15,5 +15,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "7.0.122"
+	"version": "7.0.126"
 }

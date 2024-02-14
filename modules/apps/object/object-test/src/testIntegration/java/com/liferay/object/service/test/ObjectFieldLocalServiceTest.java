@@ -168,7 +168,7 @@ public class ObjectFieldLocalServiceTest {
 			() -> _objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, false, false, false,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				"A" + RandomTestUtil.randomString(), null, null,
+				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				true, ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_SALESFORCE,
@@ -207,7 +207,7 @@ public class ObjectFieldLocalServiceTest {
 			() -> _objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, false, false, false,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				"A" + RandomTestUtil.randomString(), null, null,
+				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				true, ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_SALESFORCE,
@@ -735,6 +735,31 @@ public class ObjectFieldLocalServiceTest {
 		Assert.assertEquals("baker", objectField1.getName());
 		Assert.assertTrue(objectField1.isRequired());
 
+		// Object field indexed language id
+
+		objectField1 = _addCustomObjectField(
+			new TextObjectFieldBuilder(
+			).indexed(
+				false
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				"a" + RandomTestUtil.randomString()
+			).objectDefinitionId(
+				objectDefinition.getObjectDefinitionId()
+			).build());
+
+		Assert.assertEquals(
+			StringPool.BLANK, objectField1.getIndexedLanguageId());
+
+		objectField1.setIndexed(true);
+
+		objectField1 = _addOrUpdateCustomObjectField(objectField1);
+
+		Assert.assertEquals(
+			LanguageUtil.getLanguageId(LocaleUtil.getDefault()),
+			objectField1.getIndexedLanguageId());
+
 		// Object field label needs to be replicated when there is an update
 		// with another default language
 
@@ -765,13 +790,13 @@ public class ObjectFieldLocalServiceTest {
 			_getReadOnlyTextObjectField(
 				objectDefinition.getObjectDefinitionId(), null, null));
 
-		ObjectField finalObjectField = objectField1;
+		ObjectField finalObjectField1 = objectField1;
 
 		AssertUtils.assertFailure(
 			ObjectFieldReadOnlyConditionExpressionException.class,
 			"Read only condition expression is required",
 			() -> _updateReadOnlyObjectField(
-				finalObjectField, ObjectFieldConstants.READ_ONLY_CONDITIONAL,
+				finalObjectField1, ObjectFieldConstants.READ_ONLY_CONDITIONAL,
 				null));
 
 		String invalidDDMScript = RandomTestUtil.randomString() + "()";
@@ -780,7 +805,7 @@ public class ObjectFieldLocalServiceTest {
 			ObjectFieldReadOnlyConditionExpressionException.class,
 			"Syntax error in: " + invalidDDMScript,
 			() -> _updateReadOnlyObjectField(
-				finalObjectField, ObjectFieldConstants.READ_ONLY_CONDITIONAL,
+				finalObjectField1, ObjectFieldConstants.READ_ONLY_CONDITIONAL,
 				invalidDDMScript));
 
 		String invalidReadOnly = RandomTestUtil.randomString();
@@ -789,7 +814,7 @@ public class ObjectFieldLocalServiceTest {
 			ObjectFieldReadOnlyException.class,
 			"Unknown read only: " + invalidReadOnly,
 			() -> _updateReadOnlyObjectField(
-				finalObjectField, invalidReadOnly, null));
+				finalObjectField1, invalidReadOnly, null));
 
 		ObjectDefinition relatedObjectDefinition =
 			ObjectDefinitionTestUtil.addCustomObjectDefinition(
@@ -903,6 +928,43 @@ public class ObjectFieldLocalServiceTest {
 		TreeTestUtil.deleteObjectDefinitionHierarchy(
 			_objectDefinitionLocalService, new String[] {"C_A", "C_AA"},
 			_objectEntryLocalService);
+
+		// Object field required
+
+		objectDefinition = ObjectDefinitionTestUtil.addCustomObjectDefinition(
+			_objectDefinitionLocalService);
+
+		ObjectField objectField3 = _addCustomObjectField(
+			new TextObjectFieldBuilder(
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				"a" + RandomTestUtil.randomString()
+			).objectDefinitionId(
+				objectDefinition.getObjectDefinitionId()
+			).required(
+				true
+			).build());
+
+		Assert.assertTrue(objectField3.isRequired());
+
+		_objectDefinitionLocalService.publishCustomObjectDefinition(
+			TestPropsValues.getUserId(),
+			objectDefinition.getObjectDefinitionId());
+
+		objectField3.setRequired(false);
+
+		objectField3 = _addOrUpdateCustomObjectField(objectField3);
+
+		Assert.assertFalse(objectField3.isRequired());
+
+		objectField3.setRequired(true);
+
+		ObjectField finalObjectField2 = objectField3;
+
+		AssertUtils.assertFailure(
+			ObjectFieldRequiredException.class, null,
+			() -> _addOrUpdateCustomObjectField(finalObjectField2));
 	}
 
 	@Test
@@ -1095,7 +1157,7 @@ public class ObjectFieldLocalServiceTest {
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 					ObjectFieldConstants.DB_TYPE_STRING, "Able", "")));
 
-		String objectDefinitionName = "A" + RandomTestUtil.randomString();
+		String objectDefinitionName = ObjectDefinitionTestUtil.getRandomName();
 
 		String pkObjectFieldName = TextFormatter.format(
 			objectDefinitionName + "Id", TextFormatter.I);
@@ -1913,7 +1975,7 @@ public class ObjectFieldLocalServiceTest {
 			() -> _objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, false, false, false,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				"A" + RandomTestUtil.randomString(), null, null,
+				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				true, ObjectDefinitionConstants.SCOPE_COMPANY, storageType,
 				Arrays.asList(
@@ -2187,7 +2249,7 @@ public class ObjectFieldLocalServiceTest {
 		throws Exception {
 
 		return _addUnmodifiableSystemObjectDefinition(
-			"A" + RandomTestUtil.randomString(), objectFields);
+			ObjectDefinitionTestUtil.getRandomName(), objectFields);
 	}
 
 	private ObjectDefinition _addUnmodifiableSystemObjectDefinition(

@@ -5,9 +5,13 @@
 
 import {
 	addParams,
+	fetch,
 	navigate,
 	openConfirmModal,
+	openModal,
 	openSelectionModal,
+	openToast,
+	sub,
 } from 'frontend-js-web';
 
 import openDeleteLayoutModal from './openDeleteLayoutModal';
@@ -39,23 +43,90 @@ export default function propsTransformer({portletNamespace, ...otherProps}) {
 			),
 			multiple: true,
 			onDelete: () => {
-				const form = document.getElementById(`${portletNamespace}fm`);
+				const keys = getSelectedKeys(portletNamespace);
 
-				if (form) {
-					submitForm(form, itemData?.deleteLayoutURL);
-				}
+				const url = new URL(itemData?.deleteLayoutURL);
+
+				fetch(
+					addParams(
+						{
+							[`_${url.searchParams.get(
+								'p_p_id'
+							)}_rowIds`]: keys.join(','),
+						},
+						itemData?.deleteLayoutURL
+					),
+					{
+						method: 'post',
+					}
+				)
+					.then((response) => response.json())
+					.then(({errorMessage, redirectURL}) => {
+						if (errorMessage) {
+							openToast({
+								message: errorMessage,
+								title: Liferay.Language.get('error'),
+								type: 'danger',
+							});
+						}
+						else {
+							navigate(redirectURL);
+						}
+					})
+					.catch(() =>
+						openToast({
+							message: Liferay.Language.get(
+								'an-unexpected-error-occurred'
+							),
+							title: Liferay.Language.get('error'),
+							type: 'danger',
+						})
+					);
 			},
 		});
 	};
 
-	const permissions = (itemData) => {
-		const keys = Array.from(
-			document.querySelectorAll(
-				`[name=${portletNamespace}rowIds]:checked`
-			)
-		).map(({value}) => value);
+	const changePermissions = (itemData) => {
+		const keys = getSelectedKeys(portletNamespace);
 
-		const url = new URL(itemData?.permissionsURL);
+		if (keys.length > itemData.maxItemsToShowInfoMessage) {
+			openModal({
+				bodyHTML: `<p class="text-secondary">
+					${sub(
+						Liferay.Language.get(
+							'you-have-selected-more-than-x-x-info-message'
+						),
+						itemData.maxItemsToShowInfoMessage,
+						Liferay.Language.get('pages')
+					)}
+				</p>`,
+				buttons: [
+					{
+						displayType: 'secondary',
+						label: Liferay.Language.get('cancel'),
+						type: 'cancel',
+					},
+					{
+						displayType: 'info',
+						label: Liferay.Language.get('continue'),
+						onClick: ({processClose}) => {
+							processClose();
+							openChangePermissionsSelectionModal(itemData, keys);
+						},
+						type: 'button',
+					},
+				],
+				status: 'info',
+				title: Liferay.Language.get('bulk-action-performance'),
+			});
+		}
+		else {
+			openChangePermissionsSelectionModal(itemData, keys);
+		}
+	};
+
+	const openChangePermissionsSelectionModal = (itemData, keys) => {
+		const url = new URL(itemData?.changePermissionsURL);
 
 		openSelectionModal({
 			title: Liferay.Language.get('permissions'),
@@ -65,17 +136,13 @@ export default function propsTransformer({portletNamespace, ...otherProps}) {
 						'p_p_id'
 					)}_resourcePrimKey`]: keys.join(','),
 				},
-				itemData?.permissionsURL
+				itemData?.changePermissionsURL
 			),
 		});
 	};
 
 	const exportTranslation = ({exportTranslationURL}) => {
-		const keys = Array.from(
-			document.querySelectorAll(
-				`[name=${portletNamespace}rowIds]:checked`
-			)
-		).map(({value}) => value);
+		const keys = getSelectedKeys(portletNamespace);
 
 		const url = new URL(exportTranslationURL);
 
@@ -107,9 +174,15 @@ export default function propsTransformer({portletNamespace, ...otherProps}) {
 			else if (action === 'exportTranslation') {
 				exportTranslation(data);
 			}
-			else if (action === 'permissions') {
-				permissions(data);
+			else if (action === 'changePermissions') {
+				changePermissions(data);
 			}
 		},
 	};
+}
+
+function getSelectedKeys(portletNamespace) {
+	return Array.from(
+		document.querySelectorAll(`[name=${portletNamespace}rowIds]:checked`)
+	).map(({value}) => value);
 }

@@ -2,24 +2,24 @@
 	"dependencies": {
 		"@clayui/alert": "3.106.1",
 		"@clayui/button": "3.107.0",
-		"@clayui/core": "3.107.1",
-		"@clayui/drop-down": "3.107.1",
+		"@clayui/core": "3.109.0",
+		"@clayui/drop-down": "3.109.0",
 		"@clayui/empty-state": "3.106.1",
-		"@clayui/form": "3.107.0",
+		"@clayui/form": "3.109.0",
 		"@clayui/icon": "3.106.1",
 		"@clayui/label": "3.106.1",
 		"@clayui/layout": "3.106.1",
-		"@clayui/list": "3.107.1",
+		"@clayui/list": "3.109.0",
 		"@clayui/management-toolbar": "3.106.1",
-		"@clayui/modal": "3.107.0",
-		"@clayui/multi-step-nav": "3.107.1",
-		"@clayui/nav": "3.107.1",
-		"@clayui/pagination": "3.107.1",
-		"@clayui/pagination-bar": "3.107.1",
-		"@clayui/panel": "3.107.0",
-		"@clayui/table": "3.106.1",
-		"@clayui/tabs": "3.107.0",
-		"@clayui/tooltip": "3.107.0",
+		"@clayui/modal": "3.109.0",
+		"@clayui/multi-step-nav": "3.109.0",
+		"@clayui/nav": "3.109.0",
+		"@clayui/pagination": "3.109.0",
+		"@clayui/pagination-bar": "3.109.0",
+		"@clayui/panel": "3.110.0",
+		"@clayui/table": "3.108.0",
+		"@clayui/tabs": "3.109.0",
+		"@clayui/tooltip": "3.109.0",
 		"classnames": "2.3.1",
 		"frontend-js-web": "*",
 		"jest-fetch-mock": "3.0.3",
@@ -37,7 +37,7 @@
 			"<rootDir>/jest-setup.config.js"
 		]
 	},
-	"main": "js/index.js",
+	"main": "js/index.tsx",
 	"name": "@liferay/analytics-settings-web",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
@@ -45,5 +45,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "5.0.69"
+	"version": "5.0.72"
 }

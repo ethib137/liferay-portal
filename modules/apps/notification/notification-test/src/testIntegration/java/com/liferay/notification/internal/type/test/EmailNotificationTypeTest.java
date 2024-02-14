@@ -11,6 +11,8 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.notification.constants.NotificationConstants;
 import com.liferay.notification.constants.NotificationPortletKeys;
 import com.liferay.notification.constants.NotificationQueueEntryConstants;
+import com.liferay.notification.constants.NotificationRecipientSettingConstants;
+import com.liferay.notification.constants.NotificationTemplateConstants;
 import com.liferay.notification.model.NotificationQueueEntry;
 import com.liferay.notification.model.NotificationQueueEntryAttachment;
 import com.liferay.notification.model.NotificationTemplate;
@@ -22,14 +24,18 @@ import com.liferay.object.constants.ObjectActionTriggerConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.rest.dto.v1_0.ListEntry;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Repository;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -39,8 +45,10 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -50,6 +58,9 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.SynchronousMailTestRule;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
+import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -58,6 +69,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -74,6 +86,136 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
 			new LiferayIntegrationTestRule(), SynchronousMailTestRule.INSTANCE);
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		BaseNotificationTypeTest.setUpClass();
+
+		_freeMarkerTermValues = LinkedHashMapBuilder.<String, Object>put(
+			"${ObjectField_booleanObjectField.getData()}",
+			childObjectEntryValues.get("booleanObjectField")
+		).put(
+			"${ObjectField_dateObjectField.getData()}",
+			() -> {
+				SimpleDateFormat dateInfoFieldSimpleDateFormat =
+					new SimpleDateFormat("M/d/yy hh:mm a");
+				SimpleDateFormat dateObjectFieldSimpleDateFormat =
+					new SimpleDateFormat("yyyy-MM-dd");
+
+				return dateInfoFieldSimpleDateFormat.format(
+					dateObjectFieldSimpleDateFormat.parse(
+						(String)childObjectEntryValues.get("dateObjectField")));
+			}
+		).put(
+			"${ObjectField_dateTimeObjectField.getData()}",
+			() -> {
+				SimpleDateFormat dateTimeObjectFieldSimpleDateFormat =
+					new SimpleDateFormat("yyyy-MM-dd 00:00:00.0");
+				SimpleDateFormat defaultInfoFieldSimpleDateFormat =
+					new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+
+				return defaultInfoFieldSimpleDateFormat.format(
+					dateTimeObjectFieldSimpleDateFormat.parse(
+						(String)childObjectEntryValues.get(
+							"dateTimeObjectField")));
+			}
+		).put(
+			"${ObjectField_emailTextObjectField.getData()}",
+			childObjectEntryValues.get("emailTextObjectField")
+		).put(
+			"${ObjectField_integerObjectField.getData()}",
+			childObjectEntryValues.get("integerObjectField")
+		).put(
+			"${ObjectField_textObjectField.getData()}",
+			childObjectEntryValues.get("textObjectField")
+		).put(
+			"${portalURL}",
+			() -> {
+				Company company = _companyLocalService.getCompany(
+					TestPropsValues.getCompanyId());
+
+				return company.getPortalURL(TestPropsValues.getGroupId());
+			}
+		).build();
+	}
+
+	@Test
+	public void testFreeMarkerNotification() throws Exception {
+		String body = LocalizationUtil.updateLocalization(
+			LocalizedMapUtil.getLocalizedMap(
+				HashMapBuilder.put(
+					LanguageUtil.getLanguageId(LocaleUtil.US),
+					StringUtil.merge(
+						_freeMarkerTermValues.keySet(), StringPool.COMMA)
+				).build()),
+			null, "Body", LanguageUtil.getLanguageId(LocaleUtil.US));
+
+		_executeNotificationObjectAction(
+			0,
+			_addNotificationTemplate(
+				body, NotificationTemplateConstants.EDITOR_TYPE_FREEMARKER,
+				false,
+				Collections.singletonMap(
+					LocaleUtil.US, user1.getEmailAddress())));
+
+		List<NotificationQueueEntry> notificationQueueEntries =
+			notificationQueueEntryLocalService.getNotificationEntries(
+				NotificationConstants.TYPE_EMAIL,
+				NotificationQueueEntryConstants.STATUS_SENT);
+
+		Assert.assertEquals(
+			notificationQueueEntries.toString(), 1,
+			notificationQueueEntries.size());
+
+		notificationQueueEntry = notificationQueueEntries.get(0);
+
+		assertTermValues(
+			new ArrayList<>(_freeMarkerTermValues.values()),
+			Arrays.asList(
+				StringUtil.split(
+					notificationQueueEntry.getBody(), StringPool.COMMA)));
+	}
+
+	@Test
+	public void testFreeMarkerNotificationPickListObjectFieldTerm()
+		throws Exception {
+
+		String body = LocalizationUtil.updateLocalization(
+			LocalizedMapUtil.getLocalizedMap(
+				HashMapBuilder.put(
+					LanguageUtil.getLanguageId(LocaleUtil.US),
+					"${ObjectField_picklistObjectField.getData()}"
+				).build()),
+			null, "Body", LanguageUtil.getLanguageId(LocaleUtil.US));
+
+		_executeNotificationObjectAction(
+			0,
+			_addNotificationTemplate(
+				body, NotificationTemplateConstants.EDITOR_TYPE_FREEMARKER,
+				false,
+				Collections.singletonMap(
+					LocaleUtil.US, user1.getEmailAddress())));
+
+		List<NotificationQueueEntry> notificationQueueEntries =
+			notificationQueueEntryLocalService.getNotificationEntries(
+				NotificationConstants.TYPE_EMAIL,
+				NotificationQueueEntryConstants.STATUS_SENT);
+
+		Assert.assertEquals(
+			notificationQueueEntries.toString(), 1,
+			notificationQueueEntries.size());
+
+		notificationQueueEntry = notificationQueueEntries.get(0);
+
+		ListEntry listEntry = (ListEntry)childObjectEntryValues.get(
+			"picklistObjectField");
+
+		assertTermValues(
+			Arrays.asList(listEntry.getName()),
+			Arrays.asList(
+				StringUtil.split(
+					notificationQueueEntry.getBody(), StringPool.COMMA)));
+	}
 
 	@Test
 	public void testSendNotification() throws Exception {
@@ -172,7 +314,8 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 	}
 
 	private NotificationTemplate _addNotificationTemplate(
-			boolean singleRecipient, Map<Locale, String> to)
+			String body, String editorType, boolean singleRecipient,
+			Map<Locale, String> to)
 		throws Exception {
 
 		ObjectField objectField = objectFieldLocalService.getObjectField(
@@ -182,9 +325,8 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		return notificationTemplateLocalService.addNotificationTemplate(
 			NotificationTemplateUtil.createNotificationContext(
 				TestPropsValues.getUser(),
-				childObjectDefinition.getObjectDefinitionId(),
-				ListUtil.toString(getTermNames(), StringPool.BLANK),
-				RandomTestUtil.randomString(),
+				childObjectDefinition.getObjectDefinitionId(), body,
+				RandomTestUtil.randomString(), editorType,
 				Arrays.asList(
 					createNotificationRecipientSetting(
 						"bcc",
@@ -356,6 +498,8 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 		_executeNotificationObjectAction(
 			fileEntry.getFileEntryId(),
 			_addNotificationTemplate(
+				ListUtil.toString(getTermNames(), StringPool.BLANK),
+				NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT,
 				singleRecipient, Collections.singletonMap(LocaleUtil.US, to)));
 
 		List<NotificationQueueEntry> notificationQueueEntries = ListUtil.sort(
@@ -370,7 +514,8 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 								notificationQueueEntry);
 
 					return String.valueOf(
-						notificationRecipientSettingsMap.get("to"));
+						notificationRecipientSettingsMap.get(
+							NotificationRecipientSettingConstants.NAME_TO));
 				}));
 
 		Assert.assertEquals(
@@ -415,6 +560,11 @@ public class EmailNotificationTypeTest extends BaseNotificationTypeTest {
 								getNotificationQueueEntryId())));
 		}
 	}
+
+	@Inject
+	private static CompanyLocalService _companyLocalService;
+
+	private static Map<String, Object> _freeMarkerTermValues;
 
 	@Inject
 	private GroupLocalService _groupLocalService;

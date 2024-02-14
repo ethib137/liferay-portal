@@ -27,11 +27,14 @@ import com.liferay.client.extension.service.ClientExtensionEntryLocalService;
 import com.liferay.client.extension.type.CET;
 import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.client.extension.util.CETUtil;
+import com.liferay.data.engine.rest.dto.v2_0.DataDefinition;
+import com.liferay.data.engine.rest.resource.v2_0.DataDefinitionResource;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.constants.DDMTemplateConstants;
+import com.liferay.dynamic.data.mapping.exception.NoSuchStructureException;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
@@ -252,6 +255,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		CETManager cetManager,
 		ClientExtensionEntryLocalService clientExtensionEntryLocalService,
 		ConfigurationProvider configurationProvider,
+		DataDefinitionResource.Factory dataDefinitionResourceFactory,
 		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
@@ -334,6 +338,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_cetManager = cetManager;
 		_clientExtensionEntryLocalService = clientExtensionEntryLocalService;
 		_configurationProvider = configurationProvider;
+		_dataDefinitionResourceFactory = dataDefinitionResourceFactory;
 		_ddmStructureLocalService = ddmStructureLocalService;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
 		_defaultDDMStructureHelper = defaultDDMStructureHelper;
@@ -496,6 +501,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			_invoke(() -> _addAccountGroupAssignments(serviceContext));
 
+			_invoke(
+				() -> _addOrUpdateDataDefinitions(
+					serviceContext, stringUtilReplaceValues));
 			_invoke(
 				() -> _addOrUpdateDDMStructures(
 					serviceContext, stringUtilReplaceValues));
@@ -1552,6 +1560,74 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext.getCompanyId(), "_",
 					CETUtil.normalizeExternalReferenceCodeForPortletId(
 						jsonObject.getString("externalReferenceCode"))));
+		}
+	}
+
+	private void _addOrUpdateDataDefinitions(
+			ServiceContext serviceContext,
+			Map<String, String> stringUtilReplaceValues)
+		throws Exception {
+
+		List<DDMStructure> ddmStructures =
+			_ddmStructureLocalService.getStructures(
+				serviceContext.getScopeGroupId());
+
+		for (DDMStructure ddmStructure : ddmStructures) {
+			stringUtilReplaceValues.put(
+				"DDM_STRUCTURE_ID:" + ddmStructure.getStructureKey(),
+				String.valueOf(ddmStructure.getStructureId()));
+		}
+
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			"/site-initializer/data-definitions");
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return;
+		}
+
+		DataDefinitionResource.Builder dataDefinitionResourceBuilder =
+			_dataDefinitionResourceFactory.create();
+
+		DataDefinitionResource dataDefinitionResource =
+			dataDefinitionResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
+
+		for (String resourcePath : resourcePaths) {
+			String json = _replace(
+				SiteInitializerUtil.read(resourcePath, _servletContext),
+				stringUtilReplaceValues);
+
+			DataDefinition dataDefinition = DataDefinition.toDTO(json);
+
+			if (dataDefinition == null) {
+				_log.error(
+					"Unable to transform data definition from JSON: " + json);
+
+				continue;
+			}
+
+			try {
+				DataDefinition existingDataDefinition =
+					dataDefinitionResource.
+						getSiteDataDefinitionByContentTypeByDataDefinitionKey(
+							serviceContext.getScopeGroupId(),
+							dataDefinition.getContentType(),
+							dataDefinition.getDataDefinitionKey());
+
+				dataDefinition = dataDefinitionResource.putDataDefinition(
+					existingDataDefinition.getId(), dataDefinition);
+			}
+			catch (NoSuchStructureException noSuchStructureException) {
+				dataDefinition =
+					dataDefinitionResource.postSiteDataDefinitionByContentType(
+						serviceContext.getScopeGroupId(),
+						dataDefinition.getContentType(), dataDefinition);
+			}
+
+			stringUtilReplaceValues.put(
+				"DATA_DEFINITION_ID:" + dataDefinition.getDataDefinitionKey(),
+				String.valueOf(dataDefinition.getId()));
 		}
 	}
 
@@ -3435,7 +3511,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			SegmentsEntry segmentsEntry =
 				_segmentsEntryLocalService.fetchSegmentsEntry(
 					serviceContext.getScopeGroupId(),
-					jsonObject.getString("segmentsEntryKey"), true);
+					jsonObject.getString("segmentsEntryKey"));
 
 			if (segmentsEntry == null) {
 				segmentsEntry = _segmentsEntryLocalService.addSegmentsEntry(
@@ -3443,8 +3519,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					SiteInitializerUtil.toMap(
 						jsonObject.getString("name_i18n")),
 					null, jsonObject.getBoolean("active", true),
-					jsonObject.getString("criteria"),
-					jsonObject.getString("type"), serviceContext);
+					jsonObject.getString("criteria"), serviceContext);
 			}
 			else {
 				segmentsEntry = _segmentsEntryLocalService.updateSegmentsEntry(
@@ -3512,17 +3587,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 			String typeSettings = null;
 
 			if (type.equals(SiteNavigationMenuItemTypeConstants.LAYOUT)) {
-				boolean privateLayout = menuItemJSONObject.getBoolean(
-					"privateLayout");
-				String friendlyURL = menuItemJSONObject.getString(
-					"friendlyURL");
-
 				Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
-					serviceContext.getScopeGroupId(), privateLayout,
-					friendlyURL);
+					serviceContext.getScopeGroupId(),
+					menuItemJSONObject.getBoolean("privateLayout"),
+					menuItemJSONObject.getString("friendlyURL"));
 
 				if (layout == null) {
-					return;
+					if (_log.isWarnEnabled()) {
+						_log.warn(
+							"No layout found with friendly URL " +
+								menuItemJSONObject.getString("friendlyURL"));
+					}
+
+					continue;
 				}
 
 				SiteNavigationMenuItemType siteNavigationMenuItemType =
@@ -3535,14 +3612,30 @@ public class BundleSiteInitializer implements SiteInitializer {
 						layout);
 			}
 			else if (type.equals(SiteNavigationMenuItemTypeConstants.NODE)) {
-				typeSettings = UnicodePropertiesBuilder.put(
-					"name", menuItemJSONObject.getString("name")
+				UnicodePropertiesBuilder.UnicodePropertiesWrapper
+					unicodePropertiesWrapper =
+						_getNavigationMenuItemUnicodePropertiesWrapper(
+							menuItemJSONObject);
+
+				if (unicodePropertiesWrapper == null) {
+					continue;
+				}
+
+				typeSettings = unicodePropertiesWrapper.put(
+					"title", menuItemJSONObject.getString("title")
 				).buildString();
 			}
 			else if (type.equals(SiteNavigationMenuItemTypeConstants.URL)) {
-				typeSettings = UnicodePropertiesBuilder.put(
-					"name", menuItemJSONObject.getString("name")
-				).put(
+				UnicodePropertiesBuilder.UnicodePropertiesWrapper
+					unicodePropertiesWrapper =
+						_getNavigationMenuItemUnicodePropertiesWrapper(
+							menuItemJSONObject);
+
+				if (unicodePropertiesWrapper == null) {
+					continue;
+				}
+
+				typeSettings = unicodePropertiesWrapper.put(
 					"url", menuItemJSONObject.getString("url")
 				).put(
 					"useNewTab", menuItemJSONObject.getString("useNewTab")
@@ -4348,6 +4441,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 					accountBriefsJSONObject,
 					jsonObject.getString("emailAddress"), serviceContext);
 			}
+
+			userAccount = userAccountResource.getUserAccountByEmailAddress(
+				userAccount.getEmailAddress());
+
+			userAccount.setStatus(UserAccount.Status.INACTIVE);
+
+			userAccountResource.patchUserAccount(
+				userAccount.getId(), userAccount);
 		}
 	}
 
@@ -4664,6 +4765,34 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		return (Serializable)jsonObject.get("defaultValue");
+	}
+
+	private UnicodePropertiesBuilder.UnicodePropertiesWrapper
+		_getNavigationMenuItemUnicodePropertiesWrapper(
+			JSONObject menuItemJSONObject) {
+
+		JSONObject nameI18nJSONObject = menuItemJSONObject.getJSONObject(
+			"name_i18n");
+
+		if (nameI18nJSONObject == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn("Missing \"name_i18n\" in " + menuItemJSONObject);
+			}
+
+			return null;
+		}
+
+		UnicodePropertiesBuilder.UnicodePropertiesWrapper
+			unicodePropertiesWrapper = UnicodePropertiesBuilder.put(
+				"defaultLanguageId",
+				LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
+
+		for (String key : nameI18nJSONObject.keySet()) {
+			unicodePropertiesWrapper.put(
+				"name_" + key, nameI18nJSONObject.getString(key));
+		}
+
+		return unicodePropertiesWrapper;
 	}
 
 	private Map<String, String> _getReleaseInfoStringUtilReplaceValues() {
@@ -5072,6 +5201,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final ClientExtensionEntryLocalService
 		_clientExtensionEntryLocalService;
 	private final ConfigurationProvider _configurationProvider;
+	private final DataDefinitionResource.Factory _dataDefinitionResourceFactory;
 	private final DDMStructureLocalService _ddmStructureLocalService;
 	private final DDMTemplateLocalService _ddmTemplateLocalService;
 	private final DefaultDDMStructureHelper _defaultDDMStructureHelper;
