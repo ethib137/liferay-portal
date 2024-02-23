@@ -201,6 +201,8 @@ definition {
 
 			// For LPS-170577, need this pause to see if after 10 seconds, the alert is not showing anymore
 
+			MouseOver(locator1 = "ApplicationsMenu#TOGGLE");
+
 			Pause(value1 = 10000);
 
 			if (!(IsElementPresent.isElementPresentNoSPARefresh(key_type = "info", locator1 = "ClayAlertToast#ALERT_TOAST"))) {
