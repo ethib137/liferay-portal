@@ -118,8 +118,7 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 
 				batchType = "batch";
 			}
-
-			if (clientExtension.type.equals("siteInitializer")) {
+			else if (clientExtension.type.equals("siteInitializer")) {
 				pluginPackageProperties.put(
 					"Liferay-Client-Extension-Site-Initializer",
 					"site-initializer/");
@@ -128,16 +127,15 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 
 				_createSiteInitializerJsonFile(clientExtension);
 			}
+			else if (clientExtension.type.equals("themeCSS")) {
+				_inlineFrontendTokenDefinitionJSON(clientExtension);
+			}
 
 			if (Objects.equals(clientExtension.classification, "frontend")) {
 				_expandWildcards(clientExtension.typeSettings);
 
 				pluginPackageProperties.put(
 					"Liferay-Client-Extension-Frontend", "static/");
-			}
-
-			if (Objects.equals(clientExtension.type, "themeCSS")) {
-				_inlineFrontendTokenDefinitionJSON(clientExtension);
 			}
 
 			String pid = _clientExtensionProperties.getProperty(
