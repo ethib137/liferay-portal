@@ -73,7 +73,9 @@ export default function AttributeFields({
 						disabled={disabled}
 						id={nameId}
 						onChange={({target}) => {
-							if (target.value.toLowerCase().trim() === 'src') {
+							const value = target.value.trim().split(' ').join('');
+
+							if (value.toLowerCase() === 'src') {
 								setErrorMessage(
 									Liferay.Language.get(
 										'use-the-javascript-url-field'
@@ -84,7 +86,7 @@ export default function AttributeFields({
 								setErrorMessage(null);
 							}
 
-							onAttributeChange(index, {name: target.value});
+							onAttributeChange(index, {name: value});
 						}}
 						type="text"
 						value={name}
