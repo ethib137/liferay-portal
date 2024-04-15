@@ -377,6 +377,57 @@ function ExtensionRow({
 		},
 	];
 
+	const getScriptElementAttributesScope = () => {
+		if (!globalJSCET.scriptElementAttributesJSON) {
+			return null;
+		}
+
+		const scriptElementAttributesJSON = JSON.parse(
+			globalJSCET.scriptElementAttributesJSON
+		);
+
+		const asyncValue = scriptElementAttributesJSON['async'];
+		const deferValue = scriptElementAttributesJSON['defer'];
+
+		if (asyncValue !== undefined && asyncValue !== false) {
+			return 'async';
+		}
+		else if (deferValue !== undefined && deferValue !== false) {
+			return 'defer';
+		}
+
+		return null;
+	};
+
+	const getLoadOptions = () => {
+		const options = LOAD_TYPE_OPTIONS;
+
+		if (!globalJSCET.scriptElementAttributesJSON) {
+			return options;
+		}
+
+		const scriptElementAttributesJSON = JSON.parse(
+			globalJSCET.scriptElementAttributesJSON
+		);
+
+		return options.filter(
+			(option) => scriptElementAttributesJSON[option.label] !== false
+		);
+	};
+
+	const scriptElementAttributesScope = getScriptElementAttributesScope();
+
+	if (
+		scriptElementAttributesScope &&
+		scriptElementAttributesScope !== globalJSCET.loadType
+	) {
+		updateGlobalJSCET(
+			globalJSCET,
+			'loadType',
+			scriptElementAttributesScope as ILoadTypeOptions
+		);
+	}
+
 	return (
 		<ClayTable.Row
 			className={classNames({disabled})}
@@ -392,9 +443,11 @@ function ExtensionRow({
 				<ClaySelectWithOption
 					className="load-type-select"
 					defaultValue={
-						globalJSCET.loadType || DEFAULT_LOAD_TYPE_OPTION
+						globalJSCET.loadType ||
+						scriptElementAttributesScope ||
+						DEFAULT_LOAD_TYPE_OPTION
 					}
-					disabled={disabled}
+					disabled={disabled || !!scriptElementAttributesScope}
 					onChange={(event) =>
 						updateGlobalJSCET(
 							globalJSCET,
@@ -402,7 +455,7 @@ function ExtensionRow({
 							event.target.value as ILoadTypeOptions
 						)
 					}
-					options={LOAD_TYPE_OPTIONS}
+					options={getLoadOptions()}
 					sizing="sm"
 				/>
 			</ClayTable.Cell>
@@ -428,6 +481,7 @@ interface IGlobalJSCET {
 	inheritedLabel: string;
 	loadType?: ILoadTypeOptions;
 	name: string;
+	scriptElementAttributesJSON?: string;
 	scriptLocation?: IScriptLocationOptions;
 }
 
