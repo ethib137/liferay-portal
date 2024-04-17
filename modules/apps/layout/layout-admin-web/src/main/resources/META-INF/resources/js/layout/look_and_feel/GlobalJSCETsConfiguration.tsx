@@ -36,6 +36,33 @@ const SCRIPT_LOCATION_LABELS: Array<{
 
 const DEFAULT_SCRIPT_LOCATION_OPTION: IScriptLocationOptions = 'bottom';
 
+const getLoadTypeOptions = (scriptElementAttributesJSON: any) => {
+	const loadTypeOptions = LOAD_TYPE_OPTIONS;
+
+	if (!scriptElementAttributesJSON) {
+		return loadTypeOptions;
+	}
+
+	return loadTypeOptions.filter(
+		(option) => scriptElementAttributesJSON[option.value] !== false
+	);
+};
+
+const getPredefinedLoadType = (scriptElementAttributesJSON: any) => {
+	if (!scriptElementAttributesJSON) {
+		return null;
+	}
+
+	if (scriptElementAttributesJSON.async) {
+		return 'async';
+	}
+	else if (scriptElementAttributesJSON.defer) {
+		return 'defer';
+	}
+
+	return null;
+};
+
 export default function GlobalJSCETsConfiguration({
 	globalJSCETSelectorURL,
 	globalJSCETs: initialGlobalJSCETs,
@@ -369,6 +396,17 @@ function ExtensionRow({
 	const disabled = globalJSCET.inherited;
 	const dropdownTriggerId = `${portletNamespace}_GlobalJSCETsConfigurationOptionsButton_${globalJSCET.cetExternalReferenceCode}`;
 
+	const scriptElementAttributesJSONString =
+		globalJSCET.scriptElementAttributesJSON;
+
+	const scriptElementAttributesJSON = useMemo(() => {
+		if (!scriptElementAttributesJSONString) {
+			return null;
+		}
+
+		return JSON.parse(scriptElementAttributesJSONString);
+	}, [scriptElementAttributesJSONString]);
+
 	const dropdownItems = [
 		{
 			label: Liferay.Language.get('delete'),
@@ -377,54 +415,15 @@ function ExtensionRow({
 		},
 	];
 
-	const getScriptElementAttributesScope = () => {
-		if (!globalJSCET.scriptElementAttributesJSON) {
-			return null;
-		}
+	const predefinedLoadType = getPredefinedLoadType(
+		scriptElementAttributesJSON
+	);
 
-		const scriptElementAttributesJSON = JSON.parse(
-			globalJSCET.scriptElementAttributesJSON
-		);
-
-		const asyncValue = scriptElementAttributesJSON['async'];
-		const deferValue = scriptElementAttributesJSON['defer'];
-
-		if (asyncValue !== undefined && asyncValue !== false) {
-			return 'async';
-		}
-		else if (deferValue !== undefined && deferValue !== false) {
-			return 'defer';
-		}
-
-		return null;
-	};
-
-	const getLoadOptions = () => {
-		const options = LOAD_TYPE_OPTIONS;
-
-		if (!globalJSCET.scriptElementAttributesJSON) {
-			return options;
-		}
-
-		const scriptElementAttributesJSON = JSON.parse(
-			globalJSCET.scriptElementAttributesJSON
-		);
-
-		return options.filter(
-			(option) => scriptElementAttributesJSON[option.label] !== false
-		);
-	};
-
-	const scriptElementAttributesScope = getScriptElementAttributesScope();
-
-	if (
-		scriptElementAttributesScope &&
-		scriptElementAttributesScope !== globalJSCET.loadType
-	) {
+	if (predefinedLoadType && predefinedLoadType !== globalJSCET.loadType) {
 		updateGlobalJSCET(
 			globalJSCET,
 			'loadType',
-			scriptElementAttributesScope as ILoadTypeOptions
+			predefinedLoadType as ILoadTypeOptions
 		);
 	}
 
@@ -444,10 +443,10 @@ function ExtensionRow({
 					className="load-type-select"
 					defaultValue={
 						globalJSCET.loadType ||
-						scriptElementAttributesScope ||
+						predefinedLoadType ||
 						DEFAULT_LOAD_TYPE_OPTION
 					}
-					disabled={disabled || !!scriptElementAttributesScope}
+					disabled={disabled || !!predefinedLoadType}
 					onChange={(event) =>
 						updateGlobalJSCET(
 							globalJSCET,
@@ -455,7 +454,7 @@ function ExtensionRow({
 							event.target.value as ILoadTypeOptions
 						)
 					}
-					options={getLoadOptions()}
+					options={getLoadTypeOptions(scriptElementAttributesJSON)}
 					sizing="sm"
 				/>
 			</ClayTable.Cell>
