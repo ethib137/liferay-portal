@@ -25,7 +25,7 @@ const SelectDataSource: React.FC<ISelectDataSourceProps> = ({
 	<div className={getCN('select-data-source-root', className)}>
 		{sections.map(({dataSources, title}) => (
 			<section key={title}>
-				<div className='h4 text-uppercase section-title'>{title}</div>
+				<div className='h4 section-title text-uppercase'>{title}</div>
 
 				<div className='section-items'>
 					{dataSources.map(
