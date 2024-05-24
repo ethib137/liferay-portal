@@ -704,6 +704,12 @@ public class PredicateExpressionVisitorImpl
 				_log.debug(portalException);
 			}
 
+			if (Objects.equals(entityType, EntityField.Type.ID) &&
+				Validator.isNumber(String.valueOf(right))) {
+
+				return GetterUtil.getLong(right);
+			}
+
 			return right;
 		}
 	}
