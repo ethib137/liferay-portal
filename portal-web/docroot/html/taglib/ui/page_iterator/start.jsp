@@ -75,6 +75,72 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 </c:if>
 
 <c:if test="<%= (total > delta) || (total > PropsValues.SEARCH_CONTAINER_PAGE_DELTA_VALUES[0]) %>">
+	<%
+		JSONArray deltasJSONArray = JSONFactoryUtil.createJSONArray();
+		for (int curDelta : PropsValues.SEARCH_CONTAINER_PAGE_DELTA_VALUES) {
+			if (curDelta > SearchContainer.MAX_DELTA) {
+				continue;
+			}
+
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+			String curDeltaURL = HttpComponentsUtil.setParameter(url + urlAnchor,
+				namespace + deltaParam, curDelta);
+
+			jsonObject.put("href", curDeltaURL);
+			jsonObject.put("label", curDelta);
+
+			deltasJSONArray.put(jsonObject);
+		}
+
+		JSONObject hrefJSONObject = JSONFactoryUtil.createJSONObject();
+
+		for (int i = 1; i <= pages; i++) {
+			hrefJSONObject.put(String.valueOf(i), _getHREF(formName, namespace + curParam, i, jsCall, url, urlAnchor));
+		}
+	%>
+
+	<div id="<%= namespace %>pagination"></div>
+
+	<aui:script senna="temporary" type="module">
+		import React from 'react';
+		import ReactDOM from 'react-dom';
+
+		import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
+
+		const hrefJSONObject = <%= hrefJSONObject %>;
+
+		console.log(hrefJSONObject);
+
+		const props = {
+			active: <%= cur %>,
+			activeDelta: <%= delta %>,
+			['data-qa-id']: 'paginator',
+			deltas: <%= deltasJSONArray %>,
+			ellipsisBuffer: <%= 3 %>,
+			hrefConstructor: (page) => hrefJSONObject[page],
+			labels: {
+				['aria-label']: '<%= LanguageUtil.get(request, "more") %>',
+				title: '<%= LanguageUtil.get(request, "more") %>',
+				perPageItems: '<%= LanguageUtil.get(request, "x-entries") %>',
+				paginationResults: '<%= LanguageUtil.get(request, "showing-x-to-x-of-x-entries") %>',
+				selectPerPageItems: '{0}',
+			},
+			spritemap: Liferay.Icons.controlPanelSpritemap,
+			totalItems: <%= total %>,
+		};
+
+		console.log(props);
+
+		ReactDOM.render(
+			React.createElement(
+				ClayPaginationBarWithBasicItems,
+				props,
+			),
+			document.getElementById('<%= namespace %>pagination')
+		);
+	</aui:script>
+
 	<div class="pagination-bar" data-qa-id="paginator" id="<%= namespace + id %>">
 
 		<%
@@ -490,7 +556,7 @@ NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
 <%!
 private String _getHREF(String formName, String curParam, int cur, String jsCall, String url, String urlAnchor) throws Exception {
 	if (Validator.isNotNull(url)) {
-		return HtmlUtil.escapeHREF(HttpComponentsUtil.addParameter(HttpComponentsUtil.removeParameter(url, curParam) + urlAnchor, curParam, cur));
+		return HttpComponentsUtil.addParameter(HttpComponentsUtil.removeParameter(url, curParam) + urlAnchor, curParam, cur);
 	}
 
 	return "javascript:document." + formName + "." + curParam + ".value = '" + cur + "'; " + jsCall;
