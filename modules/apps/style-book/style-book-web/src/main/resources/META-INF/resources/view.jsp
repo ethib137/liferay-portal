@@ -1,4 +1,4 @@
-<%@ page import="com.liferay.client.extension.type.manager.CETManager" %>
+
 
 <%--
 /**
@@ -10,14 +10,11 @@
 <%@ include file="/init.jsp" %>
 
 <%
-StyleBookDisplayContext styleBookDisplayContext = new StyleBookDisplayContext(request, liferayPortletRequest, liferayPortletResponse);
-
-CETManager cetManager = (CETManager)request.getAttribute(CETManager.class.getName());
-FrontendTokenDefinitionRegistry frontendTokenDefinitionRegistry = (FrontendTokenDefinitionRegistry)request.getAttribute(FrontendTokenDefinitionRegistry.class.getName());
+StyleBookDisplayContext styleBookDisplayContext = (StyleBookDisplayContext)request.getAttribute(StyleBookDisplayContext.class.getName());
 %>
 
 <clay:management-toolbar
-	managementToolbarDisplayContext="<%= new StyleBookManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, cetManager, frontendTokenDefinitionRegistry, styleBookDisplayContext.getStyleBookEntriesSearchContainer()) %>"
+	managementToolbarDisplayContext="<%= (StyleBookManagementToolbarDisplayContext)request.getAttribute(StyleBookManagementToolbarDisplayContext.class.getName()) %>"
 	propsTransformer="{StyleBookManagementToolbarPropsTransformer} from style-book-web"
 />
 

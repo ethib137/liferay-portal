@@ -7,11 +7,18 @@ package com.liferay.style.book.web.internal.portlet.action;
 
 import com.liferay.client.extension.type.manager.CETManager;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
+import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.style.book.constants.StyleBookPortletKeys;
+import com.liferay.style.book.web.internal.display.context.StyleBookDisplayContext;
+import com.liferay.style.book.web.internal.display.context.StyleBookManagementToolbarDisplayContext;
 
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -32,10 +39,32 @@ public class ViewMVCRenderCommand implements MVCRenderCommand {
 	public String render(
 		RenderRequest renderRequest, RenderResponse renderResponse) {
 
-		renderRequest.setAttribute(CETManager.class.getName(), _cetManager);
+		HttpServletRequest httpServletRequest =
+			PortalUtil.getHttpServletRequest(renderRequest);
+		LiferayPortletRequest liferayPortletRequest =
+			PortalUtil.getLiferayPortletRequest(renderRequest);
+		LiferayPortletResponse liferayPortletResponse =
+			PortalUtil.getLiferayPortletResponse(renderResponse);
+
+		StyleBookDisplayContext styleBookDisplayContext =
+			new StyleBookDisplayContext(
+				httpServletRequest, liferayPortletRequest,
+				liferayPortletResponse);
+
+		StyleBookManagementToolbarDisplayContext
+			styleBookManagementToolbarDisplayContext =
+				new StyleBookManagementToolbarDisplayContext(
+					httpServletRequest, liferayPortletRequest,
+					liferayPortletResponse, _cetManager,
+					_frontendTokenDefinitionRegistry,
+					styleBookDisplayContext.
+						getStyleBookEntriesSearchContainer());
+
 		renderRequest.setAttribute(
-			FrontendTokenDefinitionRegistry.class.getName(),
-			_frontendTokenDefinitionRegistry);
+			StyleBookManagementToolbarDisplayContext.class.getName(),
+			styleBookManagementToolbarDisplayContext);
+		renderRequest.setAttribute(
+			StyleBookDisplayContext.class.getName(), styleBookDisplayContext);
 
 		return "/view.jsp";
 	}

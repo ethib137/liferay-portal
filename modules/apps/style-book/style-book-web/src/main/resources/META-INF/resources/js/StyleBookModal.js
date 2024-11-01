@@ -22,10 +22,10 @@ const DEFAULT_OPTION = {
 };
 
 export default function StyleBookModal({
-										  addStyleBookEntryURL,
-										  frontendTokenDefinitions  = [],
-										  namespace,
-										  onModalClose,
+										   addStyleBookEntryURL,
+										   frontendTokenDefinitions  = [],
+										   namespace,
+										   onModalClose,
 									   }) {
 	const {observer, onClose} = useModal({onClose: () => onModalClose()});
 
@@ -106,7 +106,7 @@ export default function StyleBookModal({
 				<StyleBookField
 					errors={errors}
 					id={frontendTokenDefinitionId}
-					label={Liferay.Language.get('based-on-token-definition')}
+					label={Liferay.Language.get('create-style-book-for')}
 					name="itemType"
 				>
 					<ClaySelect
@@ -137,7 +137,7 @@ export default function StyleBookModal({
 
 					<p className="text-secondary">
 						{Liferay.Language.get(
-							'the-style-book-will-be-based-on-the-selected-token-definition'
+							'the-style-book-will-be-created-based-on-the-selected-token-definition'
 						)}
 					</p>
 				</StyleBookField>

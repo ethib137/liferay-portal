@@ -58,11 +58,8 @@ public class StyleBookDisplayContext {
 			(ThemeDisplay)_httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		List<FrontendTokenDefinition> frontendTokenDefinitions =
-			_frontendTokenDefinitionRegistry.getFrontendTokenDefinitions(
-				themeDisplay.getCompanyId());
-
-		return frontendTokenDefinitions;
+		return _frontendTokenDefinitionRegistry.getFrontendTokenDefinitions(
+			themeDisplay.getCompanyId());
 	}
 
 	public PortletURL getPortletURL() {

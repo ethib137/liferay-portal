@@ -149,22 +149,19 @@ public class StyleBookManagementToolbarDisplayContext
 			() -> {
 				long companyId = _themeDisplay.getCompanyId();
 
-				List<FrontendTokenDefinition> frontendTokenDefinitions =
-					_frontendTokenDefinitionRegistry.
-						getFrontendTokenDefinitions(companyId);
-
 				List<Object> frontendTokenDefinitionProviders =
 					new ArrayList<>();
 
 				for (FrontendTokenDefinition frontendTokenDefinition :
-						frontendTokenDefinitions) {
+						_frontendTokenDefinitionRegistry.
+							getFrontendTokenDefinitions(companyId)) {
 
 					String themeId = frontendTokenDefinition.getThemeId();
 
+					String name = themeId;
+
 					Theme theme = ThemeLocalServiceUtil.fetchTheme(
 						companyId, themeId);
-
-					String name = themeId;
 
 					if (theme != null) {
 						name = theme.getName();
