@@ -1,3 +1,5 @@
+
+
 <%--
 /**
  * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
@@ -8,11 +10,11 @@
 <%@ include file="/init.jsp" %>
 
 <%
-StyleBookDisplayContext styleBookDisplayContext = new StyleBookDisplayContext(request, liferayPortletRequest, liferayPortletResponse);
+StyleBookDisplayContext styleBookDisplayContext = (StyleBookDisplayContext)request.getAttribute(StyleBookDisplayContext.class.getName());
 %>
 
 <clay:management-toolbar
-	managementToolbarDisplayContext="<%= new StyleBookManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, styleBookDisplayContext.getStyleBookEntriesSearchContainer()) %>"
+	managementToolbarDisplayContext="<%= (StyleBookManagementToolbarDisplayContext)request.getAttribute(StyleBookManagementToolbarDisplayContext.class.getName()) %>"
 	propsTransformer="{StyleBookManagementToolbarPropsTransformer} from style-book-web"
 />
 
