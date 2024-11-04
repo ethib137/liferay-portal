@@ -22,10 +22,11 @@ export default function openStyleBookModal({
 	container.id = DEFAULT_MODAL_CONTAINER_ID;
 	document.body.appendChild(container);
 
+	console.log(frontendTokenDefinitions);
 	render(
 		<StyleBookModal
 			addStyleBookEntryURL={addStyleBookEntryURL}
-			frontendTokenDefinitions ={frontendTokenDefinitions}
+			frontendTokenDefinitions={frontendTokenDefinitions}
 			namespace={namespace}
 			onModalClose={dispose}
 		/>,

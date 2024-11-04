@@ -37,12 +37,15 @@ export default function StyleBookModal({
 	);
 
 	const [name, setName] = useState('');
-	const [frontendTokenDefinition] = useState(null);
+	const [frontendTokenDefinition, setFrontendTokenDefinition] = useState(null);
 
 	const formRef = useRef(null);
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
+
+		console.log("frontendTokenDefinition ", frontendTokenDefinition);
+		console.log("name ", name);
 
 		const errors = validateFields(name, frontendTokenDefinition);
 
@@ -55,15 +58,22 @@ export default function StyleBookModal({
 		setLoading(true);
 
 		const body = Liferay.Util.ns(namespace, {
-			infoItemClassName: frontendTokenDefinition.value
+			name,
+			themeId: frontendTokenDefinition.themeId,
+
 		});
 
+		console.log("body ", body);
+		console.log("frontendTokenDefinition.name ", frontendTokenDefinition.name);
+		console.log("frontendTokenDefinition.themeId ", frontendTokenDefinition.themeId);
 		fetch(addStyleBookEntryURL, {
 			body: objectToFormData(body),
 			method: 'POST',
 		})
 			.then((response) => response.json())
 			.then((responseContent) => {
+
+				console.log("responseContent", responseContent);
 				if (responseContent.error) {
 					setLoading(false);
 					setErrors(responseContent.error);
@@ -117,8 +127,8 @@ export default function StyleBookModal({
 							const tokenDefinition =
 								value === -1 ? null : frontendTokenDefinitions[value];
 
-							frontendTokenDefinitions(tokenDefinition);
-							setErrors({tokenDefinition: null});
+							console.log("tokenDefinition ", tokenDefinition);
+							setFrontendTokenDefinition(tokenDefinition);
 						}}
 					>
 						<ClaySelect.Option
@@ -128,8 +138,8 @@ export default function StyleBookModal({
 
 						{frontendTokenDefinitions.map((tokenDefinition, index) => (
 							<ClaySelect.Option
-								key={tokenDefinition.value}
-								label={tokenDefinition.label}
+								key={tokenDefinition.themeId}
+								label={tokenDefinition.name}
 								value={index}
 							/>
 						))}

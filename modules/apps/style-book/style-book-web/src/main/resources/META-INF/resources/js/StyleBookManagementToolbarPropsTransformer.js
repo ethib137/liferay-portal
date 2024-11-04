@@ -8,6 +8,7 @@ import {getCheckedCheckboxes} from 'frontend-js-web';
 import openDeleteStyleBookModal from './openDeleteStyleBookModal';
 import openStyleBookModal from './openStyleBookModal';
 
+//coming from toolbar display context
 export default function propsTransformer({
 	additionalProps: {addStyleBookEntryURL, copyStyleBookEntryURL, exportStyleBookEntriesURL, frontendTokenDefinitions},
 	portletNamespace,
@@ -77,6 +78,7 @@ export default function propsTransformer({
 		onCreateButtonClick(event, {item}) {
 			const action = item?.data?.action;
 
+			//get just frontend token definition names here
 			if (action === 'addStyleBookEntry') {
 				openStyleBookModal({
 					addStyleBookEntryURL,
