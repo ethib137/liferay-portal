@@ -3,30 +3,29 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-package com.liferay.style.book.zip.processor;
+package com.liferay.style.book.importer;
 
 import com.liferay.style.book.model.StyleBookEntry;
 
 /**
- * @author Jürgen Kappler
+ * @author Anderson Luiz
  */
-public class StyleBookEntryZipProcessorImportResultEntry {
+public class StyleBookEntryImporterResult {
 
-	public StyleBookEntryZipProcessorImportResultEntry(
-		String name, Status status, String errorMessage) {
-
-		_name = name;
-		_errorMessage = errorMessage;
-
-		_status = Status.INVALID;
-	}
-
-	public StyleBookEntryZipProcessorImportResultEntry(
+	public StyleBookEntryImporterResult(
 		String name, Status status, StyleBookEntry styleBookEntry) {
 
 		_name = name;
 		_status = status;
 		_styleBookEntry = styleBookEntry;
+	}
+
+	public StyleBookEntryImporterResult(
+		String errorMessage, String name, Status status) {
+
+		_errorMessage = errorMessage;
+		_name = name;
+		_status = status;
 	}
 
 	public String getErrorMessage() {

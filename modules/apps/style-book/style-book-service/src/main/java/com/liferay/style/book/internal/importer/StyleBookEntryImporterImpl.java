@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-package com.liferay.style.book.web.internal.zip.processor;
+package com.liferay.style.book.internal.importer;
 
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
@@ -22,15 +22,13 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.zip.ZipWriter;
-import com.liferay.portal.kernel.zip.ZipWriterFactory;
 import com.liferay.style.book.constants.StyleBookPortletKeys;
 import com.liferay.style.book.exception.DuplicateStyleBookEntryKeyException;
+import com.liferay.style.book.importer.StyleBookEntryImporter;
+import com.liferay.style.book.importer.StyleBookEntryImporterEntry;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalService;
 import com.liferay.style.book.service.StyleBookEntryService;
-import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
-import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessorImportResultEntry;
 
 import java.io.File;
 import java.io.InputStream;
@@ -42,43 +40,21 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.portlet.PortletException;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Eudaldo Alonso
+ * @author Anderson Luiz
  */
-@Component(service = StyleBookEntryZipProcessor.class)
-public class StyleBookEntryZipProcessorImpl
-	implements StyleBookEntryZipProcessor {
+@Component(service = StyleBookEntryImporter.class)
+public class StyleBookEntryImporterImpl implements StyleBookEntryImporter {
 
 	@Override
-	public File exportStyleBookEntries(List<StyleBookEntry> styleBookEntries)
-		throws PortletException {
-
-		ZipWriter zipWriter = _zipWriterFactory.getZipWriter();
-
-		try {
-			for (StyleBookEntry styleBookEntry : styleBookEntries) {
-				styleBookEntry.populateZipWriter(zipWriter, StringPool.BLANK);
-			}
-
-			return zipWriter.getFile();
-		}
-		catch (Exception exception) {
-			throw new PortletException(exception);
-		}
-	}
-
-	@Override
-	public List<StyleBookEntryZipProcessorImportResultEntry>
-			importStyleBookEntries(
-				long userId, long groupId, File file, boolean overwrite)
+	public List<StyleBookEntryImporterEntry> importStyleBookEntries(
+			long userId, long groupId, File file, boolean overwrite)
 		throws Exception {
 
-		_importResultEntries = new ArrayList<>();
+		_styleBookEntryImporterEntries = new ArrayList<>();
 
 		try (ZipFile zipFile = new ZipFile(file)) {
 			Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
@@ -101,7 +77,7 @@ public class StyleBookEntryZipProcessorImpl
 			}
 		}
 
-		return _importResultEntries;
+		return _styleBookEntryImporterEntries;
 	}
 
 	private StyleBookEntry _addStyleBookEntry(
@@ -131,20 +107,18 @@ public class StyleBookEntryZipProcessorImpl
 						frontendTokensValues, name);
 			}
 
-			_importResultEntries.add(
-				new StyleBookEntryZipProcessorImportResultEntry(
-					name,
-					StyleBookEntryZipProcessorImportResultEntry.Status.IMPORTED,
+			_styleBookEntryImporterEntries.add(
+				new StyleBookEntryImporterEntry(
+					name, StyleBookEntryImporterEntry.Status.IMPORTED,
 					styleBookEntry));
 
 			return styleBookEntry;
 		}
 		catch (PortalException portalException) {
-			_importResultEntries.add(
-				new StyleBookEntryZipProcessorImportResultEntry(
-					name,
-					StyleBookEntryZipProcessorImportResultEntry.Status.INVALID,
-					portalException.getMessage()));
+			_styleBookEntryImporterEntries.add(
+				new StyleBookEntryImporterEntry(
+					portalException.getMessage(), name,
+					StyleBookEntryImporterEntry.Status.INVALID));
 		}
 
 		return null;
@@ -366,9 +340,6 @@ public class StyleBookEntryZipProcessorImpl
 	@Reference
 	private CompanyLocalService _companyLocalService;
 
-	private List<StyleBookEntryZipProcessorImportResultEntry>
-		_importResultEntries;
-
 	@Reference
 	private JSONFactory _jsonFactory;
 
@@ -378,7 +349,6 @@ public class StyleBookEntryZipProcessorImpl
 	@Reference
 	private StyleBookEntryService _styleBookEntryEntryService;
 
-	@Reference
-	private ZipWriterFactory _zipWriterFactory;
+	private List<StyleBookEntryImporterEntry> _styleBookEntryImporterEntries;
 
 }
