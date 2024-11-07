@@ -27,7 +27,7 @@ public class ImportStyleBookDisplayContext {
 		StyleBookEntryImporterResult.Status status) {
 
 		List<StyleBookEntryImporterResult> styleBookEntryImporterResults =
-			_getStyleBookEntryImporterResultNames();
+			_getStyleBookEntryImporterResults();
 
 		if (ListUtil.isEmpty(styleBookEntryImporterResults)) {
 			return null;
@@ -45,7 +45,7 @@ public class ImportStyleBookDisplayContext {
 	}
 
 	private List<StyleBookEntryImporterResult>
-		_getStyleBookEntryImporterResultNames() {
+		_getStyleBookEntryImporterResults() {
 
 		if (_styleBookEntryImporterResults != null) {
 			return _styleBookEntryImporterResults;
