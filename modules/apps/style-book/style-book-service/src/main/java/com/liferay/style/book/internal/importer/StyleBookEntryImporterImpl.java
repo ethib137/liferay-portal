@@ -25,7 +25,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.style.book.constants.StyleBookPortletKeys;
 import com.liferay.style.book.exception.DuplicateStyleBookEntryKeyException;
 import com.liferay.style.book.importer.StyleBookEntryImporter;
-import com.liferay.style.book.importer.StyleBookEntryImporterEntry;
+import com.liferay.style.book.importer.StyleBookEntryImporterResult;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalService;
 import com.liferay.style.book.service.StyleBookEntryService;
@@ -50,7 +50,7 @@ import org.osgi.service.component.annotations.Reference;
 public class StyleBookEntryImporterImpl implements StyleBookEntryImporter {
 
 	@Override
-	public List<StyleBookEntryImporterEntry> importStyleBookEntries(
+	public List<StyleBookEntryImporterResult> importStyleBookEntries(
 			long userId, long groupId, File file, boolean overwrite)
 		throws Exception {
 
@@ -108,17 +108,17 @@ public class StyleBookEntryImporterImpl implements StyleBookEntryImporter {
 			}
 
 			_styleBookEntryImporterEntries.add(
-				new StyleBookEntryImporterEntry(
-					name, StyleBookEntryImporterEntry.Status.IMPORTED,
+				new StyleBookEntryImporterResult(
+					name, StyleBookEntryImporterResult.Status.IMPORTED,
 					styleBookEntry));
 
 			return styleBookEntry;
 		}
 		catch (PortalException portalException) {
 			_styleBookEntryImporterEntries.add(
-				new StyleBookEntryImporterEntry(
+				new StyleBookEntryImporterResult(
 					portalException.getMessage(), name,
-					StyleBookEntryImporterEntry.Status.INVALID));
+					StyleBookEntryImporterResult.Status.INVALID));
 		}
 
 		return null;
@@ -349,6 +349,6 @@ public class StyleBookEntryImporterImpl implements StyleBookEntryImporter {
 	@Reference
 	private StyleBookEntryService _styleBookEntryEntryService;
 
-	private List<StyleBookEntryImporterEntry> _styleBookEntryImporterEntries;
+	private List<StyleBookEntryImporterResult> _styleBookEntryImporterEntries;
 
 }
