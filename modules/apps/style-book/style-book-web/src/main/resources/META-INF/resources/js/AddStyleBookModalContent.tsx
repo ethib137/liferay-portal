@@ -6,19 +6,28 @@
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput, ClaySelect} from '@clayui/form';
-import ClayIcon from "@clayui/icon";
+import ClayIcon from '@clayui/icon';
 import ClayModal from '@clayui/modal';
 import {FieldBase} from 'frontend-js-components-web';
 import {fetch, navigate, objectToFormData} from 'frontend-js-web';
-import PropTypes from 'prop-types';
 import React, {useRef, useState} from 'react';
 
-export default function AddStyleBookModalContent({
+type frontendTokenDefinitionProvider = {
+	name: string;
+	themeId: string;
+};
+
+const AddStyleBookModalContent = ({
 	addStyleBookEntryURL,
 	closeModal,
 	frontendTokenDefinitionProviders = [],
 	namespace,
-}) {
+}: {
+	addStyleBookEntryURL: string;
+	closeModal: () => void;
+	frontendTokenDefinitionProviders?: Array<frontendTokenDefinitionProvider>;
+	namespace: string;
+}) =>{
 	const [loading, setLoading] = useState(false);
 
 	const [errorMessage, setErrorMessage] = useState();
@@ -80,7 +89,7 @@ export default function AddStyleBookModalContent({
 	return (
 		<>
 			<ClayModal.Header>
-				{Liferay.Language.get('add-style-book')} Testing Evan
+				{Liferay.Language.get('add-style-book')}
 			</ClayModal.Header>
 
 			<ClayModal.Body>
@@ -188,9 +197,5 @@ export default function AddStyleBookModalContent({
 		</>
 	);
 }
-AddStyleBookModalContent.propTypes = {
-	addStyleBookEntryUrl: PropTypes.string.isRequired,
-	closeModal: PropTypes.func,
-	frontendTokenDefinitionProviders: PropTypes.object,
-	namespace: PropTypes.string.isRequired,
-};
+
+export default AddStyleBookModalContent;

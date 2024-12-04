@@ -11,10 +11,16 @@ export default function openAddStyleBookModal({
 	addStyleBookEntryURL,
 	frontendTokenDefinitionProviders,
 	namespace,
+}: {
+	addStyleBookEntryURL: string;
+	frontendTokenDefinitionProviders: any;
+	namespace: string;
 }) {
 	openModal({
 		contentComponent: ({
 			closeModal,
+		}: {
+			closeModal: () => void;
 		}) => AddStyleBookModalContent({
 			addStyleBookEntryURL,
 			closeModal,
