@@ -7,20 +7,18 @@ import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import ClayForm, {ClayInput, ClaySelect} from '@clayui/form';
 import ClayIcon from "@clayui/icon";
-import ClayModal, {useModal} from '@clayui/modal';
+import ClayModal from '@clayui/modal';
 import {FieldBase} from 'frontend-js-components-web';
 import {fetch, navigate, objectToFormData} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useRef, useState} from 'react';
 
-export default function AddStyleBookModal({
+export default function AddStyleBookModalContent({
 	addStyleBookEntryURL,
+	closeModal,
 	frontendTokenDefinitionProviders = [],
 	namespace,
-	onModalClose,
 }) {
-	const {observer, onClose} = useModal({onClose: () => onModalClose()});
-
 	const [loading, setLoading] = useState(false);
 
 	const [errorMessage, setErrorMessage] = useState();
@@ -67,7 +65,7 @@ export default function AddStyleBookModal({
 				}
 				else if (responseContent.redirectURL) {
 					navigate(responseContent.redirectURL, {
-						beforeScreenFlip: onClose,
+						beforeScreenFlip: closeModal,
 					});
 				}
 			})
@@ -80,9 +78,9 @@ export default function AddStyleBookModal({
 	const themeIdId = `${namespace}tokenDefinition`;
 
 	return (
-		<ClayModal observer={observer} size="md">
+		<>
 			<ClayModal.Header>
-				{Liferay.Language.get('add-style-book')}
+				{Liferay.Language.get('add-style-book')} Testing Evan
 			</ClayModal.Header>
 
 			<ClayModal.Body>
@@ -164,7 +162,7 @@ export default function AddStyleBookModal({
 			<ClayModal.Footer
 				last={
 					<ClayButton.Group spaced>
-						<ClayButton displayType="secondary" onClick={onClose}>
+						<ClayButton displayType="secondary" onClick={closeModal}>
 							{Liferay.Language.get('cancel')}
 						</ClayButton>
 
@@ -187,12 +185,12 @@ export default function AddStyleBookModal({
 					</ClayButton.Group>
 				}
 			/>
-		</ClayModal>
+		</>
 	);
 }
-AddStyleBookModal.propTypes = {
+AddStyleBookModalContent.propTypes = {
 	addStyleBookEntryUrl: PropTypes.string.isRequired,
+	closeModal: PropTypes.func,
 	frontendTokenDefinitionProviders: PropTypes.object,
 	namespace: PropTypes.string.isRequired,
-	onModalClose: PropTypes.func,
 };
