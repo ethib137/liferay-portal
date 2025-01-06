@@ -5,10 +5,13 @@
 
 package com.liferay.feature.flag.web.internal.feature.flag;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.kernel.feature.flag.FeatureFlag;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManager;
 import com.liferay.portal.kernel.feature.flag.constants.FeatureFlagConstants;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -55,7 +58,22 @@ public class FeatureFlagManagerImpl implements FeatureFlagManager {
 
 	@Override
 	public boolean isEnabled(String key) {
-		return isEnabled(CompanyThreadLocal.getCompanyId(), key);
+		long companyId = CompanyThreadLocal.getCompanyId();
+
+		if (_isSystemKey(key)) {
+			companyId = CompanyConstants.SYSTEM;
+		}
+		else if (companyId == CompanyConstants.SYSTEM) {
+			_log.error(
+				StringBundler.concat(
+					"Feature flag ", key,
+					" is being referenced from a context where the companyId ",
+					"is not available from companyThreadLocal. Either ",
+					"manually pass the companyId or make the feature flag ",
+					"System scoped."));
+		}
+
+		return isEnabled(companyId, key);
 	}
 
 	private boolean _isSystemKey(String key) {
@@ -68,6 +86,9 @@ public class FeatureFlagManagerImpl implements FeatureFlagManager {
 						ExtendedObjectClassDefinition.Scope.SYSTEM.
 							getValue()))));
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		FeatureFlagManagerImpl.class);
 
 	@Reference
 	private FeatureFlagsBagProvider _featureFlagsBagProvider;
