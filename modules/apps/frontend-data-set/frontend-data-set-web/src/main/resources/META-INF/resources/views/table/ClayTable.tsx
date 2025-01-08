@@ -141,6 +141,12 @@ export function ClayTable({
 	const SelectionComponent =
 		selectionType === 'multiple' ? ClayCheckbox : ClayRadio;
 
+	const columns = [
+		...(selectable ? [{fieldName: 'select'}] : []),
+		...fields,
+		{fieldName: 'actions'},
+	];
+
 	return (
 		<Table
 			alwaysVisibleColumns={
@@ -277,19 +283,8 @@ export function ClayTable({
 					(item) => {
 						const id = item[selectedItemsKey ?? 'id'];
 
-						const columns = [
-							...fields,
-							{fieldName: 'actions'},
-						];
-
 						return (
-							<Row
-								items={
-									selectable
-										? [{fieldName: 'select'}, ...columns]
-										: columns
-								}
-							>
+							<Row items={columns}>
 								{
 
 									// @ts-ignore
