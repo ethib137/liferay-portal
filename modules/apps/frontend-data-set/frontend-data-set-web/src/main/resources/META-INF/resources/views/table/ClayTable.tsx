@@ -106,6 +106,9 @@ export function ClayTable({
 	);
 	const [, viewsDispatch] = useContext(ViewsContext);
 	const [sort, setSort] = useState<Sorting | null>(null);
+	const [visibleColumns, setVisibleColumns] = useState(() =>
+		getVisibleFieldsMap(fields, visibleFields, selectable)
+	);
 
 	const filteredItems = useMemo(() => {
 		if (!sort) {
@@ -187,9 +190,11 @@ export function ClayTable({
 						visibleFieldNames,
 					})
 				);
+
+				setVisibleColumns(visibleColumns);
 			}}
 			sort={sort}
-			visibleColumns={getVisibleFieldsMap(fields, visibleFields, selectable)}
+			visibleColumns={visibleColumns}
 		>
 			<Head
 				items={selectable ? [{fieldName: 'select'}, ...fields] : fields}
