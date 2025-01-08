@@ -278,7 +278,7 @@ export function ClayTable({
 						const id = item[selectedItemsKey ?? 'id'];
 
 						const columns = [
-							...visibleFields,
+							...fields,
 							{fieldName: 'actions'},
 						];
 
