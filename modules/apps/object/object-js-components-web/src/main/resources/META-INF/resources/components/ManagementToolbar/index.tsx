@@ -5,7 +5,7 @@
 
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
-import ClayManagementToolbar from '@clayui/management-toolbar';
+import ClayLayout from '@clayui/layout';
 import classNames from 'classnames';
 import {navigate, sub} from 'frontend-js-web';
 import React, {useState} from 'react';
@@ -85,120 +85,123 @@ export function ManagementToolbar({
 	};
 
 	return (
-		<>
-			<ClayManagementToolbar
+		<nav class="component-tbar subnav-tbar-light tbar tbar-article">
+			<ClayLayout.ContainerFluid
 				className={classNames(
 					`lfr__management-toolbar ${className}`,
 					enableBoxShadow && 'lfr__management-toolbar--box-shadow'
 				)}
+				size={false}
 			>
-				<ClayManagementToolbar.ItemList>
-					<div className="border-right ml-sm-2 mr-3 pr-3">
-						<h3 className="mb-0 text-truncate">{label}</h3>
+				<ul class="tbar-nav">
+					<li class="tbar-item tbar-item-expand">
+						<div className="border-right ml-sm-2 mr-3 pr-3">
+							<h3 className="mb-0 text-truncate">{label}</h3>
 
-						{Liferay.FeatureFlags['LPD-34594'] &&
-							inheritanceLabel && (
-								<strong
-									className={`${inheritanceClassName} label`}
-								>
-									{inheritanceLabel}
+							{Liferay.FeatureFlags['LPD-34594'] &&
+								inheritanceLabel && (
+									<strong
+										className={`${inheritanceClassName} label`}
+									>
+										{inheritanceLabel}
+									</strong>
+								)}
+
+							{badgeLabel && (
+								<strong className={`${badgeClassName} label`}>
+									{badgeLabel}
 								</strong>
 							)}
-
-						{badgeLabel && (
-							<strong className={`${badgeClassName} label`}>
-								{badgeLabel}
-							</strong>
-						)}
-					</div>
-
-					{showEntityDetails && (
-						<div>
-							<div>
-								<span className="text-secondary">
-									{`${Liferay.Language.get('id')}:`}
-								</span>
-
-								<strong className="ml-2">{entityId}</strong>
-							</div>
-
-							<div className="mt-1">
-								<span className="text-secondary">
-									{`${Liferay.Language.get('erc')}:`}
-								</span>
-
-								<strong className="ml-2">
-									{objectDefinitionExternalReferenceCode}
-								</strong>
-
-								<span
-									className="ml-3 text-secondary"
-									title={helpMessage}
-								>
-									<ClayIcon symbol="question-circle" />
-								</span>
-
-								<ClayButton
-									aria-label={sub(
-										Liferay.Language.get('edit-x'),
-										Liferay.Language.get(
-											'external-reference-code'
-										)
-									)}
-									className="ml-3 p-0 text-secondary"
-									displayType="unstyled"
-									onClick={() => setVisibleModal(true)}
-								>
-									<ClayIcon symbol="pencil" />
-								</ClayButton>
-							</div>
 						</div>
-					)}
-				</ClayManagementToolbar.ItemList>
 
-				{(!screenNavigationCategoryKey ||
-					screenNavigationCategoryKey === 'details') && (
-					<ClayManagementToolbar.ItemList>
-						<ClayButton.Group key={1} spaced>
-							<ClayButton
-								displayType="secondary"
-								id={`${portletNamespace}cancel`}
-								name="cancel"
-								onClick={() => navigate(backURL)}
-							>
-								{Liferay.Language.get('cancel')}
-							</ClayButton>
+						{showEntityDetails && (
+							<div>
+								<div>
+									<span className="text-secondary">
+										{`${Liferay.Language.get('id')}:`}
+									</span>
 
-							<ClayButton
-								disabled={!hasUpdatePermission}
-								displayType={
-									isApproved ||
-									isApproved === undefined ||
-									isRootDescendantNode
-										? 'primary'
-										: 'secondary'
-								}
-								id={`${portletNamespace}save`}
-								name="save"
-								onClick={() => onSubmit(true)}
-							>
-								{Liferay.Language.get('save')}
-							</ClayButton>
+									<strong className="ml-2">{entityId}</strong>
+								</div>
 
-							{isApproved !== undefined && !isApproved && (
+								<div className="mt-1">
+									<span className="text-secondary">
+										{`${Liferay.Language.get('erc')}:`}
+									</span>
+
+									<strong className="ml-2">
+										{objectDefinitionExternalReferenceCode}
+									</strong>
+
+									<span
+										className="ml-3 text-secondary"
+										title={helpMessage}
+									>
+										<ClayIcon symbol="question-circle" />
+									</span>
+
+									<ClayButton
+										aria-label={sub(
+											Liferay.Language.get('edit-x'),
+											Liferay.Language.get(
+												'external-reference-code'
+											)
+										)}
+										className="ml-3 p-0 text-secondary"
+										displayType="unstyled"
+										onClick={() => setVisibleModal(true)}
+									>
+										<ClayIcon symbol="pencil" />
+									</ClayButton>
+								</div>
+							</div>
+						)}
+					</li>
+
+					{(!screenNavigationCategoryKey ||
+						screenNavigationCategoryKey === 'details') && (
+						<li class="tbar-item">
+							<ClayButton.Group key={1} spaced>
 								<ClayButton
-									disabled={!hasUpdatePermission || disabled}
-									id={`${portletNamespace}publish`}
-									name="publish"
-									onClick={() => onPublish()}
+									displayType="secondary"
+									id={`${portletNamespace}cancel`}
+									name="cancel"
+									onClick={() => navigate(backURL)}
 								>
-									{Liferay.Language.get('publish')}
+									{Liferay.Language.get('cancel')}
 								</ClayButton>
-							)}
-						</ClayButton.Group>
-					</ClayManagementToolbar.ItemList>
-				)}
-			</ClayManagementToolbar>
+
+								<ClayButton
+									disabled={!hasUpdatePermission}
+									displayType={
+										isApproved ||
+										isApproved === undefined ||
+										isRootDescendantNode
+											? 'primary'
+											: 'secondary'
+									}
+									id={`${portletNamespace}save`}
+									name="save"
+									onClick={() => onSubmit(true)}
+								>
+									{Liferay.Language.get('save')}
+								</ClayButton>
+
+								{isApproved !== undefined && !isApproved && (
+									<ClayButton
+										disabled={!hasUpdatePermission || disabled}
+										id={`${portletNamespace}publish`}
+										name="publish"
+										onClick={() => onPublish()}
+									>
+										{Liferay.Language.get('publish')}
+									</ClayButton>
+								)}
+							</ClayButton.Group>
+						</li>
+					)}
+				</ul>
+			</ClayLayout.ContainerFluid>
 
 			{visibleModal && (
 				<ModalEditObjectDefinitionExternalReferenceCode
@@ -217,6 +220,6 @@ export function ManagementToolbar({
 					}
 				/>
 			)}
-		</>
+		</nav>
 	);
 }
