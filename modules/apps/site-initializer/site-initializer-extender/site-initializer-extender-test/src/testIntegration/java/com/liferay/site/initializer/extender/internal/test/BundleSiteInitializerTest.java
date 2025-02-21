@@ -205,6 +205,7 @@ import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
+import com.liferay.site.configuration.manager.MenuAccessConfigurationManager;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.site.initializer.SiteInitializerFactory;
 import com.liferay.site.initializer.SiteInitializerRegistry;
@@ -3760,12 +3761,30 @@ public class BundleSiteInitializerTest {
 			draftLayoutSegmentsExperience2.getSegmentsExperienceId());
 	}
 
-	private void _assertSiteConfiguration() {
+	private void _assertSiteConfiguration1() throws Exception {
 		Assert.assertEquals(
 			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
 			_group.getMembershipRestriction());
 		Assert.assertEquals(GroupConstants.TYPE_SITE_OPEN, _group.getType());
 		Assert.assertTrue(_group.isManualMembership());
+
+		Assert.assertTrue(
+			_menuAccessConfigurationManager.isShowControlMenuByRole(
+				_group.getGroupId()));
+		Assert.assertEquals(
+			2,
+			_menuAccessConfigurationManager.getAccessToControlMenuRoleIds(
+				_group.getGroupId()).length);
+	}
+
+	private void _assertSiteConfiguration2() throws Exception {
+		Assert.assertFalse(
+			_menuAccessConfigurationManager.isShowControlMenuByRole(
+				_group.getGroupId()));
+		Assert.assertEquals(
+			0,
+			_menuAccessConfigurationManager.getAccessToControlMenuRoleIds(
+				_group.getGroupId()).length);
 	}
 
 	private void _assertSiteNavigationMenu1() {
@@ -4446,7 +4465,7 @@ public class BundleSiteInitializerTest {
 		_assertPortletSettings();
 		_assertSAPEntries();
 		_assertSegmentsEntries();
-		_assertSiteConfiguration();
+		_assertSiteConfiguration1();
 		_assertSiteSettings();
 		_assertSiteNavigationMenu1();
 		_assertStyleBookEntry();
@@ -4485,6 +4504,7 @@ public class BundleSiteInitializerTest {
 		_assertOrganizations2();
 		_assertPLOEntries2();
 		_assertResourcePermission2();
+		_assertSiteConfiguration2();
 		_assertSiteNavigationMenu2();
 		_assertSXPBlueprint2();
 		_assertUserAccounts2();
@@ -4640,6 +4660,9 @@ public class BundleSiteInitializerTest {
 	@Inject
 	private ListTypeDefinitionResource.Factory
 		_listTypeDefinitionResourceFactory;
+
+	@Inject
+	private MenuAccessConfigurationManager _menuAccessConfigurationManager;
 
 	@Inject
 	private NotificationTemplateResource.Factory
