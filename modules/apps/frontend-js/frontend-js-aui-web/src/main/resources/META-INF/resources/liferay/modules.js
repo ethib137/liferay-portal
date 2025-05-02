@@ -42,7 +42,6 @@
 							'liferay-form',
 							'liferay-menu',
 							'liferay-portlet-base',
-							'liferay-undo-manager',
 							'sortable',
 						],
 					},
@@ -72,35 +71,6 @@
 							'autocomplete-highlighters',
 						],
 					},
-					'liferay-navigation-interaction': {
-						path: 'navigation_interaction.js',
-						plugins: {
-							'liferay-navigation-interaction-touch': {
-								condition: {
-									name: 'liferay-navigation-interaction-touch',
-									test(A) {
-										return A.UA.touchEnabled;
-									},
-									trigger: 'liferay-navigation-interaction',
-								},
-							},
-						},
-						requires: [
-							'aui-base',
-							'aui-component',
-							'event-mouseenter',
-							'node-focusmanager',
-							'plugin',
-						],
-					},
-					'liferay-navigation-interaction-touch': {
-						path: 'navigation_interaction_touch.js',
-						requires: [
-							'event-tap',
-							'event-touch',
-							'liferay-navigation-interaction',
-						],
-					},
 					'liferay-portlet-base': {
 						path: 'portlet_base.js',
 						requires: ['aui-base'],
@@ -124,14 +94,6 @@
 					'liferay-search-container-select': {
 						path: 'search_container_select.js',
 						requires: ['aui-component', 'aui-url', 'plugin'],
-					},
-					'liferay-translation-manager': {
-						path: 'translation_manager.js',
-						requires: ['aui-base'],
-					},
-					'liferay-undo-manager': {
-						path: 'undo_manager.js',
-						requires: ['aui-data-set-deprecated', 'base'],
 					},
 					'liferay-upload': {
 						path: 'upload.js',
