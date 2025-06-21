@@ -14,6 +14,12 @@ import com.liferay.account.service.AccountEntryOrganizationRelLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.entry.rel.service.AssetEntryAssetCategoryRelLocalService;
+import com.liferay.asset.kernel.exception.NoSuchCategoryException;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryTypeConstants;
@@ -71,8 +77,10 @@ import com.liferay.object.rest.dto.v1_0.FileEntry;
 import com.liferay.object.rest.dto.v1_0.Link;
 import com.liferay.object.rest.dto.v1_0.ListEntry;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
+import com.liferay.object.rest.dto.v1_0.Scope;
 import com.liferay.object.rest.dto.v1_0.Status;
 import com.liferay.object.rest.dto.v1_0.SystemProperties;
+import com.liferay.object.rest.dto.v1_0.TaxonomyCategoryBrief;
 import com.liferay.object.rest.dto.v1_0.Version;
 import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
@@ -160,6 +168,8 @@ import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.portal.security.script.management.test.rule.ScriptManagementConfigurationTestRule;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
@@ -2202,6 +2212,99 @@ public class DefaultObjectEntryManagerImplTest
 			).build(),
 			group.getGroupId(), externalReferenceCode, parentObjectDefinition,
 			Collections.emptyMap());
+	}
+
+	@FeatureFlag("LPD-47858")
+	@Test
+	public void testAddObjectEntryWithMissingTaxonomyCategoryBriefReference()
+		throws Exception {
+
+		// Lazy referencing disabled
+
+		String taxonomyCategoryExternalReferenceCode1 =
+			RandomTestUtil.randomString();
+		String taxonomyCategoryExternalReferenceCode2 =
+			RandomTestUtil.randomString();
+
+		ObjectEntry objectEntry = new ObjectEntry() {
+			{
+				setTaxonomyCategoryBriefs(
+					new TaxonomyCategoryBrief[] {
+						new TaxonomyCategoryBrief() {
+							{
+								scope = _getScope(_group);
+								taxonomyCategoryExternalReferenceCode =
+									taxonomyCategoryExternalReferenceCode1;
+							}
+						},
+						new TaxonomyCategoryBrief() {
+							{
+								scope = _getScope(_group);
+								taxonomyCategoryExternalReferenceCode =
+									taxonomyCategoryExternalReferenceCode2;
+							}
+						}
+					});
+			}
+		};
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.object.rest.internal.util.ServiceContextUtil",
+				LoggerTestUtil.ERROR)) {
+
+			_defaultObjectEntryManager.addObjectEntry(
+				_simpleDTOConverterContext, _objectDefinition1, objectEntry,
+				ObjectDefinitionConstants.SCOPE_COMPANY);
+
+			Assert.fail();
+		}
+		catch (Exception exception) {
+			Assert.assertTrue(
+				exception.getCause() instanceof NoSuchCategoryException);
+		}
+
+		// Lazy referencing enabled
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			objectEntry = _defaultObjectEntryManager.addObjectEntry(
+				_simpleDTOConverterContext, _objectDefinition1, objectEntry,
+				ObjectDefinitionConstants.SCOPE_COMPANY);
+
+			AssetCategory assetCategory1 =
+				_assetCategoryLocalService.
+					fetchAssetCategoryByExternalReferenceCode(
+						taxonomyCategoryExternalReferenceCode1,
+						_group.getGroupId());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_INCOMPLETE,
+				assetCategory1.getStatus());
+
+			AssetCategory assetCategory2 =
+				_assetCategoryLocalService.
+					fetchAssetCategoryByExternalReferenceCode(
+						taxonomyCategoryExternalReferenceCode2,
+						_group.getGroupId());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_INCOMPLETE,
+				assetCategory2.getStatus());
+
+			AssetEntry assetEntry = _assetEntryLocalService.getEntry(
+				_objectDefinition1.getClassName(), objectEntry.getId());
+
+			Assert.assertArrayEquals(
+				ArrayUtil.sortedUnique(
+					new long[] {
+						assetCategory1.getCategoryId(),
+						assetCategory2.getCategoryId()
+					}),
+				ArrayUtil.sortedUnique(
+					_assetEntryAssetCategoryRelLocalService.
+						getAssetCategoryPrimaryKeys(assetEntry.getEntryId())));
+		}
 	}
 
 	@Test
@@ -6257,11 +6360,11 @@ public class DefaultObjectEntryManagerImplTest
 
 		Timestamp timestamp = Timestamp.valueOf(
 			LocalDateTime.now(
-		).plusDays(
-			1
-		).truncatedTo(
-			ChronoUnit.MINUTES
-		));
+			).plusDays(
+				1
+			).truncatedTo(
+				ChronoUnit.MINUTES
+			));
 
 		ObjectEntry objectEntry = _defaultObjectEntryManager.addObjectEntry(
 			_simpleDTOConverterContext, objectDefinition,
@@ -7265,6 +7368,22 @@ public class DefaultObjectEntryManagerImplTest
 			StringPool.BLANK, null, null, null);
 	}
 
+	private Scope _getScope(Group group) {
+		return new Scope() {
+			{
+				setExternalReferenceCode(group::getExternalReferenceCode);
+				setType(
+					() -> {
+						if (group.getType() == GroupConstants.TYPE_DEPOT) {
+							return Scope.Type.ASSET_LIBRARY;
+						}
+
+						return Scope.Type.SITE;
+					});
+			}
+		};
+	}
+
 	private Timestamp _getTimestamp(String dateString) throws Exception {
 		Date date = DateUtil.parseDate(
 			"yyyy-MM-dd", dateString, LocaleUtil.getSiteDefault());
@@ -7785,6 +7904,16 @@ public class DefaultObjectEntryManagerImplTest
 
 	@Inject
 	private AccountRoleLocalService _accountRoleLocalService;
+
+	@Inject
+	private AssetCategoryLocalService _assetCategoryLocalService;
+
+	@Inject
+	private AssetEntryAssetCategoryRelLocalService
+		_assetEntryAssetCategoryRelLocalService;
+
+	@Inject
+	private AssetEntryLocalService _assetEntryLocalService;
 
 	private Role _buyerRole;
 
