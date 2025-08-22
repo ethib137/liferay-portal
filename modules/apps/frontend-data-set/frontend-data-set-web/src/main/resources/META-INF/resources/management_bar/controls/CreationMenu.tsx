@@ -6,6 +6,7 @@
 import ClayButton from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
+import {LinkOrButton} from '@clayui/shared';
 import classNames from 'classnames';
 import React, {useContext, useState} from 'react';
 
@@ -96,6 +97,26 @@ function CreationMenu({
 
 	const {loadData} = frontendDataSetContext;
 
+	const newButtonIcon = () => {
+		return primaryItems[0].href ? (
+			<span className="pl-2">
+				<ClayIcon symbol="shortcut" />
+			</span>
+		) : inEmptyState ? (
+			''
+		) : (
+			<ClayIcon symbol="plus" />
+		);
+	};
+
+	const newButtonLabel = () => {
+		return inEmptyState
+			? primaryItems[0].label
+			: primaryItems[0].href
+				? Liferay.Language.get('new')
+				: '';
+	};
+
 	return primaryItems?.length > 0 ? (
 		<ul
 			className={classNames('navbar-nav', {
@@ -109,11 +130,16 @@ function CreationMenu({
 						primaryItems={primaryItems}
 					/>
 				) : (
-					<ClayButton
+					<LinkOrButton
 						aria-label={primaryItems[0].label}
-						className="nav-btn nav-btn-monospaced"
+						className={
+							inEmptyState
+								? 'btn btn-secondary'
+								: 'btn btn-primary'
+						}
 						data-testid="fdsCreationActionButton"
 						data-tooltip-align="top"
+						href={primaryItems[0].href}
 						onClick={() => {
 							const item = primaryItems[0];
 
@@ -125,15 +151,16 @@ function CreationMenu({
 								triggerAction(item, frontendDataSetContext);
 							}
 						}}
+						target={primaryItems[0].href ? '_blank' : ''}
 						title={primaryItems[0].label}
-						{...(inEmptyState && EMPTY_STATE_BUTTON_PROPS)}
+						{...(primaryItems[0].href
+							? ''
+							: inEmptyState && EMPTY_STATE_BUTTON_PROPS)}
 					>
-						{inEmptyState ? (
-							primaryItems[0].label
-						) : (
-							<ClayIcon symbol="plus" />
-						)}
-					</ClayButton>
+						{newButtonLabel()}
+
+						{newButtonIcon()}
+					</LinkOrButton>
 				)}
 			</li>
 		</ul>
