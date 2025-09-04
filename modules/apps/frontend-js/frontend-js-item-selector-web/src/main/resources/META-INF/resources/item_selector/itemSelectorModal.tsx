@@ -31,10 +31,17 @@ export interface IItemSelectorModalProps<T> {
 	 * Can be used as a period separated path (e.g.: 'embedded.id').
 	 */
 	locator?: {
+		folderId?: string;
 		id: string;
 		label: string;
 		value: string;
 	};
+
+	/**
+	 * A flag for rendering the Clay MultiSelect component and allowing multiple
+	 * selection.
+	 */
+	multiSelect?: boolean;
 
 	/**
 	 * Expects the 'observer' property from the Clay useModal hook.
@@ -62,20 +69,29 @@ export interface IItemSelectorModalProps<T> {
 	type: string;
 }
 
+const defaultLocator = {
+	folderId: 'embedded.id',
+	id: 'id',
+	label: 'title',
+	value: 'id',
+};
+
 function ItemSelectorModal<T extends Record<string, any>>({
 	fdsProps,
 	items: externalItems,
-	locator = {
-		id: 'id',
-		label: 'title',
-		value: 'id',
-	},
+	locator: externalLocator,
+	multiSelect = false,
 	observer,
 	onItemsChange,
 	onOpenChange,
 	open,
 	type,
 }: IItemSelectorModalProps<T>) {
+	const locator = {
+		...defaultLocator,
+		...externalLocator,
+	};
+
 	const [selectedItems, setSelectedItems] = useState(externalItems);
 
 	useEffect(() => {
@@ -101,16 +117,20 @@ function ItemSelectorModal<T extends Record<string, any>>({
 
 			<ClayModal.Body className="p-0">
 				<FrontendDataSet
-					{...fdsProps}
+					{...{
+						pagination: {
+							deltas: [{label: 20}, {label: 40}, {label: 60}],
+							initialDelta: 20,
+						},
+						selectionType: multiSelect ? 'multiple' : 'single',
+						...fdsProps
+					}}
 					onSelect={({
 						selectedItems: newSelectedItems,
 					}: {
 						selectedItems: T[];
 					}) => {
-						if (
-							fdsProps.selectionType === 'single' &&
-							newSelectedItems.length > 1
-						) {
+						if (!multiSelect && newSelectedItems.length > 1) {
 							setSelectedItems(newSelectedItems.slice(0, 1));
 						}
 						else {

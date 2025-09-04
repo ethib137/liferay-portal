@@ -109,25 +109,31 @@ export interface IItemSelectorProps<T>
 	 */
 	value?: string;
 }
+const defaultLocator = {
+	id: 'id',
+	label: 'title',
+	value: 'id',
+};
 
 function ItemSelector<T extends Record<string, any>>({
 	apiURL,
 	children,
-	locator = {
-		id: 'id',
-		label: 'title',
-		value: 'id',
-	},
-	value: externalValue,
+	defaultItems,
+	defaultValue,
+	displaySelectedItems = true,
+	items: externalItems,
+	locator: externalLocator,
+	multiSelect = false,
 	onChange,
 	onItemsChange,
-	multiSelect = false,
-	items: externalItems,
-	defaultValue,
-	defaultItems,
-	displaySelectedItems = true,
+	value: externalValue,
 	...otherProps
 }: IItemSelectorProps<T>) {
+	const locator = {
+		...defaultLocator,
+		...externalLocator,
+	};
+
 	useEffect(() => {
 		if (!displaySelectedItems && !multiSelect) {
 			console.warn(

@@ -137,6 +137,7 @@ const FrontendDataSetContent = ({
 	uniformActionsDisplay,
 	views,
 }: IFrontendDataSetProps) => {
+	console.log('views', views);
 	const fdsRef = useRef(null);
 	const dataSetWrapperRef: RefObject<HTMLDivElement> = useRef(null);
 	const [componentLoading, setComponentLoading] = useState(false);

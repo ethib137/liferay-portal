@@ -9,8 +9,7 @@ import {ClayInput} from '@clayui/form';
 import ClayList from '@clayui/list';
 import {useModal} from '@clayui/modal';
 import ClaySticker from '@clayui/sticker';
-import {IFrontendDataSetProps} from '@liferay/frontend-data-set-web';
-import {ItemSelector, ItemSelectorModal} from 'frontend-js-item-selector-web';
+import {CMSFilesItemSelectorModal, ItemSelector, ItemSelectorModal} from 'frontend-js-item-selector-web';
 import React, {useState} from 'react';
 
 import {
@@ -66,14 +65,6 @@ type User = {
 	}[];
 };
 
-const FDS_DEFAULT_PROPS: Partial<IFrontendDataSetProps> = {
-	pagination: {
-		deltas: [{label: 20}, {label: 40}, {label: 60}],
-		initialDelta: 20,
-	},
-	selectionType: 'single',
-};
-
 const assetLibrariesItemSelectorConfig = {
 	apiURL: `${location.origin}/o/headless-asset-library/v1.0/asset-libraries`,
 	locator: {
@@ -116,9 +107,15 @@ export default function ItemSelectorSamples() {
 	const [space, setSpace] = useState<Space>();
 
 	const [space2, setSpace2] = useState<Space | null>();
+	const [cmsFile, setCMSFile] = useState<any>();
 	const [document, setDocument] = useState<Document | null>();
 	const [user, setUser] = useState<User | null>();
 
+	const {
+		observer: cmsFileItemSelectorObserver,
+		onOpenChange: cmsFileItemSelectorOpenChange,
+		open: cmsFileItemSelectorOpen,
+	} = useModal();
 	const {
 		observer: fileItemSelectorObserver,
 		onOpenChange: fileItemSelectorOpenChange,
@@ -304,10 +301,21 @@ export default function ItemSelectorSamples() {
 			</SampleContainer>
 
 			<SampleContainer label="Item Selector Modal">
+				<CMSFilesItemSelectorModal
+					{...{
+						items: cmsFile ? [cmsFile] : [],
+						observer: cmsFileItemSelectorObserver,
+						onItemsChange: (items: any) => {
+							setCMSFile(items[0]);
+						},
+						onOpenChange: cmsFileItemSelectorOpenChange,
+						open: cmsFileItemSelectorOpen,
+					}}
+				/>
+
 				<ItemSelectorModal<Document>
 					{...{
 						fdsProps: {
-							...FDS_DEFAULT_PROPS,
 							apiURL: documentsItemSelectorConfig.apiURL,
 							id: `itemSelectorModal-documents-${getRandomId()}`,
 							views: getDefaultItemSelectorModalViews({
@@ -330,7 +338,6 @@ export default function ItemSelectorSamples() {
 				<ItemSelectorModal<Space>
 					{...{
 						fdsProps: {
-							...FDS_DEFAULT_PROPS,
 							apiURL: assetLibrariesItemSelectorConfig.apiURL,
 							id: `itemSelectorModal-assets-${getRandomId()}`,
 							views: getDefaultItemSelectorModalViews({
@@ -353,7 +360,6 @@ export default function ItemSelectorSamples() {
 				<ItemSelectorModal<User>
 					{...{
 						fdsProps: {
-							...FDS_DEFAULT_PROPS,
 							apiURL: userAccountsItemSelectorConfig.apiURL,
 							id: `itemSelectorModal-users-${getRandomId()}`,
 							views: getDefaultItemSelectorModalViews({
@@ -374,6 +380,15 @@ export default function ItemSelectorSamples() {
 				/>
 
 				<ClayButton.Group className="mb-3" spaced>
+					<ClayButton
+						displayType="primary"
+						onClick={() => {
+							cmsFileItemSelectorOpenChange(true);
+						}}
+					>
+						Select CMS File
+					</ClayButton>
+
 					<ClayButton
 						displayType="primary"
 						onClick={() => {
