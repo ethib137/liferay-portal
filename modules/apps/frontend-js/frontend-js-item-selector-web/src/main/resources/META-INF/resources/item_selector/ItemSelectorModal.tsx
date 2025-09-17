@@ -7,6 +7,7 @@ import ClayButton from '@clayui/button';
 import ClayModal from '@clayui/modal';
 import {InternalDispatch} from '@clayui/shared';
 import {
+	ACTION_ITEM_TARGETS,
 	FrontendDataSet,
 	IFrontendDataSetProps,
 } from '@liferay/frontend-data-set-web';
@@ -101,6 +102,7 @@ function ItemSelectorModal<T extends Record<string, any>>({
 			{
 				href: createItemURL,
 				label: Liferay.Language.get('add-new-item'),
+				target: ACTION_ITEM_TARGETS.BLANK,
 			},
 		],
 	};

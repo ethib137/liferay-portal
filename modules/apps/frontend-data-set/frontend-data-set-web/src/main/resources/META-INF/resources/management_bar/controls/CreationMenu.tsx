@@ -11,15 +11,9 @@ import classNames from 'classnames';
 import React, {useContext, useState} from 'react';
 
 import FrontendDataSetContext from '../../FrontendDataSetContext';
+import {ACTION_ITEM_TARGETS} from '../../utils/actionItems/constants';
 import {triggerAction} from '../../utils/actionItems/triggerAction';
 import {ICreationActionItem} from '../../utils/types';
-
-const EMPTY_STATE_BUTTON_PROPS = {
-	'aria-label': undefined,
-	'className': undefined,
-	'displayType': 'secondary',
-	'title': undefined,
-};
 
 const DropDown = ({
 	inEmptyState,
@@ -40,17 +34,15 @@ const DropDown = ({
 			onActiveChange={setActive}
 			trigger={
 				<ClayButton
-					aria-label={Liferay.Language.get('new')}
-					className="nav-btn nav-btn-monospaced"
+					className={!inEmptyState ? 'nav-btn' : undefined}
 					data-testid="fdsCreationActionButton"
-					title={Liferay.Language.get('new')}
-					{...(inEmptyState && EMPTY_STATE_BUTTON_PROPS)}
+					displayType={inEmptyState ? 'secondary' : undefined}
 				>
-					{inEmptyState ? (
-						Liferay.Language.get('new')
-					) : (
-						<ClayIcon symbol="plus" />
-					)}
+					{Liferay.Language.get('new')}
+
+					<span className="inline-item inline-item-after">
+						<ClayIcon symbol="caret-bottom" />
+					</span>
 				</ClayButton>
 			}
 		>
@@ -97,27 +89,15 @@ function CreationMenu({
 
 	const {loadData} = frontendDataSetContext;
 
-	const newButtonIcon = () => {
-		return primaryItems[0].href ? (
-			<span className="pl-2">
-				<ClayIcon symbol="shortcut" />
-			</span>
-		) : inEmptyState ? (
-			''
-		) : (
-			<ClayIcon symbol="plus" />
-		);
-	};
+	if (primaryItems?.length === 0) {
+		return null;
+	}
 
-	const newButtonLabel = () => {
-		return inEmptyState
-			? primaryItems[0].label
-			: primaryItems[0].href
-				? Liferay.Language.get('new')
-				: '';
-	};
+	const firstItem = primaryItems[0];
 
-	return primaryItems?.length > 0 ? (
+	const opensInNewTab = firstItem.target === ACTION_ITEM_TARGETS.BLANK;
+
+	return (
 		<ul
 			className={classNames('navbar-nav', {
 				'd-inline-flex': inEmptyState,
@@ -131,41 +111,46 @@ function CreationMenu({
 					/>
 				) : (
 					<LinkOrButton
-						aria-label={primaryItems[0].label}
 						className={
 							inEmptyState
 								? 'btn btn-secondary'
-								: 'btn btn-primary'
+								: 'btn btn-primary nav-btn'
 						}
 						data-testid="fdsCreationActionButton"
 						data-tooltip-align="top"
-						href={primaryItems[0].href}
+						href={opensInNewTab ? firstItem.href : undefined}
 						onClick={() => {
-							const item = primaryItems[0];
+							if (opensInNewTab) {
+								return;
+							}
 
-							item.onClick?.({
+							firstItem.onClick?.({
 								loadData,
 							});
 
-							if (item.href || item.target) {
-								triggerAction(item, frontendDataSetContext);
+							if (firstItem.href || firstItem.target) {
+								triggerAction(
+									firstItem,
+									frontendDataSetContext
+								);
 							}
 						}}
-						target={primaryItems[0].href ? '_blank' : ''}
-						title={primaryItems[0].label}
-						{...(primaryItems[0].href
-							? ''
-							: inEmptyState && EMPTY_STATE_BUTTON_PROPS)}
+						target={opensInNewTab ? '_blank' : undefined}
+						title={!inEmptyState ? firstItem.label : undefined}
 					>
-						{newButtonLabel()}
+						{inEmptyState
+							? firstItem.label
+							: Liferay.Language.get('new')}
 
-						{newButtonIcon()}
+						{opensInNewTab && (
+							<span className="inline-item inline-item-after">
+								<ClayIcon symbol="shortcut" />
+							</span>
+						)}
 					</LinkOrButton>
 				)}
 			</li>
 		</ul>
-	) : (
-		<></>
 	);
 }
 
