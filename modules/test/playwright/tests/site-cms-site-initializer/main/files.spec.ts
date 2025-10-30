@@ -155,7 +155,7 @@ test(
 		await test.step('Check the Space selector dialog', async () => {
 			await page.getByRole('dialog').waitFor();
 
-			await page.getByLabel('SpaceRequired').click();
+			await page.getByLabel('SpaceMandatory').click();
 
 			await page.getByRole('option', {name: assetLibraryName}).click();
 
