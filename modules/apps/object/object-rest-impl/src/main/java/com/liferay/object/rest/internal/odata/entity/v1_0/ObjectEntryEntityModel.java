@@ -221,6 +221,10 @@ public class ObjectEntryEntityModel implements EntityModel {
 					"externalReferenceCode",
 					_getExternalReferenceCodeFunction())
 			).put(
+				"folderId",
+				new IntegerEntityField(
+					"folderId", locale -> "objectEntryFolderId")
+			).put(
 				"id", new IdEntityField("id", locale -> "id", String::valueOf)
 			).put(
 				"keywords",

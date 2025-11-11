@@ -329,7 +329,8 @@ public class DefaultObjectEntryManagerImpl
 			group.getGroupKey(), serviceContext);
 
 		_updateDuplicateObjectEntryName(
-			objectDefinition, objectEntryFolder, values, replace);
+			objectDefinition, objectEntryFolder,
+			serviceBuilderObjectEntry.getDefaultLanguageId(), values, replace);
 
 		return _objectEntryDTOConverter.toDTO(
 			dtoConverterContext,
@@ -1212,7 +1213,8 @@ public class DefaultObjectEntryManagerImpl
 			group.getGroupKey(), serviceContext);
 
 		_updateDuplicateObjectEntryName(
-			objectDefinition, objectEntryFolder, values, replace);
+			objectDefinition, objectEntryFolder,
+			serviceBuilderObjectEntry.getDefaultLanguageId(), values, replace);
 
 		return _objectEntryDTOConverter.toDTO(
 			dtoConverterContext,
@@ -3396,6 +3398,29 @@ public class DefaultObjectEntryManagerImpl
 					objectDefinition, serviceBuilderObjectEntry,
 					serviceBuilderParentObjectEntry)
 			).put(
+				"get-by-scope",
+				() -> {
+					if (!FeatureFlagManagerUtil.isEnabled(
+							serviceBuilderObjectEntry.getCompanyId(),
+							"LPD-17564")) {
+
+						return null;
+					}
+
+					return ActionUtil.addAction(
+						ActionKeys.VIEW, ObjectEntryResourceImpl.class,
+						serviceBuilderObjectEntry.getObjectEntryId(),
+						"getScopeScopeKeyPage", null,
+						_objectEntryService.getModelResourcePermission(
+							serviceBuilderObjectEntry.getObjectDefinitionId()),
+						HashMapBuilder.put(
+							"scopeKey",
+							String.valueOf(
+								serviceBuilderObjectEntry.getGroupId())
+						).build(),
+						dtoConverterContext.getUriInfo());
+				}
+			).put(
 				"move",
 				() -> {
 					if (!FeatureFlagManagerUtil.isEnabled(
@@ -3657,7 +3682,7 @@ public class DefaultObjectEntryManagerImpl
 
 	private void _updateDuplicateObjectEntryName(
 			ObjectDefinition objectDefinition,
-			ObjectEntryFolder objectEntryFolder,
+			ObjectEntryFolder objectEntryFolder, String languageId,
 			Map<String, Serializable> values, boolean replace)
 		throws Exception {
 
@@ -3703,14 +3728,29 @@ public class DefaultObjectEntryManagerImpl
 			return;
 		}
 
-		values.put(
-			titleObjectField.getName(),
-			UniqueUtil.getUniqueValue(
-				"copy",
-				uniqueValue -> _isUniqueName(
-					objectDefinition, objectEntryFolder, objectFieldColumn,
-					uniqueValue),
-				titleValue));
+		if (titleObjectField.isLocalized()) {
+			Map<String, Object> i18nValues = (Map<String, Object>)values.get(
+				titleObjectField.getI18nObjectFieldName());
+
+			i18nValues.put(
+				languageId,
+				UniqueUtil.getUniqueValue(
+					"copy",
+					uniqueValue -> _isUniqueName(
+						objectDefinition, objectEntryFolder, objectFieldColumn,
+						uniqueValue),
+					titleValue));
+		}
+		else {
+			values.put(
+				titleObjectField.getName(),
+				UniqueUtil.getUniqueValue(
+					"copy",
+					uniqueValue -> _isUniqueName(
+						objectDefinition, objectEntryFolder, objectFieldColumn,
+						uniqueValue),
+					titleValue));
+		}
 	}
 
 	private ObjectEntry _updateObjectEntry(
