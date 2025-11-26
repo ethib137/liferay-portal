@@ -32,6 +32,7 @@ import com.liferay.exportimport.kernel.lifecycle.constants.ExportImportLifecycle
 import com.liferay.exportimport.kernel.staging.LayoutStagingUtil;
 import com.liferay.exportimport.kernel.staging.MergeLayoutPrototypesThreadLocal;
 import com.liferay.exportimport.kernel.staging.Staging;
+import com.liferay.exportimport.kernel.staging.StagingUtil;
 import com.liferay.exportimport.lar.PermissionImporter;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
@@ -1784,7 +1785,8 @@ public class LayoutStagedModelDataHandler
 
 		return _styleBookEntryLocalService.
 			fetchStyleBookEntryByExternalReferenceCode(
-				layout.getStyleBookEntryERC(), layout.getGroupId());
+				layout.getStyleBookEntryERC(),
+				_staging.getLiveGroupId(layout.getGroupId()));
 	}
 
 	private void _fixExportTypeSettings(Layout layout) throws Exception {
